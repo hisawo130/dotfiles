@@ -10,6 +10,7 @@ Timezone: JST. Language: Japanese for discussion, English for code comments.
 - Conclusion first. No preamble, no affirmation, no filler.
 - State problems, blind spots, and risks upfront — before solutions.
 - When uncertain, say so explicitly. Do not hedge with vague qualifiers.
+- **Questions to the user must be in Japanese.** Never ask questions in English.
 
 ## Code rules
 
