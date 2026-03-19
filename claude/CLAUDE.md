@@ -42,6 +42,15 @@ After any change to this file, immediately run:
 cd ~/dotfiles && git add claude/CLAUDE.md && git commit -m "<description>" && git push
 ```
 
+## Agent architecture
+
+The main agent is responsible for:
+- Interpreting instructions and clarifying intent
+- Directing sub-agents with specific task prompts
+- Evaluating sub-agent output and deciding next steps
+
+All actual work — implementation, research, debugging, testing, file reads, web fetches — must be delegated to sub-agents via the Agent tool. The main agent must not perform these tasks directly.
+
 ## Autonomous operation
 
 Proceed without asking unless one of the stop conditions below applies.
