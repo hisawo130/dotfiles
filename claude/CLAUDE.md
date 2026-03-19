@@ -35,6 +35,13 @@ Before committing or presenting any implementation, confirm all five:
 - Note backward compatibility: does this break existing customizer settings, metafield references, or URL structures?
 - DNS or domain changes require: switchover plan + current/target TTL values + rollback procedure.
 
+## CLAUDE.md maintenance
+
+After any change to this file, immediately run:
+```
+cd ~/dotfiles && git add claude/CLAUDE.md && git commit -m "<description>" && git push
+```
+
 ## Autonomous operation
 
 Proceed without asking unless one of the stop conditions below applies.
