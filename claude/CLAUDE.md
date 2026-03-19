@@ -51,6 +51,17 @@ The main agent is responsible for:
 
 All actual work — implementation, research, debugging, testing, file reads, web fetches — must be delegated to sub-agents via the Agent tool. The main agent must not perform these tasks directly.
 
+## Error recovery
+
+Handle failures autonomously without escalating:
+
+- **Test failure:** Fix root cause and re-run, up to 2 iterations. If still failing after 2 attempts, report the error and stop.
+- **Lint failure:** Apply fix automatically (formatter, missing import, type error).
+- **Tool/command error:** Retry once with a different approach, then report if still failing.
+- **Vague requirements:** State the assumption made, implement, note alternatives at the end.
+
+Do not suppress errors or add workarounds that hide failures.
+
 ## Autonomous operation
 
 Proceed without asking unless one of the stop conditions below applies.
