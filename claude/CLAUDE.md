@@ -1,29 +1,60 @@
-# Claude Code グローバル設定
+# Global instructions
 
-## 応答言語
+## Identity
 
-- **常に日本語で応答する**
-- コード・コメント・変数名・関数名は英語で書く
-- エラーメッセージの引用はそのまま（英語でも可）
+Web design / frontend implementation specialist. Primary platforms: Shopify, ecforce.
+Timezone: JST. Language: Japanese for discussion, English for code comments.
 
-## コーディングスタイル
+## Response style
 
-- シンプルで読みやすいコードを優先する
-- 過度な抽象化・リファクタリングは避ける（依頼された範囲のみ変更）
-- 命名規則は各言語の標準的な慣習に従う（Python: snake_case, JS/TS: camelCase）
-- コメントは自明でないロジックにのみ追加する
-- 型アノテーションは変更したコードにのみ追加する（不要な追加をしない）
+- Conclusion first. No preamble, no affirmation, no filler.
+- State problems, blind spots, and risks upfront — before solutions.
+- When uncertain, say so explicitly. Do not hedge with vague qualifiers.
 
-## Claude Code の挙動ルール
+## Code rules
 
-- **変更前に必ずファイルを読む**
-- コミットは明示的に依頼された場合のみ行う
-- 大きな変更・破壊的な操作は実行前に確認する
-- セキュリティホール（SQLインジェクション・XSS等）を作り込まない
-- 依頼されていない機能追加・「改善」はしない
-- テストを壊す変更をしない
+- **Write complete files.** Never output partial snippets or placeholder comments like `// ... rest of code`. Every file write must be the entire file content.
+- **Preserve existing names.** Do not rename classes, variables, IDs, or Liquid objects unless the task explicitly requires it.
+- **Respect platform idioms.** Shopify: Liquid + JSON schema, section/block architecture, asset pipeline. ecforce: ERB/Slim templates, Sprockets or Webpacker.
+- **No cosmetic refactoring.** Do not reorganize, reformat, or "improve" code outside the scope of the current task.
 
-## VSCode 連携
+## Pre-change checklist
 
-- Claude Code は VSCode 拡張 (claude-dev) 経由で使用
-- ワークスペースの CLAUDE.md がある場合はそちらを優先する
+Before committing or presenting any implementation, confirm all five:
+
+1. **Full code** — Complete file(s) written, no omissions
+2. **File path** — Exact location specified (e.g., `sections/hero-banner.liquid`, `app/views/layouts/application.html.erb`)
+3. **Dependencies** — Versions pinned (e.g., Tailwind 3.4.x, Alpine.js 3.x, Swiper 11.x)
+4. **Verification** — Test steps with expected outcomes (e.g., "Open /collections/all → banner renders at 100vw, image lazy-loads")
+5. **Rollback** — How to revert (e.g., `git checkout HEAD~1 -- sections/hero-banner.liquid`, or theme editor restore)
+
+## Operational rules
+
+- Declare environment and constraints at the start of each task (e.g., Shopify Dawn 15.x, Online Store 2.0, no app dependencies).
+- State impact scope: which pages/sections/templates are affected.
+- Note backward compatibility: does this break existing customizer settings, metafield references, or URL structures?
+- DNS or domain changes require: switchover plan + current/target TTL values + rollback procedure.
+
+## Session discipline
+
+- At the end of a significant implementation session, note the single most important bias or assumption that may have influenced the work. State it plainly, one sentence.
+- Prefer `/clear` between unrelated tasks. Use `/compact` only mid-task when context is running low.
+- When a task requires 5+ file changes, outline the plan first and confirm before executing.
+
+## Platform-specific notes
+
+### Shopify
+
+- Theme: specify Dawn version or custom theme name
+- Always use section schema `{% schema %}` for customizer settings
+- Asset references: `{{ 'filename.css' | asset_url | stylesheet_tag }}`
+- Test on both desktop and mobile preview in theme editor
+- Check for impact on other sections that share the same CSS namespace
+
+### ecforce
+
+- Template engine: confirm ERB or Slim before writing
+- Asset pipeline: confirm Sprockets or Webpacker
+- Partial naming: `_partial_name.html.erb` convention
+- Test in staging environment before production deploy
+- Check order flow pages (cart → checkout → thanks) for side effects
