@@ -74,7 +74,10 @@
       "Bash(docker:*)",
       "Bash(docker-compose:*)",
       "Bash(clasp create:*)",
-      "Bash(clasp push:*)"
+      "Bash(clasp push:*)",
+      "Bash(ln:*)",
+      "Bash(git config:*)",
+      "Bash(cat:*)"
     ],
     "deny": [
       "Bash(rm -rf /)",
