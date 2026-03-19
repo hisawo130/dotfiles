@@ -35,11 +35,38 @@ Before committing or presenting any implementation, confirm all five:
 - Note backward compatibility: does this break existing customizer settings, metafield references, or URL structures?
 - DNS or domain changes require: switchover plan + current/target TTL values + rollback procedure.
 
+## Autonomous operation
+
+Proceed without asking unless one of the stop conditions below applies.
+
+**Proceed without confirmation:**
+- The intent is unambiguous (one reasonable interpretation exists)
+- Reading, writing, editing, or refactoring code — regardless of file count or scope
+- Task intent is clear even if implementation details are left to judgment
+
+**Stop and confirm only for:**
+- Destructive operations: deleting files/branches, force push, `reset --hard`, dropping tables
+- Ambiguity so fundamental that either interpretation could be wrong
+- External actions: creating PRs, deploying, sending messages, publishing content
+
+**Default behavior when ambiguous:**
+- Proceed with the safest, most common interpretation
+- State the assumption in one line at the top of the response
+- Implement first, then note alternatives — do not present a menu of options before acting
+
 ## Session discipline
 
 - At the end of a significant implementation session, note the single most important bias or assumption that may have influenced the work. State it plainly, one sentence.
 - Prefer `/clear` between unrelated tasks. Use `/compact` only mid-task when context is running low.
-- When a task requires 5+ file changes, outline the plan first and confirm before executing.
+
+## Default assumptions
+
+When not explicitly specified, assume:
+
+- **Shopify:** Dawn (latest stable), Online Store 2.0, no app dependencies
+- **ecforce:** ERB templates, Sprockets asset pipeline
+- **CSS:** Follow existing class names and design patterns
+- **JS:** Vanilla JS or match the existing framework in use
 
 ## Platform-specific notes
 
