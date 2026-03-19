@@ -45,8 +45,8 @@
       "Bash(ruby:*)",
       "Bash(python:*)",
       "Bash(python3:*)",
-      "Bash(bash:*)",
-      "Bash(sh:*)",
+      "Bash(bash *.sh:*)",
+      "Bash(sh *.sh:*)",
       "Bash(make:*)",
       "Bash(rake:*)",
       "Bash(curl:*)",
@@ -75,9 +75,23 @@
       "Bash(docker-compose:*)",
       "Bash(clasp create:*)",
       "Bash(clasp push:*)",
-      "Bash(ln:*)",
+      "Bash(ln -sf ~/dotfiles/claude/CLAUDE.md ~/.claude/CLAUDE.md)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh repo:*)",
+      "Bash(gh api:*)",
+      "Bash(claude --version)",
+      "Bash(env)",
+      "WebFetch(domain:support.claude.com)",
+      "Bash(claude config:*)",
+      "WebFetch(domain:claudelog.com)",
+      "Bash(cp ~/.claude/settings.json ~/dotfiles/claude/settings.json)",
+      "Bash(cp -r ~/.claude/agents ~/dotfiles/claude/agents)",
+      "Bash(rm ~/.claude/settings.json)",
+      "Bash(ln -sf ~/dotfiles/claude/settings.json ~/.claude/settings.json)",
+      "Bash(rm -rf ~/.claude/agents)",
+      "Bash(ln -sf ~/dotfiles/claude/agents ~/.claude/agents)",
       "Bash(git config:*)",
-      "Bash(cat:*)"
+      "Bash(echo:*)"
     ],
     "deny": [
       "Bash(rm -rf /)",
@@ -92,7 +106,8 @@
       "Bash(chmod -R 777:*)",
       "Bash(curl * | bash)",
       "Bash(wget * | sh)"
-    ]
+    ],
+    "defaultMode": "acceptEdits"
   },
   "hooks": {
     "Notification": [
@@ -107,5 +122,6 @@
       }
     ]
   },
-  "effortLevel": "high"
+  "effortLevel": "high",
+  "autoUpdatesChannel": "stable"
 }

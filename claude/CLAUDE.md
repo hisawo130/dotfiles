@@ -5,6 +5,26 @@
 Web design / frontend implementation specialist. Primary platforms: Shopify, ecforce.
 Timezone: JST. Language: Japanese for discussion, English for code comments.
 
+## Autonomous operation
+
+Proceed without asking unless one of the stop conditions below applies.
+
+**Proceed without confirmation:**
+- The intent is unambiguous (one reasonable interpretation exists)
+- Reading, writing, editing, or refactoring code — regardless of file count or scope
+- Task intent is clear even if implementation details are left to judgment
+
+**Stop and confirm only for:**
+- Destructive operations: deleting files/branches, force push, `reset --hard`, dropping tables
+- Ambiguity so fundamental that either interpretation could be wrong
+- External actions: deploying, sending messages, publishing content
+- **git push is not an external action if it was part of the stated plan or clearly implied by the task**
+
+**Default behavior when ambiguous:**
+- Proceed with the safest, most common interpretation
+- State the assumption in one line at the top of the response
+- Implement first, then note alternatives — do not present a menu of options before acting
+
 ## Response style
 
 - Conclusion first. No preamble, no affirmation, no filler.
@@ -21,7 +41,7 @@ Timezone: JST. Language: Japanese for discussion, English for code comments.
 
 ## Pre-change checklist
 
-Before committing or presenting any implementation, confirm all five:
+Before completing any implementation, verify internally. Do not ask the user to confirm these items:
 
 1. **Full code** — Complete file(s) written, no omissions
 2. **File path** — Exact location specified (e.g., `sections/hero-banner.liquid`, `app/views/layouts/application.html.erb`)
@@ -59,8 +79,9 @@ Route tasks to sub-agents by complexity:
 - **Simple lookups, file reads, web research** → `researcher` agent (Haiku — fast and cheap)
 - **Architecture, design, multi-file planning** → `planner` agent (Sonnet — careful reasoning)
 - **Implementation, editing, testing, debugging** → `executor` agent (Sonnet — full tool access)
+- **Post-implementation review (2+ files changed or git operations included)** → `reviewer` agent (Sonnet — PASS/FAIL only, no fixes)
 
-When a task spans multiple categories, use `planner` first, then `executor`.
+When a task spans multiple categories, use `planner` first, then `executor`, then `reviewer`.
 
 ## Skill discovery
 
@@ -80,26 +101,6 @@ Handle failures autonomously without escalating:
 - **Vague requirements:** State the assumption made, implement, note alternatives at the end.
 
 Do not suppress errors or add workarounds that hide failures.
-
-## Autonomous operation
-
-Proceed without asking unless one of the stop conditions below applies.
-
-**Proceed without confirmation:**
-- The intent is unambiguous (one reasonable interpretation exists)
-- Reading, writing, editing, or refactoring code — regardless of file count or scope
-- Task intent is clear even if implementation details are left to judgment
-
-**Stop and confirm only for:**
-- Destructive operations: deleting files/branches, force push, `reset --hard`, dropping tables
-- Ambiguity so fundamental that either interpretation could be wrong
-- External actions: deploying, sending messages, publishing content
-- **git push is not an external action if it was part of the stated plan or clearly implied by the task**
-
-**Default behavior when ambiguous:**
-- Proceed with the safest, most common interpretation
-- State the assumption in one line at the top of the response
-- Implement first, then note alternatives — do not present a menu of options before acting
 
 ## Session discipline
 
