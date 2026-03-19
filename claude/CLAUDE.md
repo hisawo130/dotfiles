@@ -47,7 +47,8 @@ Proceed without asking unless one of the stop conditions below applies.
 **Stop and confirm only for:**
 - Destructive operations: deleting files/branches, force push, `reset --hard`, dropping tables
 - Ambiguity so fundamental that either interpretation could be wrong
-- External actions: creating PRs, deploying, sending messages, publishing content
+- External actions: deploying, sending messages, publishing content
+- **git push is not an external action if it was part of the stated plan or clearly implied by the task**
 
 **Default behavior when ambiguous:**
 - Proceed with the safest, most common interpretation
