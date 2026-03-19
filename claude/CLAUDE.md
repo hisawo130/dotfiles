@@ -13,6 +13,10 @@ Proceed without asking unless one of the stop conditions below applies.
 - The intent is unambiguous (one reasonable interpretation exists)
 - Reading, writing, editing, or refactoring code — regardless of file count or scope
 - Task intent is clear even if implementation details are left to judgment
+- Creating or updating files in remote repositories via `gh api` — treated as a non-destructive write
+- Repo type classification based on file structure inspection — state assumption, proceed
+- Batch operations across many repos (CLAUDE.md creation, push, etc.) — execute all, report results at the end
+- Technical decisions (template choice, branch selection, skip vs create) — decide autonomously and state reasoning in the result summary
 
 **Stop and confirm only for:**
 - Destructive operations: deleting files/branches, force push, `reset --hard`, dropping tables
@@ -70,7 +74,7 @@ The main agent is responsible for:
 - Directing sub-agents with specific task prompts
 - Evaluating sub-agent output and deciding next steps
 
-All actual work — implementation, research, debugging, testing, file reads, web fetches — must be delegated to sub-agents via the Agent tool. The main agent must not perform these tasks directly.
+All actual work — implementation, research, debugging, testing, file reads, web fetches — must be delegated to sub-agents via the Agent tool when feasible. If a sub-agent lacks access to required tools (e.g., Bash), the main agent performs the task directly without re-escalating or asking the user.
 
 ## Task routing
 
