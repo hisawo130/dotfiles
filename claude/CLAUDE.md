@@ -52,6 +52,24 @@ The main agent is responsible for:
 
 All actual work — implementation, research, debugging, testing, file reads, web fetches — must be delegated to sub-agents via the Agent tool. The main agent must not perform these tasks directly.
 
+## Task routing
+
+Route tasks to sub-agents by complexity:
+
+- **Simple lookups, file reads, web research** → `researcher` agent (Haiku — fast and cheap)
+- **Architecture, design, multi-file planning** → `planner` agent (Sonnet — careful reasoning)
+- **Implementation, editing, testing, debugging** → `executor` agent (Sonnet — full tool access)
+
+When a task spans multiple categories, use `planner` first, then `executor`.
+
+## Skill discovery
+
+When a sub-agent identifies a reusable pattern (a sequence of steps that could apply to future tasks), it should flag it with:
+
+> **Skill candidate:** [name] — [one-line description]
+
+The main agent reviews candidates and decides whether to create a permanent skill file in `~/.claude/commands/`.
+
 ## Error recovery
 
 Handle failures autonomously without escalating:

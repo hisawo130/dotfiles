@@ -72,10 +72,25 @@
       "Bash(jq:*)",
       "Bash(open:*)",
       "Bash(docker:*)",
-      "Bash(docker-compose:*)"
+      "Bash(docker-compose:*)",
+      "Bash(clasp create:*)",
+      "Bash(clasp push:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf ~/)",
+      "Bash(git push --force)",
+      "Bash(git reset --hard:*)",
+      "Bash(git checkout -- .)",
+      "Bash(git restore .:*)",
+      "Bash(git clean -f:*)",
+      "Bash(sudo rm:*)",
+      "Bash(chmod -R 777:*)",
+      "Bash(curl * | bash)",
+      "Bash(wget * | sh)"
     ]
   },
-  "effortLevel": "high",
   "hooks": {
     "Notification": [
       {
@@ -88,5 +103,6 @@
         ]
       }
     ]
-  }
+  },
+  "effortLevel": "high"
 }
