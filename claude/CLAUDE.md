@@ -71,6 +71,18 @@ cd ~/dotfiles && git add claude/CLAUDE.md && git commit -m "<description>" && gi
 
 When creating or updating any document file (CLAUDE.md, README.md, docs/, etc.) in a repository, always run `git add`, `git commit`, and `git push` immediately after writing — without waiting for the user to ask. This applies to all repos under `/Users/P130/GitHub/`.
 
+## Reference document update rule
+
+Any file containing an `UPDATE BEFORE USE` block at the top must be refreshed before its contents are used:
+
+1. Read the `Sources:` list in the block.
+2. For `WebFetch:` sources — fetch each URL and compare against current content.
+3. For `Scan:` sources — read the listed local paths and compare.
+4. Apply any new or changed information to the file body.
+5. Run `git add + git commit + git push` immediately after updating.
+
+When creating a new reference document, always add an `UPDATE BEFORE USE` block at the top with appropriate `Sources:` entries (WebFetch URLs or local Scan paths).
+
 ## Agent architecture
 
 The main agent is responsible for:
@@ -90,6 +102,8 @@ Route tasks to sub-agents by complexity:
 - **Post-implementation review (2+ files changed or git operations included)** → `reviewer` agent (Sonnet — PASS/FAIL only, no fixes)
 
 When a task spans multiple categories, use `planner` first, then `executor`, then `reviewer`.
+
+If `reviewer` returns FAIL: route back to `executor` with the specific FAIL items as the task prompt. Allow one retry loop only. If still FAIL after retry, stop and report to the user.
 
 ## Skill discovery
 
