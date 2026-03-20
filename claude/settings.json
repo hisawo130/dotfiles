@@ -73,6 +73,19 @@
       "Bash([:*)",
       "Bash($(:*)",
       "Bash(zip:*)",
+      "Bash(if:*)",
+      "Bash(case:*)",
+      "Bash(true:*)",
+      "Bash(false:*)",
+      "Bash(pwd:*)",
+      "Bash(read:*)",
+      "Bash(type:*)",
+      "Bash(command:*)",
+      "Bash(kill:*)",
+      "Bash(wait:*)",
+      "Bash(trap:*)",
+      "Bash((:*)",
+      "Bash({:*)",
       "mcp__claude_ai_Gmail__gmail_get_profile",
       "mcp__claude_ai_Gmail__gmail_list_labels",
       "mcp__claude_ai_Gmail__gmail_read_message",
@@ -118,13 +131,24 @@
         ]
       }
     ],
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "_stale=$(find \"$HOME/dotfiles/claude/references\" -name '*.md' -mtime +14 2>/dev/null | while read -r f; do echo \"$(basename \"$f\"): $(stat -f '%Sm' -t '%Y-%m-%d' \"$f\")\"; done); [ -n \"$_stale\" ] && jq -n --arg s \"$_stale\" '{\"systemMessage\":(\"⚠️ 以下のリファレンスが14日以上未更新:\\n\" + $s)}' || true"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "echo '─── session end ───'; echo '[commits]'; git -C \"$(pwd)\" log --oneline -5 2>/dev/null || true; echo '[uncommitted]'; git -C \"$(pwd)\" status --short 2>/dev/null | head -15 || true; echo '[dotfiles sync]'; git -C \"$HOME/dotfiles\" log --oneline -1 2>/dev/null || true"
+            "command": "echo '─── session end ───'; echo '[commits]'; git -C \"$(pwd)\" log --oneline -5 2>/dev/null || true; echo '[uncommitted]'; git -C \"$(pwd)\" status --short 2>/dev/null | head -15 || true; echo '[dotfiles]'; _d=\"$HOME/dotfiles\"; _s=$(git -C \"$_d\" status --porcelain 2>/dev/null); [ -n \"$_s\" ] && git -C \"$_d\" add -A && git -C \"$_d\" commit -m 'chore: セッション終了時の自動同期' 2>/dev/null; _u=$(git -C \"$_d\" log --oneline @{u}..HEAD 2>/dev/null); [ -n \"$_u\" ] && git -C \"$_d\" push 2>/dev/null && echo 'pushed'; git -C \"$_d\" log --oneline -1 2>/dev/null || true"
           }
         ]
       }
