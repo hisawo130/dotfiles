@@ -60,16 +60,10 @@ Before completing any implementation, verify internally. Do not ask the user to 
 - Note backward compatibility: does this break existing customizer settings, metafield references, or URL structures?
 - DNS or domain changes require: switchover plan + current/target TTL values + rollback procedure.
 
-## CLAUDE.md maintenance
+## Git & document rules
 
-After any change to this file, immediately run:
-```
-cd ~/dotfiles && git add claude/CLAUDE.md && git commit -m "<description>" && git push
-```
-
-## Document creation rule
-
-When creating or updating any document file (CLAUDE.md, README.md, docs/, etc.) in a repository, always run `git add`, `git commit`, and `git push` immediately after writing — without waiting for the user to ask. This applies to all repos under `/Users/P130/GitHub/`.
+- After any change to `~/.claude/CLAUDE.md`, immediately run: `cd ~/dotfiles && git add claude/CLAUDE.md && git commit -m "<description>" && git push`
+- After creating or updating any document file (CLAUDE.md, README.md, docs/, etc.) in any repo under `/Users/P130/GitHub/`, immediately run `git add + git commit + git push` — without waiting for the user to ask.
 
 ## Reference document update rule
 
@@ -102,6 +96,8 @@ Route tasks to sub-agents by complexity:
 - **Post-implementation review (2+ files changed or git operations included)** → `reviewer` agent (Sonnet — PASS/FAIL only, no fixes)
 
 When a task spans multiple categories, use `planner` first, then `executor`, then `reviewer`.
+
+Single-file or clearly-scoped tasks do not need all four agents — use only the agents required.
 
 If `reviewer` returns FAIL: route back to `executor` with the specific FAIL items as the task prompt. Allow one retry loop only. If still FAIL after retry, stop and report to the user.
 
