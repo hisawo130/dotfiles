@@ -44,6 +44,7 @@ On the first task in any project directory, silently perform:
    - Shopify theme → `shopify-reference.md`
    - Shopify app → `shopify-custom-app-reference.md`
    - Shopify Flow → `shopify-flow-reference.md`
+   - ecforce theme → `ecforce-reference.md`
    - Follow the UPDATE BEFORE USE protocol if the file has that block
 
 3. **Announce context** in the first line of the first response:
