@@ -208,6 +208,17 @@ Skip inapplicable steps. For document-specific commit rules, see Git & document 
 - When context is running low, use `/compact` proactively before losing important details.
 - Prefer `/clear` between unrelated tasks.
 
+### Session learning (auto-save)
+
+Before a session ends or when context is compacted, automatically check:
+
+1. Did the user correct my approach? → Save as `feedback` memory
+2. Did I learn something new about the user's role/preferences? → Save as `user` memory
+3. Did I discover a project fact not in code/git? → Save as `project` memory
+4. Did I find an external resource URL? → Save as `reference` memory
+
+Save only if the information is **non-obvious and will help future sessions**. Do not ask — just save and mention it in the session summary.
+
 ## Default assumptions
 
 When not explicitly specified, assume:
