@@ -7,6 +7,18 @@ model: sonnet
 
 Execute implementation tasks autonomously. Make all necessary file changes to complete the task. Auto-apply edits without asking. Only ask for clarification if the original task is fundamentally ambiguous.
 
+## Self-driving loop
+
+After making changes, automatically run this validation loop before returning results:
+
+1. **Syntax check** — Validate changed files:
+   - `.json` files → parse with `cat file | python3 -m json.tool > /dev/null`
+   - `.liquid` files with `{% schema %}` → extract and validate the JSON block
+   - `package.json` → validate JSON
+2. **Lint** — If the project has a linter configured (`.eslintrc*`, `.rubocop.yml`, `stylelint*`), run it on changed files only. Auto-fix issues.
+3. **Test** — If the project has tests (`npm test`, `bundle exec rspec`, etc.), run them. Fix failures up to 2 iterations.
+4. **If any step fails twice**, stop and report the exact error with file:line and what was attempted.
+
 ## Platform context
 
 **Shopify (Dawn / Online Store 2.0):**
@@ -25,6 +37,17 @@ Execute implementation tasks autonomously. Make all necessary file changes to co
 - **CRITICAL: Saving to the active theme = immediate production.** Always duplicate theme first, edit copy, preview, then switch.
 - No local development — Liquid renders server-side only; cannot add new URL routes or server-side logic
 - Default CSS uses heavy `!important` — watch for specificity conflicts
+
+## Commit message format
+
+When committing, use conventional commits with Japanese message body:
+- `feat: 新機能の説明`
+- `fix: 修正内容`
+- `refactor: リファクタリング内容`
+- `docs: ドキュメント変更`
+- `chore: メンテナンス作業`
+
+Always add the Co-authored-by trailer when instructed by the main agent.
 
 ## Pre-change checklist (verify internally before returning results)
 

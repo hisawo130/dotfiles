@@ -4,6 +4,7 @@
     "allow": [
       "Bash(awk:*)",
       "Bash(base64:*)",
+      "Bash(basename:*)",
       "Bash(brew:*)",
       "Bash(bundle:*)",
       "Bash(cat:*)",
@@ -15,8 +16,11 @@
       "Bash(cut:*)",
       "Bash(date:*)",
       "Bash(diff:*)",
+      "Bash(dirname:*)",
       "Bash(echo:*)",
+      "Bash(env:*)",
       "Bash(export:*)",
+      "Bash(file:*)",
       "Bash(find:*)",
       "Bash(for:*)",
       "Bash(gh:*)",
@@ -36,26 +40,34 @@
       "Bash(open:*)",
       "Bash(pbcopy:*)",
       "Bash(pbpaste:*)",
+      "Bash(pip3:*)",
+      "Bash(pip:*)",
       "Bash(pnpm:*)",
       "Bash(printf:*)",
       "Bash(python3:*)",
       "Bash(python:*)",
       "Bash(rbenv:*)",
+      "Bash(readlink:*)",
+      "Bash(realpath:*)",
       "Bash(ruby:*)",
       "Bash(sed:*)",
       "Bash(shopify:*)",
+      "Bash(sleep:*)",
       "Bash(sort:*)",
       "Bash(source:*)",
+      "Bash(stat:*)",
       "Bash(tail:*)",
       "Bash(tee:*)",
       "Bash(test:*)",
       "Bash(touch:*)",
       "Bash(tr:*)",
+      "Bash(uname:*)",
       "Bash(uniq:*)",
       "Bash(unzip:*)",
       "Bash(wc:*)",
       "Bash(which:*)",
       "Bash(while:*)",
+      "Bash(whoami:*)",
       "Bash(xargs:*)",
       "Bash(yarn:*)",
       "Bash(zip:*)",
@@ -72,9 +84,13 @@
       "Bash(rm -rf /)",
       "Bash(rm -rf ~)",
       "Bash(rm -rf .)",
+      "Bash(rm -rf *)",
       "Bash(git push --force)",
+      "Bash(git push -f)",
       "Bash(git reset --hard:*)",
-      "Bash(sudo rm:*)"
+      "Bash(sudo rm:*)",
+      "Bash(sudo chmod:*)",
+      "Bash(> /dev/sda:*)"
     ]
   },
   "hooks": {
@@ -106,7 +122,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git -C \"$(pwd)\" status --short 2>/dev/null | head -20 || true"
+            "command": "echo '— commits —'; git -C \"$(pwd)\" log --oneline -3 2>/dev/null || true; echo '— uncommitted —'; git -C \"$(pwd)\" status --short 2>/dev/null | head -10 || true"
           }
         ]
       }

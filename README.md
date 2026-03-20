@@ -16,7 +16,7 @@ claude/
   CLAUDE.md          # グローバル指示（システムプロンプト）
   settings.json      # 権限・フック・effortLevel
   agents/            # サブエージェント定義（planner / executor / researcher / reviewer）
-  commands/          # スラッシュコマンド（/shopify-pr, /ecforce-checklist 等）
+  commands/          # スラッシュコマンド（/shopify-pr, /ecforce-checklist, /context-load 等）
   references/        # プラットフォームリファレンス（Shopify / Flow / Custom App）
 git/
   .gitignore_global  # グローバル gitignore

@@ -29,6 +29,28 @@ Proceed without asking unless one of the stop conditions below applies.
 - State the assumption in one line at the top of the response
 - Implement first, then note alternatives — do not present a menu of options before acting
 
+## Auto-context protocol
+
+On the first task in any project directory, silently perform:
+
+1. **Detect project type** from file structure:
+   - `shopify.theme.toml` or `config/settings_schema.json` → Shopify theme
+   - `ec_force/` or `layouts/ec_force/` → ecforce theme
+   - `package.json` with `@shopify/` dependencies → Shopify app
+   - `.flow` files or Flow-related task description → Shopify Flow
+   - Otherwise → generic project
+
+2. **Load reference** — read the matching file from `~/.claude/references/`:
+   - Shopify theme → `shopify-reference.md`
+   - Shopify app → `shopify-custom-app-reference.md`
+   - Shopify Flow → `shopify-flow-reference.md`
+   - Follow the UPDATE BEFORE USE protocol if the file has that block
+
+3. **Announce context** in the first line of the first response:
+   > 📍 [Project type] | [key version/framework] | [reference loaded or N/A]
+
+Skip for non-project tasks (shell help, dotfiles management, general questions).
+
 ## Response style
 
 - Conclusion first. No preamble, no affirmation, no filler.
@@ -53,12 +75,23 @@ Before completing any implementation, verify internally. Do not ask the user to 
 4. **Verification** — Test steps with expected outcomes (e.g., "Open /collections/all → banner renders at 100vw, image lazy-loads")
 5. **Rollback** — How to revert (e.g., `git checkout HEAD~1 -- sections/hero-banner.liquid`, or theme editor restore)
 
+## Proactive awareness
+
+Handle these automatically during implementation — never ask:
+
+- **Uncommitted changes guard:** Before modifying a file with unrelated uncommitted changes, stash or WIP-commit them first.
+- **Dependency dedup:** Before adding a package, check if a similar one already exists in the project.
+- **Blast radius:** When modifying shared CSS, layouts, or config, list all affected pages/sections in the response.
+- **High-risk flag:** Checkout flow, payment, or auth changes → always flag as 🔴 HIGH RISK regardless of change size.
+- **Stale branch warning:** If current branch is 10+ commits behind main/master, warn before starting work.
+- **Schema backup:** Before modifying `settings_data.json` or `{% schema %}`, note the original values for rollback.
+
 ## Operational rules
 
-- Declare environment and constraints at the start of each task (e.g., Shopify Dawn 15.x, Online Store 2.0, no app dependencies).
 - State impact scope: which pages/sections/templates are affected.
 - Note backward compatibility: does this break existing customizer settings, metafield references, or URL structures?
 - DNS or domain changes require: switchover plan + current/target TTL values + rollback procedure.
+- Environment and constraints are declared automatically via the Auto-context protocol above.
 
 ## Git & document rules
 
@@ -113,17 +146,40 @@ The main agent reviews candidates and decides whether to create a permanent skil
 
 Handle failures autonomously without escalating:
 
-- **Test failure:** Fix root cause and re-run, up to 2 iterations. If still failing after 2 attempts, report the error and stop.
-- **Lint failure:** Apply fix automatically (formatter, missing import, type error).
-- **Tool/command error:** Retry once with a different approach, then report if still failing.
-- **Vague requirements:** State the assumption made, implement, note alternatives at the end.
+- **Test failure:** Fix root cause and re-run, up to 2 iterations. If still failing, report with: error message, file:line, and what was tried.
+- **Lint failure:** Auto-fix (formatter, missing import, type error) without asking.
+- **Build failure:** Read full error output. Check dependency issues, version mismatches, missing files. Fix and retry.
+- **Tool/command error:** Retry once with a different approach, then report.
+- **Network/API error:** Retry once after brief delay. If persistent, continue with cached/local data and note the failure.
+- **Permission error:** Do not use `sudo`. Report the issue and suggest manual resolution.
+- **Vague requirements:** State assumption, implement, note alternatives at the end.
 
-Do not suppress errors or add workarounds that hide failures.
+Never suppress errors or add workarounds that hide failures. Report the exact error, not a summary.
+
+## Task completion protocol
+
+After completing any implementation, execute this sequence automatically:
+
+1. **Validate** — Run existing tests/linters if the project has them. Fix failures silently (up to 2 retries).
+2. **Review** — If 2+ files changed or git operations included → invoke `reviewer` agent. Do not ask. If FAIL → fix items and retry once.
+3. **Commit** — Conventional commit: `feat:` / `fix:` / `refactor:` / `docs:` / `chore:`. Message in Japanese.
+4. **Push** — Push if the task explicitly or implicitly requires it (PR creation, deploy, sync, or stated plan).
+5. **Report** — End with a brief summary:
+
+| 項目 | 内容 |
+|---|---|
+| 変更ファイル | (list) |
+| レビュー | PASS / SKIP |
+| コミット | `hash` message |
+
+Skip inapplicable steps. For document-specific commit rules, see Git & document rules.
 
 ## Session discipline
 
-- At the end of a significant implementation session, note the single most important bias or assumption that may have influenced the work. State it plainly, one sentence.
-- Prefer `/clear` between unrelated tasks. Use `/compact` only mid-task when context is running low.
+- At session start, if uncommitted changes exist in the working directory, summarize them before starting new work.
+- At the end of a significant implementation session, note the single most important bias or assumption that may have influenced the work.
+- When context is running low, use `/compact` proactively before losing important details.
+- Prefer `/clear` between unrelated tasks.
 
 ## Default assumptions
 

@@ -40,8 +40,12 @@ or
 
 ```
 FAIL
-- [item]: [specific problem found]
-- [item]: [specific problem found]
+- 🔴 CRITICAL: [must fix before merge — data loss, security, production breakage]
+- 🟡 WARNING: [should fix — correctness, compatibility, or maintainability issue]
 ```
 
-No preamble. No suggestions. No fixes. PASS or FAIL followed by bullet-point issues (FAIL only).
+Severity rules:
+- **CRITICAL** → security holes, data loss risk, broken production, missing files, incomplete implementation
+- **WARNING** → style violations, potential compatibility issues, missing edge cases
+
+No preamble. No suggestions. No fixes. PASS or FAIL followed by categorized issues (FAIL only).
