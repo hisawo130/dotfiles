@@ -40,7 +40,7 @@ Proceed without asking unless one of the stop conditions below applies.
 
 - **Write complete files.** Never output partial snippets or placeholder comments like `// ... rest of code`. Every file write must be the entire file content.
 - **Preserve existing names.** Do not rename classes, variables, IDs, or Liquid objects unless the task explicitly requires it.
-- **Respect platform idioms.** Shopify: Liquid + JSON schema, section/block architecture, asset pipeline. ecforce: ERB/Slim templates, Sprockets or Webpacker.
+- **Respect platform idioms.** Shopify: Liquid + JSON schema, section/block architecture, asset pipeline. ecforce: Liquid templates (`.html.liquid`), file uploader for assets.
 - **No cosmetic refactoring.** Do not reorganize, reformat, or "improve" code outside the scope of the current task.
 
 ## Pre-change checklist
@@ -116,7 +116,7 @@ Do not suppress errors or add workarounds that hide failures.
 When not explicitly specified, assume:
 
 - **Shopify:** Dawn (latest stable), Online Store 2.0, no app dependencies
-- **ecforce:** ERB templates, Sprockets asset pipeline
+- **ecforce:** Liquid templates, file uploader for assets, `{{ file_root_path }}` for asset URL base
 - **CSS:** Follow existing class names and design patterns
 - **JS:** Vanilla JS or match the existing framework in use
 
@@ -132,8 +132,12 @@ When not explicitly specified, assume:
 
 ### ecforce
 
-- Template engine: confirm ERB or Slim before writing
-- Asset pipeline: confirm Sprockets or Webpacker
-- Partial naming: `_partial_name.html.erb` convention
-- Test in staging environment before production deploy
-- Check order flow pages (cart → checkout → thanks) for side effects
+- Template engine: **Liquid** (`.html.liquid`、スマホ版は `+smartphone` サフィックス)
+- Layouts: `layouts/ec_force/shop/order.html.liquid`（購入フロー）/ `layouts/ec_force/shop.html.liquid`（その他）
+- Partials: `{% include 'ec_force/shop/shared/header.html' %}` 形式
+- Assets: 管理画面のファイルアップローダー。参照は `{{ file_root_path }}/css/style.css`
+- **保存 = 即本番反映**（現在のテーマ直接編集時）。必ずテーマを複製してから編集 → プレビュー確認 → テーマ切り替えの順で行う
+- ローカル環境での開発不可（Liquidはサーバーサイドレンダリングのみ）
+- デフォルトCSSに `!important` 多用 → CSS詳細度競合に注意
+- 新規URLルート追加・フォーム項目変更・サーバーサイド処理変更は不可
+- Check order flow pages (cart → order input → confirm → complete) for side effects
