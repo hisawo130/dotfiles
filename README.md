@@ -79,3 +79,47 @@ Claude Code 起動時に dotfiles を自動 pull するフックが `settings.js
 | `gb` | `git branch` |
 | `glog` | `git log --oneline --graph --all -30` |
 
+
+## リモートコントロール（ヘッドレス実行）
+
+Claude Code を非インタラクティブに実行するためのラッパーが付属しています。
+
+### インストール後の使い方
+
+```bash
+# シンプル実行
+claude-run "テーマのスニペット一覧を出力して"
+
+# 作業ディレクトリ指定
+claude-run --dir ~/projects/my-theme "未使用の CSS クラスを探して"
+
+# JSON 出力（CI/パース用）
+claude-run --json "セキュリティ問題を報告"
+
+# ツール制限（読み取り専用）
+claude-run --tools "Read,Grep,Glob" "全 Liquid テンプレートをスキャン"
+
+# ターン数制限
+claude-run --turns 5 "Shopify Section のスキーマを列挙"
+```
+
+### CI / GitHub Actions
+
+`claude/templates/claude.yml` を `.github/workflows/` にコピーして使用:
+
+```bash
+cp claude/templates/claude.yml .github/workflows/
+```
+
+GitHub リポジトリの Secrets に `ANTHROPIC_API_KEY` を設定してください。
+
+### SSH リモート実行
+
+```bash
+# コードが存在するサーバーで直接実行
+ssh myserver "cd /srv/shopify-theme && \
+  claude -p 'テーマ監査を実行して結果を報告' \
+    --dangerously-skip-permissions --output-format json"
+```
+
+> 詳細: `/headless` コマンド (`claude/commands/headless.md`)
