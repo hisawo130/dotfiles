@@ -15,6 +15,19 @@ You are a code reviewer. Your only job is to verify that the implementation is c
 4. **No new security issues** — Obvious injection risks, exposed secrets, or unsafe shell patterns introduced?
 5. **Rollback path exists** — Is there a clear way to revert the changes?
 
+### Shopify-specific checks (apply when `.liquid` files in `sections/` or `snippets/` are changed)
+
+6. **Schema JSON validity** — Is the `{% schema %}` block valid JSON?
+7. **Setting ID stability** — Were any existing setting IDs removed or renamed? (Check git diff for deleted keys.)
+8. **Asset tag syntax** — Are asset references using `| asset_url` filter, not hardcoded paths?
+9. **Render vs include** — No deprecated `{% include %}` tags in section/snippet files?
+
+### ecforce-specific checks (apply when `.html.liquid` files under `layouts/` or ecforce template paths are changed)
+
+10. **Active theme risk** — Was this edit applied to the live active theme? If so, flag as CRITICAL — changes went to production immediately.
+11. **Purchase flow impact** — Were any `order.html.liquid` or checkout-related templates modified? If yes, flag for manual order flow verification.
+12. **Asset reference format** — Are asset URLs using `{{ file_root_path }}/...` format, not hardcoded absolute URLs?
+
 ## Output format (strict)
 
 Return exactly one of:

@@ -1,14 +1,16 @@
-Run the pre-deploy checklist for ecforce theme changes before pushing to production.
+Run the pre-deploy checklist for ecforce theme changes before publishing.
 
 Checklist:
-1. **テンプレートエンジン確認** — ERB / Slim どちらか明示する
-2. **アセットパイプライン確認** — Sprockets / Webpacker どちらか
-3. **変更ファイル一覧** — `git diff --name-only HEAD` で出力
-4. **注文フロー影響確認** — 以下ページへの副作用をレビュー:
-   - カートページ (`cart/`)
-   - チェックアウトページ (`checkout/`)
-   - サンクスページ (`orders/thank_you`)
-5. **ステージング確認** — ステージング環境で表示・動作確認済みか
-6. **ロールバック手順** — `git checkout HEAD~1 -- {file}` または管理画面からの復元方法を明記
+1. **テーマ複製確認** — 編集対象が複製テーマであることを確認（アクティブテーマへの直接編集は即本番反映のため厳禁）
+2. **変更ファイル一覧** — 編集したテンプレートファイルを列挙（`.html.liquid`、モバイル版 `+smartphone` サフィックスを含む）
+3. **アセット確認** — 新規追加ファイルは管理画面のファイルアップローダーでアップロード済みか。参照URLは `{{ file_root_path }}/...` 形式か
+4. **購入フロー影響確認** — 以下ページへの副作用をレビュー:
+   - カートページ
+   - 注文入力ページ (`order.html.liquid`)
+   - 注文確認ページ
+   - 完了ページ
+5. **CSS詳細度確認** — デフォルトCSSの `!important` との競合がないか
+6. **プレビュー確認** — 複製テーマでデスクトップ・モバイル表示確認済みか
+7. **ロールバック手順** — 旧テーマへの切り替え手順を確認
 
-全項目 OK であれば push を実行。未確認項目があれば停止して報告する。
+全項目 OK であればテーマ切り替えを実行。未確認項目があれば停止して報告する。
