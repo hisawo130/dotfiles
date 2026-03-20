@@ -1,0 +1,45 @@
+name: Claude Code Automation
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Claude に実行させるプロンプト'
+        required: true
+        default: 'テーマの最終チェックを実行してください'
+      max_turns:
+        description: '最大ターン数'
+        required: false
+        default: '10'
+
+jobs:
+  claude-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run Claude
+        run: |
+          claude -p "${{ github.event.inputs.prompt }}" \
+            --dangerously-skip-permissions \
+            --output-format json \
+            --max-turns ${{ github.event.inputs.max_turns }} \
+            | tee claude-output.json
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: claude-result
+          path: claude-output.json

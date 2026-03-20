@@ -249,3 +249,16 @@ When not explicitly specified, assume:
 - Hardcoded asset URL (not using `{{ file_root_path }}`) → replace automatically
 - Missing `+smartphone` variant when desktop template changed → flag for manual check
 - CSS `!important` added → note specificity risk in response
+
+## Headless / remote execution
+
+When running via `claude -p` (print/headless mode) or `claude-run`:
+
+- **No interactive prompts** — never pause to ask questions; make the safest assumption and document it in output
+- **No confirmation dialogs** — `--dangerously-skip-permissions` is set; proceed directly
+- **JSON output preferred** — use `--output-format json` for CI pipelines so output is parsable
+- **Bound by `--max-turns`** — stop cleanly when turn limit reached; summarize what was done vs. remaining
+- **Error = exit non-zero** — if a critical step fails, output error details to stdout and exit 1
+- **Secrets via env** — ANTHROPIC_API_KEY must be in `~/.secrets` or environment before running headlessly
+- **Read `scripts/claude-run.sh`** for flag reference; read `claude/templates/claude.yml` for CI usage
+- **Scope creep prevention** — in headless mode, do exactly what the prompt says; skip tangential improvements unless explicitly instructed

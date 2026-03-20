@@ -27,6 +27,16 @@ ln -sfn "$DOTFILES/claude/references" "$HOME/.claude/references"
 mkdir -p "$HOME/.claude/projects/-Users-P130/memory"
 echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,references}"
 
+# --- scripts (claude-run 等) ---
+echo "→ scripts 設定..."
+chmod +x "$DOTFILES"/scripts/*.sh 2>/dev/null || true
+ln -sfn "$DOTFILES/scripts" "$HOME/.local/bin/claude-scripts" 2>/dev/null || true
+# PATH に含まれる場所へ claude-run のシンボリックリンクを作成
+mkdir -p "$HOME/.local/bin"
+ln -sf "$DOTFILES/scripts/claude-run.sh" "$HOME/.local/bin/claude-run"
+chmod +x "$HOME/.local/bin/claude-run" 2>/dev/null || true
+echo "  完了: claude-run → ~/.local/bin/claude-run"
+
 # --- zsh ---
 echo "→ zsh 設定..."
 ZSHRC_DEST="$HOME/.zshrc"
@@ -74,3 +84,4 @@ echo ""
 echo "⚠️  手動対応が必要な項目:"
 echo "   1. ~/.secrets に ANTHROPIC_API_KEY 等を追記"
 echo "   2. 新しいシェルを開く: exec zsh"
+echo "   3. PATHに ~/.local/bin が含まれているか確認: echo \$PATH | grep .local"

@@ -19,6 +19,9 @@ if command -v npm &>/dev/null; then
   [[ -d "$NPM_GLOBAL_BIN" ]] && export PATH="$NPM_GLOBAL_BIN:$PATH"
 fi
 
+# ~/.local/bin (claude-run 等のカスタムスクリプト)
+export PATH="$HOME/.local/bin:$PATH"
+
 # =============================================================================
 # Secrets — NOT stored in dotfiles
 # Create ~/.secrets and add: export ANTHROPIC_API_KEY="sk-ant-..."
