@@ -16,4 +16,6 @@ Steps:
 5. State rollback method: `git checkout HEAD~1 -- {file}` or equivalent
 6. Output verdict: PASS or FAIL with specific reason
 
-If FAIL: list blocking items only. Do not fix — stop and report.
+If FAIL: list blocking items only. Route back to the executor with the specific FAIL items as the task prompt. Allow one retry. If still FAIL after retry, stop and report to the user.
+
+Note: For automated review, use the `reviewer` agent instead. This command is for manual, interactive review workflows.

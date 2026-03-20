@@ -71,6 +71,7 @@
     "deny": [
       "Bash(rm -rf /)",
       "Bash(rm -rf ~)",
+      "Bash(rm -rf .)",
       "Bash(git push --force)",
       "Bash(git reset --hard:*)",
       "Bash(sudo rm:*)"
@@ -83,7 +84,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "_f=/tmp/.dotfiles_pull_$(id -u); [ ! -f \"$_f\" ] && { git -C \"$HOME/dotfiles\" pull --ff-only -q 2>/dev/null && touch \"$_f\"; } 2>/dev/null || true"
+            "command": "_d=$HOME/.cache; mkdir -p \"$_d\"; _f=$_d/dotfiles_pull_check; [ ! -f \"$_f\" ] && { git -C \"$HOME/dotfiles\" pull --ff-only -q 2>/dev/null && touch \"$_f\"; } 2>/dev/null || true"
           }
         ]
       }

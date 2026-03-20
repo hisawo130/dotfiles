@@ -19,5 +19,7 @@ Steps:
      - [ ] モバイル表示確認
      - [ ] テーマエディター設定確認
      - [ ] スキーマ設定の後方互換性確認
+
+     /gemini review
      ```
 4. Output the PR URL

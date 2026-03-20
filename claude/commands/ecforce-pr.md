@@ -27,5 +27,7 @@ Steps:
 
      ## ロールバック
      旧テーマへの切り替えで即時ロールバック可能
+
+     /gemini review
      ```
 4. Output the PR URL

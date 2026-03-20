@@ -4,12 +4,13 @@
 
 # Homebrew (Apple Silicon)
 if [[ -d /opt/homebrew/bin ]]; then
-  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 # Node via Homebrew (version-agnostic)
-if command -v brew &>/dev/null && brew --prefix node &>/dev/null 2>&1; then
-  export PATH="$(brew --prefix node)/bin:$PATH"
+BREW_NODE_PREFIX="$(brew --prefix node 2>/dev/null)"
+if [[ -n "$BREW_NODE_PREFIX" && -d "$BREW_NODE_PREFIX/bin" ]]; then
+  export PATH="$BREW_NODE_PREFIX/bin:$PATH"
 fi
 
 # npm global binaries
@@ -53,3 +54,10 @@ claude() {
 alias be="bundle exec"
 alias bi="bundle install"
 alias dc="docker compose"
+
+# git
+alias gs="git status"
+alias gl="git log --oneline -20"
+alias gd="git diff"
+alias ga="git add"
+alias gp="git push"

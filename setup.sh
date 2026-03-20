@@ -4,9 +4,17 @@
 
 set -e
 
-DOTFILES="$HOME/dotfiles"
+# スクリプトの場所から dotfiles ルートを自動検出
+DOTFILES="$(cd "$(dirname "$0")" && pwd)"
 
 echo "🔧 dotfiles セットアップ開始..."
+echo "   DOTFILES=$DOTFILES"
+
+# --- 前提チェック ---
+if ! command -v git &>/dev/null; then
+  echo "❌ git が見つかりません。先にインストールしてください。"
+  exit 1
+fi
 
 # --- Claude Code ---
 echo "→ Claude Code 設定..."
@@ -17,7 +25,7 @@ ln -sfn "$DOTFILES/claude/agents" "$HOME/.claude/agents"
 ln -sfn "$DOTFILES/claude/commands" "$HOME/.claude/commands"
 ln -sfn "$DOTFILES/claude/references" "$HOME/.claude/references"
 mkdir -p "$HOME/.claude/projects/-Users-P130/memory"
-echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,references,memory}"
+echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,references}"
 
 # --- zsh ---
 echo "→ zsh 設定..."
@@ -45,8 +53,6 @@ ln -sfn "$GITIGNORE_SRC" "$GITIGNORE_DEST"
 # git config (冪等)
 git config --global core.excludesfile "$HOME/.gitignore_global"
 git config --global core.autocrlf input
-git config --global pull.rebase false
-git config --global init.defaultBranch main
 echo "  完了: .gitignore_global + git config"
 
 # --- secrets stub ---
@@ -67,5 +73,4 @@ echo "✅ セットアップ完了！"
 echo ""
 echo "⚠️  手動対応が必要な項目:"
 echo "   1. ~/.secrets に ANTHROPIC_API_KEY 等を追記"
-echo "   2. ~/.zshrc.bak.* を確認し不要なら削除"
-echo "   3. ~/.zprofile の重複 PATH エントリを手動で整理"
+echo "   2. 新しいシェルを開く: exec zsh"

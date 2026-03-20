@@ -18,6 +18,8 @@
 .env.*.local
 *.pem
 *.key
+*.p12
+*.pfx
 
 # Shopify
 .shopify-app-dev.json
@@ -28,6 +30,10 @@ node_modules/
 # Ruby
 .bundle/
 vendor/bundle/
+
+# Python
+__pycache__/
+*.pyc
 
 # Logs
 *.log
