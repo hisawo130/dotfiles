@@ -15,8 +15,9 @@ ln -sf "$DOTFILES/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 ln -sf "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
 ln -sfn "$DOTFILES/claude/agents" "$HOME/.claude/agents"
 ln -sfn "$DOTFILES/claude/commands" "$HOME/.claude/commands"
+ln -sfn "$DOTFILES/claude/references" "$HOME/.claude/references"
 mkdir -p "$HOME/.claude/projects/-Users-P130/memory"
-echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,memory}"
+echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,references,memory}"
 
 # --- zsh ---
 echo "→ zsh 設定..."
