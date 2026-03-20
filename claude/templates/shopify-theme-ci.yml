@@ -1,0 +1,92 @@
+name: Shopify Theme CI
+
+on:
+  pull_request:
+    branches: [main, master]
+    paths:
+      - '**.liquid'
+      - '**.json'
+      - 'assets/**'
+      - 'config/**'
+      - 'layout/**'
+      - 'sections/**'
+      - 'snippets/**'
+      - 'templates/**'
+      - 'locales/**'
+
+jobs:
+  theme-check:
+    name: Theme Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Install theme-check
+        run: gem install theme-check
+
+      - name: Run theme check
+        run: theme-check --fail-level error .
+
+  liquid-syntax:
+    name: Liquid Syntax Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check unmatched Liquid tags
+        run: |
+          EXIT=0
+          for file in $(find . -name "*.liquid" -type f); do
+            for tag in if for unless case capture comment form paginate; do
+              opens=$(grep -cE '\{%-?\s*'"$tag"'[\s%]' "$file" 2>/dev/null || echo 0)
+              closes=$(grep -cE '\{%-?\s*end'"$tag"'' "$file" 2>/dev/null || echo 0)
+              if [ "$opens" -ne "$closes" ]; then
+                echo "::error file=$file::Unmatched {% $tag %} (open: $opens, close: $closes)"
+                EXIT=1
+              fi
+            done
+          done
+          exit $EXIT
+
+      - name: Check for deprecated {% include %}
+        run: |
+          FOUND=$(grep -rn '{% include ' --include="*.liquid" . || true)
+          if [ -n "$FOUND" ]; then
+            echo "::warning::Found {% include %} usage (should be {% render %} for OS 2.0):"
+            echo "$FOUND"
+          fi
+
+  schema-validation:
+    name: Schema JSON Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate schema JSON in sections
+        run: |
+          EXIT=0
+          for file in $(find sections -name "*.liquid" -type f 2>/dev/null); do
+            SCHEMA=$(sed -n '/{% schema %}/,/{% endschema %}/p' "$file" | sed '1d;$d')
+            if [ -n "$SCHEMA" ]; then
+              echo "$SCHEMA" | jq . >/dev/null 2>&1
+              if [ $? -ne 0 ]; then
+                echo "::error file=$file::Invalid JSON in {% schema %}"
+                EXIT=1
+              else
+                DUPES=$(echo "$SCHEMA" | jq -r '.. | .settings? // empty | .[].id' 2>/dev/null | sort | uniq -d)
+                if [ -n "$DUPES" ]; then
+                  echo "::error file=$file::Duplicate setting IDs: $DUPES"
+                  EXIT=1
+                fi
+              fi
+            fi
+          done
+          exit $EXIT

@@ -65,6 +65,7 @@ Skip for non-project tasks (shell help, dotfiles management, general questions).
 - **Preserve existing names.** Do not rename classes, variables, IDs, or Liquid objects unless the task explicitly requires it.
 - **Respect platform idioms.** Shopify: Liquid + JSON schema, section/block architecture, asset pipeline. ecforce: Liquid templates (`.html.liquid`), file uploader for assets.
 - **No cosmetic refactoring.** Do not reorganize, reformat, or "improve" code outside the scope of the current task.
+- **No compound commands.** Never chain commands with `&&`, `||`, or `;` in a single Bash call. Each command must be a separate tool call. Pipes (`|`) are allowed. This ensures every command passes through PreToolUse hooks individually and deny rules cannot be bypassed.
 
 ## Pre-change checklist
 

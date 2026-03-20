@@ -170,6 +170,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash $HOME/.claude/hooks/block-compound-commands.sh"
+          },
+          {
+            "type": "command",
             "command": "bash $HOME/.claude/hooks/pre-push-validate.sh"
           }
         ]
@@ -193,6 +197,15 @@
             "command": "bash $HOME/.claude/hooks/post-liquid-validate.sh"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/post-push-notify.sh"
+          }
+        ]
       }
     ],
     "Stop": [
@@ -201,7 +214,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '─── session end ───'; echo '[commits]'; git -C \"$(pwd)\" log --oneline -5 2>/dev/null || true; echo '[uncommitted]'; git -C \"$(pwd)\" status --short 2>/dev/null | head -15 || true; echo '[dotfiles]'; _d=\"$HOME/dotfiles\"; _s=$(git -C \"$_d\" status --porcelain 2>/dev/null); [ -n \"$_s\" ] && git -C \"$_d\" add -A && git -C \"$_d\" commit -m 'chore: セッション終了時の自動同期' 2>/dev/null; _u=$(git -C \"$_d\" log --oneline @{u}..HEAD 2>/dev/null); [ -n \"$_u\" ] && git -C \"$_d\" push 2>/dev/null && echo 'pushed'; git -C \"$_d\" log --oneline -1 2>/dev/null || true"
+            "command": "bash $HOME/.claude/hooks/session-end-notify.sh"
           }
         ]
       }

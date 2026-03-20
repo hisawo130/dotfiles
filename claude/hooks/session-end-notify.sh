@@ -1,0 +1,46 @@
+#!/bin/bash
+# Session end hook: summarize changes and notify via ntfy
+
+echo '─── session end ───'
+
+# Collect session summary
+COMMITS=$(git -C "$(pwd)" log --oneline -5 2>/dev/null || echo "N/A")
+UNCOMMITTED=$(git -C "$(pwd)" status --short 2>/dev/null | head -15)
+REPO=$(basename "$(pwd)" 2>/dev/null || echo "unknown")
+
+echo '[commits]'
+echo "$COMMITS"
+echo '[uncommitted]'
+echo "$UNCOMMITTED"
+
+# Dotfiles sync
+echo '[dotfiles]'
+_d="$HOME/dotfiles"
+_s=$(git -C "$_d" status --porcelain 2>/dev/null)
+if [ -n "$_s" ]; then
+  git -C "$_d" add -A
+  git -C "$_d" commit -m 'chore: セッション終了時の自動同期' 2>/dev/null
+fi
+_u=$(git -C "$_d" log --oneline @{u}..HEAD 2>/dev/null)
+if [ -n "$_u" ]; then
+  git -C "$_d" push 2>/dev/null && echo 'dotfiles pushed'
+fi
+git -C "$_d" log --oneline -1 2>/dev/null
+
+# Notify via ntfy
+COMMIT_COUNT=$(git -C "$(pwd)" log --oneline -5 2>/dev/null | wc -l | tr -d ' ')
+UNCOMMIT_COUNT=$(git -C "$(pwd)" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+SUMMARY="Repo: ${REPO}
+Commits(5): ${COMMIT_COUNT}
+Uncommitted: ${UNCOMMIT_COUNT}"
+
+if [ -n "$UNCOMMITTED" ]; then
+  SUMMARY="${SUMMARY}
+${UNCOMMITTED}"
+fi
+
+curl -s \
+  -H 'Title: Session End' \
+  -H 'Tags: checkered_flag' \
+  -d "$SUMMARY" \
+  ntfy.sh/claude-2e88e2160d55 2>/dev/null || true
