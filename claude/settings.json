@@ -59,7 +59,6 @@
       "Bash(xargs:*)",
       "Bash(yarn:*)",
       "Bash(zip:*)",
-      "mcp__claude_ai_Gmail__gcal_get_profile",
       "mcp__claude_ai_Gmail__gmail_get_profile",
       "mcp__claude_ai_Gmail__gmail_list_labels",
       "mcp__claude_ai_Gmail__gmail_read_message",
@@ -78,6 +77,17 @@
     ]
   },
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "_f=/tmp/.dotfiles_pull_$(id -u); [ ! -f \"$_f\" ] && { git -C \"$HOME/dotfiles\" pull --ff-only -q 2>/dev/null && touch \"$_f\"; } 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
         "matcher": "",
