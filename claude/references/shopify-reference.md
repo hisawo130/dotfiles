@@ -83,6 +83,7 @@
 - `header` type setting で視覚的グルーピングを行う
 - セクション独自翻訳は `locales` オブジェクトで定義し `{{ 'sections.my-section.title' | t }}` でアクセス
 - **新 setting type**: `article_list`（複数のブログ記事をまとめて選択可能、2026年1月追加）
+- テーマアプリ拡張のアプリブロック上限: **25 → 30** に拡大
 
 ---
 
@@ -98,6 +99,13 @@
   {% assign loading = 'eager' %}
 {% endif %}
 {{ section.settings.image | image_url: width: 1200 | image_tag: loading: loading, fetchpriority: 'high' }}
+```
+
+### `unit_price_with_measurement` フィルタ（Dawn 15.4.0〜）
+
+単位あたり価格をフォーマット付きで表示:
+```liquid
+{{ variant | unit_price_with_measurement }}
 ```
 
 ### 厳格なLiquid構文チェック（2026年1月13日〜全テーマ対象）
@@ -189,8 +197,10 @@ JavaScript では `window.Shopify.routes.root` を使用。
 |---|---|---|
 | checkout.liquid（**Shopify Plus専用**）サンキュー/注文ステータスページ | **2025年8月28日** | Checkout UI Extensions |
 | Shopify ScriptsとCheckout Extensionsの共存終了 | **2026年6月30日** | Shopify Functions |
-| JSONメタフィールド値の128KB上限適用 | **2026年4月** | — |
-| チェックアウトIDのトークンベース参照化 | **2026年4月** | — |
+| JSONメタフィールド値の128KB上限適用 | **2026年4月（API 2026-04〜）** | 値を分割 or file型に移行 |
+| チェックアウトIDのWebhookペイロードからの除去 | **2026年4月（API 2026-04〜）** | checkout tokenを使用 |
+| レガシー顧客アカウント | **新規ストアでは利用不可** | 新・顧客アカウントUI |
+| `inventorySetScheduledChanges` mutation | **廃止済み** | — |
 
 ---
 
@@ -228,6 +238,11 @@ JavaScript では `window.Shopify.routes.root` を使用。
 ```
 
 **2025-01 API変更**: PrivateMetafield を GraphQL Admin API から削除 → `app-data metafields` へ移行。
+
+**2026 API変更**:
+- `metaobjectDefinitionCreate` の `fieldDefinitions` 入力がオプションに
+- MetaobjectDefinition に `createdAt`/`updatedAt` フィールド追加
+- JSON型メタフィールド値は **128KB上限** が2026-04 APIから適用
 
 ---
 
