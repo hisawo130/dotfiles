@@ -76,6 +76,29 @@ Before completing any implementation, verify internally. Do not ask the user to 
 4. **Verification** — Test steps with expected outcomes (e.g., "Open /collections/all → banner renders at 100vw, image lazy-loads")
 5. **Rollback** — How to revert (e.g., `git checkout HEAD~1 -- sections/hero-banner.liquid`, or theme editor restore)
 
+## Precision protocol
+
+Additional accuracy measures enforced automatically after implementation:
+
+1. **Re-read after write** — After editing a `.liquid` file, re-read the changed region to verify correctness. Never assume a write produced the intended result.
+2. **Diff sanity** — Before commit, run `git diff --staged` and verify:
+   - No unintended whitespace-only changes
+   - No files outside the task scope
+   - No `settings_data.json` or lock files accidentally staged
+3. **Impact trace** — For template/section changes, trace which pages render the modified template. List them in the response.
+4. **Liquid syntax verify** — After editing any `.liquid` file, check:
+   - Matched open/close tags (`{% if %}...{% endif %}`, `{% for %}...{% endfor %}`)
+   - `{% render %}` not `{% include %}` (Shopify OS 2.0)
+   - Valid filter chains (no typos in filter names)
+   - `{% schema %}` JSON is valid and has no duplicate setting IDs
+5. **Schema integrity** — When modifying `{% schema %}`:
+   - All setting IDs are unique within the section
+   - No existing setting IDs were renamed (this is a breaking change for saved theme data)
+   - Default values are valid for the setting type
+6. **Cross-platform guard** — When editing ecforce desktop template, check for corresponding `+smartphone` variant. Flag if it exists and may need the same change.
+
+These checks are automated by PostToolUse hooks on Write/Edit for `.liquid` files and PreToolUse hooks on `git push`.
+
 ## Proactive awareness
 
 Handle these automatically during implementation — never ask:
