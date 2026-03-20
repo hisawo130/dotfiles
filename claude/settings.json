@@ -103,6 +103,7 @@
       "mcp__claude_ai_Google_Calendar__gcal_respond_to_event",
       "mcp__claude_ai_Google_Calendar__gcal_update_event"
     ],
+    "defaultMode": "auto",
     "deny": [
       "Bash(rm -rf /)",
       "Bash(rm -rf ~)",
