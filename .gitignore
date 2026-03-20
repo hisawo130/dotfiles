@@ -1,0 +1,4 @@
+# Secrets / tokens
+.mcp.json
+*.bak
+.secrets
