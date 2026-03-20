@@ -16,7 +16,7 @@ claude/
   CLAUDE.md          # グローバル指示（システムプロンプト）
   settings.json      # 権限・フック・effortLevel
   agents/            # サブエージェント定義（planner / executor / researcher / reviewer）
-  commands/          # スラッシュコマンド（/shopify-pr, /ecforce-checklist, /context-load 等）
+  commands/          # スラッシュコマンド一覧（下表参照）
   references/        # プラットフォームリファレンス（Shopify / Flow / Custom App）
 git/
   .gitignore_global  # グローバル gitignore
@@ -24,6 +24,23 @@ zsh/
   .zshrc             # シェル設定（PATH / エイリアス / Claude Code ラッパー）
 setup.sh             # シンボリックリンク作成スクリプト
 ```
+
+## スラッシュコマンド一覧
+
+| コマンド | 説明 |
+|---|---|
+| `/shopify-pr` | Shopify テーマのPR作成（テーマバージョン自動検出・検証付き） |
+| `/shopify-push` | テーマをストアへpush（theme check自動実行） |
+| `/shopify-section <name>` | Dawn OS2.0準拠のセクションをスキャフォールド |
+| `/snippet-scaffold <name>` | Dawn準拠のスニペットをスキャフォールド |
+| `/theme-check` | Shopify theme check実行（一部エラー自動修正） |
+| `/ecforce-pr` | ecforceテーマのPR作成（購入フロー影響度スコア付き） |
+| `/ecforce-checklist` | ecforceデプロイ前チェックリスト |
+| `/git-checkpoint` | WIPチェックポイントコミット作成 |
+| `/post-review` | 実装後レビュー（インタラクティブ） |
+| `/context-load` | プロジェクト種別検出＋リファレンス自動ロード |
+| `/debug-liquid` | Liquidテンプレートの変数・出力デバッグ |
+| `/sync-refs` | 全リファレンスドキュメントを一括更新 |
 
 ## シンボリックリンク
 
@@ -46,3 +63,19 @@ cd ~/dotfiles && git pull
 ```
 
 Claude Code 起動時に dotfiles を自動 pull するフックが `settings.json` に設定済み。
+
+## Git エイリアス（.zshrc）
+
+| エイリアス | コマンド |
+|---|---|
+| `gs` | `git status` |
+| `gl` | `git log --oneline -20` |
+| `gd` | `git diff` |
+| `ga` | `git add` |
+| `gc` | `git commit` |
+| `gp` | `git push` |
+| `gpl` | `git pull` |
+| `gco` | `git checkout` |
+| `gb` | `git branch` |
+| `glog` | `git log --oneline --graph --all -30` |
+

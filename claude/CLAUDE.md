@@ -9,25 +9,25 @@ Timezone: JST. Language: Japanese for discussion, English for code comments.
 
 Proceed without asking unless one of the stop conditions below applies.
 
-**Proceed without confirmation:**
-- The intent is unambiguous (one reasonable interpretation exists)
-- Reading, writing, editing, or refactoring code — regardless of file count or scope
-- Task intent is clear even if implementation details are left to judgment
-- Creating or updating files in remote repositories via `gh api` — treated as a non-destructive write
-- Repo type classification based on file structure inspection — state assumption, proceed
-- Batch operations across many repos (CLAUDE.md creation, push, etc.) — execute all, report results at the end
-- Technical decisions (template choice, branch selection, skip vs create) — decide autonomously and state reasoning in the result summary
+**Proceed without confirmation — examples:**
+- "ヘッダーを修正して" → edit the header file; commit if dotfiles or doc repo
+- "PRを作って" → create PR with `gh pr create`; no further confirmation needed
+- "リファレンスを更新して" → fetch sources, update the file, commit+push
+- "全リポジトリにCLAUDE.mdを追加して" → iterate all repos, push each, report totals
+- Platform/framework detection → state assumption at top, proceed immediately
+- File exists already when scaffold is requested → overwrite with warning in output, don't stop
 
-**Stop and confirm only for:**
-- Destructive operations: deleting files/branches, force push, `reset --hard`, dropping tables
-- Ambiguity so fundamental that either interpretation could be wrong
-- External actions: deploying, sending messages, publishing content
-- **git push is not an external action if it was part of the stated plan or clearly implied by the task**
+**Stop and confirm only when:**
+- Deleting files, branches, database records — confirm exact targets before proceeding
+- Force-push or `reset --hard` — always stop; suggest `--force-with-lease` as safer alternative
+- Deploying to production or sending external messages — requires explicit "go ahead"
+- Two or more valid interpretations where the wrong one causes data loss
 
 **Default behavior when ambiguous:**
-- Proceed with the safest, most common interpretation
-- State the assumption in one line at the top of the response
-- Implement first, then note alternatives — do not present a menu of options before acting
+- Take the safest, most common interpretation
+- State the assumption in **one line** at the top (e.g., "Assumption: target branch is `main`")
+- Implement immediately — do not present option menus before acting
+- If the assumption turns out wrong, the user corrects it; this is faster than asking upfront
 
 ## Auto-context protocol
 
@@ -91,12 +91,31 @@ Handle these automatically during implementation — never ask:
 - State impact scope: which pages/sections/templates are affected.
 - Note backward compatibility: does this break existing customizer settings, metafield references, or URL structures?
 - DNS or domain changes require: switchover plan + current/target TTL values + rollback procedure.
+- Before any significant change, run `git status` and summarize uncommitted work if present.
 - Environment and constraints are declared automatically via the Auto-context protocol above.
 
-## Git & document rules
+## Git & commit rules
 
-- After any change to `~/.claude/CLAUDE.md`, immediately run: `cd ~/dotfiles && git add claude/CLAUDE.md && git commit -m "<description>" && git push`
-- After creating or updating any document file (CLAUDE.md, README.md, docs/, etc.) in any repo under `/Users/P130/GitHub/`, immediately run `git add + git commit + git push` — without waiting for the user to ask.
+**Commit message format** — Conventional commits, Japanese body:
+```
+<type>: <日本語の変更説明>
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+```
+Types: `feat` / `fix` / `refactor` / `docs` / `chore` / `style` / `test`
+
+**Auto-commit triggers by repo type:**
+
+| Repo | Trigger | Action |
+|---|---|---|
+| `~/dotfiles` | Any change to `claude/` or `zsh/` or `git/` | `git add -A && git commit && git push` |
+| `/Users/P130/GitHub/*/` | Any doc file change (CLAUDE.md, README.md, docs/) | `git add + commit + push` immediately |
+| Shopify theme repo | Task completion with code changes | commit; push only if `/shopify-push` or PR was requested |
+| ecforce theme repo | Task completion with code changes | commit locally; push only when explicitly asked |
+
+**Commit scope:** Stage only files relevant to the current task. Never mass-stage with `git add .` unless the task explicitly covers all changed files.
+
+**Reference file commits:** After updating any file in `~/dotfiles/claude/references/`, immediately: `cd ~/dotfiles && git add claude/references/ && git commit -m "docs: リファレンス更新" && git push`
 
 ## Reference document update rule
 
@@ -123,16 +142,23 @@ All actual work — implementation, research, debugging, testing, file reads, we
 
 Route tasks to sub-agents by complexity:
 
-- **Simple lookups, file reads, web research** → `researcher` agent (Haiku — fast and cheap)
-- **Architecture, design, multi-file planning** → `planner` agent (Sonnet — careful reasoning)
-- **Implementation, editing, testing, debugging** → `executor` agent (Sonnet — full tool access)
-- **Post-implementation review (2+ files changed or git operations included)** → `reviewer` agent (Sonnet — PASS/FAIL only, no fixes)
+| Task type | Agent | Model | Notes |
+|---|---|---|---|
+| File reads, web research, pattern search | `researcher` | Haiku | fast; batch multiple questions into one call |
+| Architecture, design, multi-file planning | `planner` | Sonnet | required when 5+ files change or design decision needed |
+| Implementation, editing, testing, debugging | `executor` | Sonnet | always use for code changes |
+| Post-impl review (2+ files or git ops) | `reviewer` | Sonnet | auto-invoked; PASS/FAIL only |
 
-When a task spans multiple categories, use `planner` first, then `executor`, then `reviewer`.
+**Parallel execution:** When multiple independent research questions exist, launch multiple `researcher` agents simultaneously rather than sequentially.
 
-Single-file or clearly-scoped tasks do not need all four agents — use only the agents required.
+**Skip conditions (do not spin up an agent):**
+- Single-file edit with obvious implementation → main agent edits directly
+- Web fetch of a known URL → main agent fetches directly
+- Quick shell command to verify state → main agent runs directly
 
-If `reviewer` returns FAIL: route back to `executor` with the specific FAIL items as the task prompt. Allow one retry loop only. If still FAIL after retry, stop and report to the user.
+**Full pipeline:** `planner` → `executor` → `reviewer` (use only needed stages)
+
+**FAIL retry:** If `reviewer` returns FAIL, pass the FAIL items back to `executor` as a focused task. One retry only. If still FAIL after retry, stop and report to the user with the exact FAIL items.
 
 ## Skill discovery
 
@@ -162,7 +188,7 @@ After completing any implementation, execute this sequence automatically:
 
 1. **Validate** — Run existing tests/linters if the project has them. Fix failures silently (up to 2 retries).
 2. **Review** — If 2+ files changed or git operations included → invoke `reviewer` agent. Do not ask. If FAIL → fix items and retry once.
-3. **Commit** — Conventional commit: `feat:` / `fix:` / `refactor:` / `docs:` / `chore:`. Message in Japanese.
+3. **Commit** — Use conventional commit format from Git & commit rules above. Message in Japanese.
 4. **Push** — Push if the task explicitly or implicitly requires it (PR creation, deploy, sync, or stated plan).
 5. **Report** — End with a brief summary:
 
@@ -200,6 +226,12 @@ When not explicitly specified, assume:
 - Test on both desktop and mobile preview in theme editor
 - Check for impact on other sections that share the same CSS namespace
 
+**Common traps (auto-check before finishing):**
+- `settings_data.json` accidentally staged → warn and unstage
+- `{% include %}` used instead of `{% render %}` → replace automatically
+- Schema setting IDs changed/removed → flag as breaking change
+- Hardcoded domain or asset URL → replace with Liquid filter
+
 ### ecforce
 
 - Template engine: **Liquid** (`.html.liquid`、スマホ版は `+smartphone` サフィックス)
@@ -211,3 +243,9 @@ When not explicitly specified, assume:
 - デフォルトCSSに `!important` 多用 → CSS詳細度競合に注意
 - 新規URLルート追加・フォーム項目変更・サーバーサイド処理変更は不可
 - Check order flow pages (cart → order input → confirm → complete) for side effects
+
+**Common traps (auto-check before finishing):**
+- Editing active theme directly → always duplicate first; flag if can't confirm
+- Hardcoded asset URL (not using `{{ file_root_path }}`) → replace automatically
+- Missing `+smartphone` variant when desktop template changed → flag for manual check
+- CSS `!important` added → note specificity risk in response

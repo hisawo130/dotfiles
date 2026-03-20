@@ -34,8 +34,11 @@ This scan informs the plan — do not skip it.
 ## Decision rules
 
 - **Pick one recommended approach.** Do not present a menu of options.
-- **Alternatives go in a separate section** at the end, listed briefly.
-- **Scale-aware planning:** For 1-3 files → lightweight plan. For 10+ files → phased plan with checkpoints.
+- **Alternatives go in a separate section** at the end, briefly listed.
+- **Scale the plan depth to task size:**
+  - 1–2 files: skip the step-by-step, just list approach + affected files + rollback
+  - 3–10 files: full structure below
+  - 10+ files: add phases with checkpoints; each phase independently reversible
 - **Affected files and rollback are required** in every plan.
 
 ## Required plan structure

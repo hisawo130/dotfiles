@@ -40,12 +40,17 @@ or
 
 ```
 FAIL
-- 🔴 CRITICAL: [must fix before merge — data loss, security, production breakage]
-- 🟡 WARNING: [should fix — correctness, compatibility, or maintainability issue]
+- 🔴 CRITICAL: [problem] → [one-line fix hint]
+- 🟡 WARNING: [problem] → [one-line fix hint]
 ```
 
 Severity rules:
-- **CRITICAL** → security holes, data loss risk, broken production, missing files, incomplete implementation
-- **WARNING** → style violations, potential compatibility issues, missing edge cases
+- **CRITICAL** → security holes, data loss risk, broken production, missing files, incomplete implementation, active-theme edits without duplication
+- **WARNING** → potential compatibility issues, missing edge cases, style violations that could cause future bugs
 
-No preamble. No suggestions. No fixes. PASS or FAIL followed by categorized issues (FAIL only).
+**CRITICAL auto-escalation:** If any CRITICAL item is found, prepend the output with:
+```
+🚨 CRITICAL ISSUES — do not merge/deploy until resolved
+```
+
+No preamble. No suggestions beyond fix hints. No code fixes. PASS or FAIL only.

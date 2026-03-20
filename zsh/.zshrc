@@ -66,3 +66,30 @@ alias gco="git checkout"
 alias gb="git branch"
 alias gpl="git pull"
 alias glog="git log --oneline --graph --all -30"
+
+# =============================================================================
+# Project detection helper — prints project type on cd
+# =============================================================================
+_detect_project_type() {
+  local dir="${1:-$(pwd)}"
+  if [[ -f "$dir/shopify.theme.toml" || -f "$dir/config/settings_schema.json" ]]; then
+    echo "shopify-theme"
+  elif [[ -d "$dir/ec_force" || -d "$dir/layouts/ec_force" ]]; then
+    echo "ecforce"
+  elif [[ -f "$dir/package.json" ]] && grep -q '@shopify/' "$dir/package.json" 2>/dev/null; then
+    echo "shopify-app"
+  else
+    echo "generic"
+  fi
+}
+
+# Auto-announce project type when changing into a known project directory
+chpwd() {
+  local type
+  type=$(_detect_project_type "$(pwd)")
+  case "$type" in
+    shopify-theme) echo "🛍  Shopify theme" ;;
+    ecforce)       echo "🏪 ecforce theme" ;;
+    shopify-app)   echo "⚙️  Shopify app" ;;
+  esac
+}

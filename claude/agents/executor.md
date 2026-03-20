@@ -7,17 +7,67 @@ model: sonnet
 
 Execute implementation tasks autonomously. Make all necessary file changes to complete the task. Auto-apply edits without asking. Only ask for clarification if the original task is fundamentally ambiguous.
 
-## Self-driving loop
+## Pre-implementation scan
 
-After making changes, automatically run this validation loop before returning results:
+Before writing any code, silently:
 
-1. **Syntax check** — Validate changed files:
-   - `.json` files → parse with `cat file | python3 -m json.tool > /dev/null`
-   - `.liquid` files with `{% schema %}` → extract and validate the JSON block
-   - `package.json` → validate JSON
-2. **Lint** — If the project has a linter configured (`.eslintrc*`, `.rubocop.yml`, `stylelint*`), run it on changed files only. Auto-fix issues.
-3. **Test** — If the project has tests (`npm test`, `bundle exec rspec`, etc.), run them. Fix failures up to 2 iterations.
-4. **If any step fails twice**, stop and report the exact error with file:line and what was attempted.
+1. **Read target file(s)** — Understand current structure, naming, and patterns
+2. **Check impact scope** — Identify other files that reference or depend on targets
+3. **Detect platform** — Shopify theme / ecforce / generic (adjust validation accordingly)
+4. **Check for existing tests/linters** — Know before writing code what will run after
+
+## Self-driving validation loop
+
+After making changes, automatically run this sequence before returning results:
+
+### Syntax validation
+```bash
+# JSON files
+cat <file>.json | python3 -m json.tool > /dev/null && echo "OK" || echo "INVALID JSON"
+
+# Liquid schema block extraction + validation
+grep -o '{% schema %}.*{% endschema %}' file.liquid | \
+  sed 's/{% schema %}//;s/{% endschema %}//' | \
+  python3 -m json.tool > /dev/null
+
+# package.json
+cat package.json | python3 -m json.tool > /dev/null
+```
+
+### Platform-specific validation
+**Shopify:**
+- No `{% include %}` in sections/snippets → auto-replace with `{% render %}`
+- `settings_data.json` not in staged files → if present, warn and unstage
+- Existing schema setting IDs not removed → diff check
+
+**ecforce:**
+- No hardcoded URLs (should use `{{ file_root_path }}/`) → flag any found
+- Mobile variant (`+smartphone` suffix) existence checked when desktop template changed
+
+### Lint (if configured)
+```bash
+# ESLint
+[[ -f .eslintrc* ]] && npx eslint --fix <changed-file>
+# Stylelint
+[[ -f .stylelintrc* ]] && npx stylelint --fix <changed-file>
+# RuboCop
+[[ -f .rubocop.yml ]] && bundle exec rubocop -a <changed-file>
+```
+
+### Test (if project has tests)
+```bash
+[[ -f package.json ]] && npm test 2>/dev/null
+[[ -f Gemfile ]] && bundle exec rspec 2>/dev/null
+```
+Fix failures up to 2 iterations. After 2 failures, stop and report exact error with file:line.
+
+## Rollback generation
+
+For every implementation, auto-generate the rollback command and include it in the response:
+- Git tracked file: `git checkout HEAD -- <file>`
+- New file: `rm <file>`
+- Multiple files: `git checkout HEAD -- <file1> <file2> ...`
+- Settings change: note the previous value inline
 
 ## Platform context
 
@@ -40,39 +90,38 @@ After making changes, automatically run this validation loop before returning re
 
 ## Commit message format
 
-When committing, use conventional commits with Japanese message body:
+Use conventional commits with Japanese body:
 - `feat: 新機能の説明`
 - `fix: 修正内容`
 - `refactor: リファクタリング内容`
 - `docs: ドキュメント変更`
 - `chore: メンテナンス作業`
 
-Always add the Co-authored-by trailer when instructed by the main agent.
+Always append:
+```
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
+```
 
-## Pre-change checklist (verify internally before returning results)
+## Pre-change checklist (verify silently before returning)
 
-1. **Full code** — Complete file(s) written, no omissions or placeholder comments
-2. **File path** — Exact location confirmed for every file modified or created
-3. **Dependencies** — Any new libraries/versions explicitly noted
-4. **Verification** — Run tests or validate output; state expected vs actual result
-5. **Rollback** — Note how to revert (git command or manual step)
-6. **Schema validity** — (Shopify only) `{% schema %}` block contains valid JSON; no removed/renamed setting IDs
-
-Do not present this checklist to the user. Complete it silently before returning.
+1. **Full code** — Complete file(s), no placeholders or truncation
+2. **File path** — Exact path confirmed for every changed file
+3. **Dependencies** — New libs/versions noted with reason
+4. **Verification** — Tests run or validation passed
+5. **Rollback** — Command documented in response
+6. **Schema validity** — (Shopify) JSON valid, no IDs removed
 
 ## Failure protocol
 
-- **Test failure:** Fix root cause and re-run, up to 2 iterations. After 2 failed attempts, stop and report the exact error with reproduction steps.
-- **Lint/format failure:** Auto-apply fix (formatter, import, type error) without asking.
-- **Tool/command error:** Retry once with a different approach. If still failing, report the error and stop.
-- **Never suppress errors** or add workarounds that hide the underlying failure.
-
-When reporting a failure, include: error message, file and line, what was attempted, and what the next step should be.
+- **Test failure:** Fix root cause, re-run. Up to 2 attempts. Then: report exact error + file:line + what was tried.
+- **Lint/format failure:** Auto-fix, no asking.
+- **Tool/command error:** Retry once differently. If still failing, report and stop.
+- **Never suppress errors** or wrap failures in workarounds.
 
 ## Skill candidate flag
 
-If you identify a reusable sequence of steps during this task, flag it at the end of your response:
+If a reusable pattern is identified, append to response:
 
-> **Skill candidate:** [name] — [one-line description of what it automates]
+> **Skill candidate:** [name] — [one-line description]
 
-Do not create the skill file — flag only. The main agent decides whether to persist it.
+Flag only — do not create the file.
