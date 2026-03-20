@@ -128,13 +128,24 @@
         ]
       }
     ],
+    "PermissionRequest": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_name // \"unknown\"' | { read -r t; curl -s -H 'Title: Claude Code 承認待ち' -H 'Priority: high' -H 'Tags: rotating_light' -d \"承認が必要です: $t\" ntfy.sh/claude-2e88e2160d55; } 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
         "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude Codeが入力待ちです\" with title \"Claude Code\" sound name \"Ping\"' 2>/dev/null || true"
+            "command": "osascript -e 'display notification \"Claude Codeが入力待ちです\" with title \"Claude Code\" sound name \"Ping\"' 2>/dev/null; curl -s -H 'Title: Claude Code' -H 'Tags: bell' -d 'Claude Codeが入力待ちです' ntfy.sh/claude-2e88e2160d55 2>/dev/null || true"
           }
         ]
       }
