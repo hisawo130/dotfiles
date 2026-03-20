@@ -67,6 +67,10 @@ After any change to this file, immediately run:
 cd ~/dotfiles && git add claude/CLAUDE.md && git commit -m "<description>" && git push
 ```
 
+## Document creation rule
+
+When creating or updating any document file (CLAUDE.md, README.md, docs/, etc.) in a repository, always run `git add`, `git commit`, and `git push` immediately after writing — without waiting for the user to ask. This applies to all repos under `/Users/P130/GitHub/`.
+
 ## Agent architecture
 
 The main agent is responsible for:
