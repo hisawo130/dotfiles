@@ -1,5 +1,6 @@
 {
   "effortLevel": "high",
+  "skipAutoPermissionPrompt": true,
   "permissions": {
     "allow": [
       "Bash(awk:*)",
@@ -38,6 +39,7 @@
       "Bash(npx:*)",
       "Bash(nvm:*)",
       "Bash(open:*)",
+      "Bash(osascript:*)",
       "Bash(pbcopy:*)",
       "Bash(pbpaste:*)",
       "Bash(pip3:*)",
