@@ -70,6 +70,8 @@
       "Bash(whoami:*)",
       "Bash(xargs:*)",
       "Bash(yarn:*)",
+      "Bash([:*)",
+      "Bash($(:*)",
       "Bash(zip:*)",
       "mcp__claude_ai_Gmail__gmail_get_profile",
       "mcp__claude_ai_Gmail__gmail_list_labels",
