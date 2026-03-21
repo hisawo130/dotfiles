@@ -1,5 +1,9 @@
 {
   "effortLevel": "high",
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.py"
+  },
   "skipAutoPermissionPrompt": true,
   "permissions": {
     "allow": [
