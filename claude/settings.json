@@ -123,10 +123,6 @@
           {
             "type": "command",
             "command": "_d=$HOME/.cache; mkdir -p \"$_d\"; _f=$_d/dotfiles_pull_check; [ ! -f \"$_f\" ] && { git -C \"$HOME/dotfiles\" pull --ff-only -q 2>/dev/null && touch \"$_f\"; } 2>/dev/null || true"
-          },
-          {
-            "type": "command",
-            "command": "jq -n '{\"systemMessage\":\"⚠️ CRITICAL: Bashツール呼び出しで &&, ||, ; を使用禁止。各コマンドは個別のBash呼び出しに分割すること。for/if/whileループとパイプ(|)は許可。\"}'"
           }
         ]
       }
