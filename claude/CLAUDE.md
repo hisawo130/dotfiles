@@ -82,13 +82,13 @@ Skip for non-project tasks (shell help, dotfiles management, general questions).
 
 ## Pre-change checklist
 
-Before completing any implementation, verify internally. Do not ask the user to confirm these items:
+Verify internally before finishing. No output for these items unless a problem is found:
 
 1. **Full code** — Complete file(s) written, no omissions
-2. **File path** — Exact location specified (e.g., `sections/hero-banner.liquid`, `app/views/layouts/application.html.erb`)
-3. **Dependencies** — Versions pinned (e.g., Tailwind 3.4.x, Alpine.js 3.x, Swiper 11.x)
-4. **Verification** — Test steps with expected outcomes (e.g., "Open /collections/all → banner renders at 100vw, image lazy-loads")
-5. **Rollback** — How to revert (e.g., `git checkout HEAD~1 -- sections/hero-banner.liquid`, or theme editor restore)
+2. **File path** — Exact location specified
+3. **Dependencies** — Versions pinned if newly introduced
+4. **Verification** — Mentally trace the expected outcome; only output test steps if non-obvious
+5. **Rollback** — Know how to revert; only surface if the change is high-risk
 
 ## Precision protocol
 
@@ -126,10 +126,10 @@ Handle these automatically during implementation — never ask:
 
 ## Operational rules
 
-- State impact scope: which pages/sections/templates are affected.
-- Note backward compatibility: does this break existing customizer settings, metafield references, or URL structures?
+- State impact scope only when 3+ pages/sections are affected. Single-template changes: skip the trace.
+- Note backward compatibility only when a breaking change is detected (setting ID renamed, URL structure changed, etc.). Do not annotate every change.
 - DNS or domain changes require: switchover plan + current/target TTL values + rollback procedure.
-- Before any significant change, run `git status` and summarize uncommitted work if present.
+- Before any significant change, run `git status` silently. Report only if unexpected uncommitted changes exist.
 - Environment and constraints are declared automatically via the Auto-context protocol above.
 
 ## Git & commit rules
@@ -146,14 +146,14 @@ Types: `feat` / `fix` / `refactor` / `docs` / `chore` / `style` / `test`
 
 | Repo | Trigger | Action |
 |---|---|---|
-| `~/dotfiles` | Any change to `claude/` or `zsh/` or `git/` | `git add -A && git commit && git push` |
-| `/Users/P130/GitHub/*/` | Any doc file change (CLAUDE.md, README.md, docs/) | `git add + commit + push` immediately |
+| `~/dotfiles` | Any change to `claude/` or `zsh/` or `git/` | `git -C ~/dotfiles add -A && git -C ~/dotfiles commit -m "..." && git -C ~/dotfiles push` |
+| `/Users/P130/GitHub/*/` | Any doc file change (CLAUDE.md, README.md, docs/) | stage → commit → push in one compound call |
 | Shopify theme repo | Task completion with code changes | commit; push only if `/shopify-push` or PR was requested |
 | ecforce theme repo | Task completion with code changes | commit locally; push only when explicitly asked |
 
 **Commit scope:** Stage only files relevant to the current task. Never mass-stage with `git add .` unless the task explicitly covers all changed files.
 
-**Reference file commits:** After updating any file in `~/dotfiles/claude/references/`, immediately: `cd ~/dotfiles && git add claude/references/ && git commit -m "docs: リファレンス更新" && git push`
+**Reference file commits:** After updating any file in `~/dotfiles/claude/references/`: `git -C ~/dotfiles add claude/references/ && git -C ~/dotfiles commit -m "docs: リファレンス更新" && git -C ~/dotfiles push`
 
 ## Reference document update rule
 
@@ -229,16 +229,10 @@ Never suppress errors or add workarounds that hide failures. Report the exact er
 After completing any implementation, execute this sequence automatically:
 
 1. **Validate** — Run existing tests/linters if the project has them. Fix failures silently (up to 2 retries).
-2. **Review** — If 2+ files changed or git operations included → invoke `reviewer` agent. Do not ask. If FAIL → fix items and retry once.
+2. **Review** — If 3+ files changed with non-trivial logic → invoke `reviewer` agent. Skip for simple edits, doc changes, or pure git operations.
 3. **Commit** — Use conventional commit format from Git & commit rules above. Message in Japanese.
 4. **Push** — Push if the task explicitly or implicitly requires it (PR creation, deploy, sync, or stated plan).
-5. **Report** — End with a brief summary:
-
-| 項目 | 内容 |
-|---|---|
-| 変更ファイル | (list) |
-| レビュー | PASS / SKIP |
-| コミット | `hash` message |
+5. **Report** — One line: `変更: <files> | レビュー: PASS/SKIP | コミット: <hash>`
 
 Skip inapplicable steps. For document-specific commit rules, see Git & document rules.
 
