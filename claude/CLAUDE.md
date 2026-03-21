@@ -2,7 +2,7 @@
 
 ## CRITICAL RULES (violations are automatically blocked by hooks)
 
-1. **No compound commands in Bash.** Each `Bash` tool call = one command. `&&`, `||`, `;` は禁止。`|`（パイプ）と `for`/`if`/`while`/`case` 文は許可。違反はPreToolUse hookでブロックされる。
+1. **Compound commands are allowed if all parts are safe.** `&&`/`||`/`;` を含む複合コマンドは、denyリスト操作（`rm -rf`、`git push --force`、`git reset --hard`、`sudo rm/chmod`）を含む場合のみhookでブロック。安全な複合コマンド（例: `git add file && git commit -m "msg"`）は許可。`|`（パイプ）と `for`/`if`/`while`/`case` 文は常に許可。
 2. **No `git push --force` or `git push -f`.** `--force-with-lease` を使う。deny listでブロック済み。
 3. **No `git reset --hard`.** deny listでブロック済み。
 
@@ -78,7 +78,7 @@ Skip for non-project tasks (shell help, dotfiles management, general questions).
 - **Preserve existing names.** Do not rename classes, variables, IDs, or Liquid objects unless the task explicitly requires it.
 - **Respect platform idioms.** Shopify: Liquid + JSON schema, section/block architecture, asset pipeline. ecforce: Liquid templates (`.html.liquid`), file uploader for assets.
 - **No cosmetic refactoring.** Do not reorganize, reformat, or "improve" code outside the scope of the current task.
-- **No compound commands.** Never chain independent commands with `&&`, `||`, or `;` in a single Bash call. Each command must be a separate tool call. Allowed exceptions: `|` (pipes), `for`/`if`/`while`/`until`/`case` compound statements, and `||`/`&&` inside conditional tests. This ensures every command passes through PreToolUse hooks individually and deny rules cannot be bypassed.
+- **Compound commands are allowed when safe.** `&&`, `||`, `;` による連結は、全パートがdenyリスト操作を含まない場合に使用可。`block-compound-commands` hookが自動でチェックし、危険な操作を含む複合コマンドはブロックする。関連操作は積極的に繋げてよい（例: `git add file && git commit -m "msg"`, `npm install && npm run build`）。`|`（パイプ）と `for`/`if`/`while` ループは常に許可。
 
 ## Pre-change checklist
 
