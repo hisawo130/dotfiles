@@ -22,16 +22,23 @@ Proceed without asking unless one of the stop conditions below applies.
 - "全リポジトリにCLAUDE.mdを追加して" → iterate all repos, push each, report totals
 - Platform/framework detection → state assumption at top, proceed immediately
 - File exists already when scaffold is requested → overwrite with warning in output, don't stop
+- Deleting a named file/branch/record when the target is stated unambiguously → proceed
+- Installing or removing packages → proceed; report what changed
+- Creating or switching branches → proceed
+- Any git operation reversible by `git revert` or `git checkout` → proceed
+- Configuration changes (package.json, theme settings, env files) → proceed
+- Renaming when both old and new names are stated → proceed
+- Ambiguous target matching multiple files → pick most recently modified or most central to the feature; proceed silently
 
 **Stop and confirm only when:**
-- Deleting files, branches, database records — confirm exact targets before proceeding
+- Mass or wildcard deletion (`rm -rf`, glob patterns, multiple unnamed targets) — confirm exact targets first
 - Force-push or `reset --hard` — always stop; suggest `--force-with-lease` as safer alternative
 - Deploying to production or sending external messages — requires explicit "go ahead"
-- Two or more valid interpretations where the wrong one causes data loss
+- Two or more valid interpretations where the wrong choice is **both irreversible AND high-impact**
 
 **Default behavior when ambiguous:**
 - Take the safest, most common interpretation
-- State the assumption in **one line** at the top (e.g., "Assumption: target branch is `main`")
+- State the assumption only when non-obvious (e.g., choosing between two meaningfully different approaches). For obvious defaults, proceed silently.
 - Implement immediately — do not present option menus before acting
 - If the assumption turns out wrong, the user corrects it; this is faster than asking upfront
 
@@ -167,7 +174,7 @@ The main agent is responsible for:
 - Directing sub-agents with specific task prompts
 - Evaluating sub-agent output and deciding next steps
 
-All actual work — implementation, research, debugging, testing, file reads, web fetches — must be delegated to sub-agents via the Agent tool when feasible. If a sub-agent lacks access to required tools (e.g., Bash), the main agent performs the task directly without re-escalating or asking the user.
+Delegate to sub-agents when work benefits from parallelism, needs context protection, or involves large research queries. For sequential single-chain tasks (one file, one fetch, one verification), the main agent acts directly without spinning up a sub-agent. If a sub-agent lacks access to required tools (e.g., Bash), the main agent performs the task directly without re-escalating or asking the user.
 
 ## Task routing
 
@@ -184,7 +191,9 @@ Route tasks to sub-agents by complexity:
 
 **Skip conditions (do not spin up an agent):**
 - Single-file edit with obvious implementation → main agent edits directly
+- Sequential 2–3 file edits with clear implementation → main agent edits directly
 - Web fetch of a known URL → main agent fetches directly
+- Single research question → main agent reads/fetches directly
 - Quick shell command to verify state → main agent runs directly
 
 **Full pipeline:** `planner` → `executor` → `reviewer` (use only needed stages)
@@ -210,6 +219,8 @@ Handle failures autonomously without escalating:
 - **Network/API error:** Retry once after brief delay. If persistent, continue with cached/local data and note the failure.
 - **Permission error:** Do not use `sudo`. Report the issue and suggest manual resolution.
 - **Vague requirements:** State assumption, implement, note alternatives at the end.
+- **Missing file:** If a referenced file doesn't exist, create it at the most conventional path for the project type. Do not ask.
+- **Ambiguous target:** If a task names an entity (function, section, component) matching multiple files, pick the most recently modified or most central to the described feature. Proceed without asking.
 
 Never suppress errors or add workarounds that hide failures. Report the exact error, not a summary.
 
