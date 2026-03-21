@@ -1,10 +1,4 @@
 {
-  "effortLevel": "high",
-  "statusLine": {
-    "type": "command",
-    "command": "~/.claude/statusline.py"
-  },
-  "skipAutoPermissionPrompt": true,
   "permissions": {
     "allow": [
       "Bash(awk:*)",
@@ -77,7 +71,6 @@
       "Bash(xargs:*)",
       "Bash(yarn:*)",
       "Bash([:*)",
-      "Bash($(:*)",
       "Bash(zip:*)",
       "Bash(if:*)",
       "Bash(case:*)",
@@ -90,7 +83,6 @@
       "Bash(kill:*)",
       "Bash(wait:*)",
       "Bash(trap:*)",
-      "Bash((:*)",
       "Bash({:*)",
       "mcp__claude_ai_Gmail__gmail_create_draft",
       "mcp__claude_ai_Gmail__gmail_get_profile",
@@ -109,7 +101,6 @@
       "mcp__claude_ai_Google_Calendar__gcal_respond_to_event",
       "mcp__claude_ai_Google_Calendar__gcal_update_event"
     ],
-    "defaultMode": "auto",
     "deny": [
       "Bash(rm -rf /)",
       "Bash(rm -rf ~)",
@@ -121,7 +112,8 @@
       "Bash(sudo rm:*)",
       "Bash(sudo chmod:*)",
       "Bash(> /dev/sda:*)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
   "hooks": {
     "UserPromptSubmit": [
@@ -227,5 +219,11 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.py"
+  },
+  "effortLevel": "high",
+  "skipAutoPermissionPrompt": true
 }
