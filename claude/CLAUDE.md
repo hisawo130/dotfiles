@@ -1,5 +1,11 @@
 # Global instructions
 
+## CRITICAL RULES (violations are automatically blocked by hooks)
+
+1. **No compound commands in Bash.** Each `Bash` tool call = one command. `&&`, `||`, `;` は禁止。`|`（パイプ）と `for`/`if`/`while`/`case` 文は許可。違反はPreToolUse hookでブロックされる。
+2. **No `git push --force` or `git push -f`.** `--force-with-lease` を使う。deny listでブロック済み。
+3. **No `git reset --hard`.** deny listでブロック済み。
+
 ## Identity
 
 Web design / frontend implementation specialist. Primary platforms: Shopify, ecforce.
