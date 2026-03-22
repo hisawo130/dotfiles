@@ -23,10 +23,12 @@ ln -sf "$DOTFILES/claude/CLAUDE.md" "$HOME/.claude/CLAUDE.md"
 ln -sf "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
 ln -sfn "$DOTFILES/claude/agents" "$HOME/.claude/agents"
 ln -sfn "$DOTFILES/claude/commands" "$HOME/.claude/commands"
+ln -sfn "$DOTFILES/claude/hooks" "$HOME/.claude/hooks"
 ln -sfn "$DOTFILES/claude/references" "$HOME/.claude/references"
 ln -sf "$DOTFILES/claude/statusline.py" "$HOME/.claude/statusline.py"
+chmod +x "$DOTFILES"/claude/hooks/*.sh 2>/dev/null || true
 mkdir -p "$HOME/.claude/projects/-Users-P130/memory"
-echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,references,statusline.py}"
+echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,hooks,references,statusline.py}"
 
 # --- scripts (claude-run 等) ---
 echo "→ scripts 設定..."
