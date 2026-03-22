@@ -1,5 +1,14 @@
 # Shopify Webhooks & Metafields / Metaobjects リファレンス
 
+<!-- UPDATE BEFORE USE
+このファイルを参照する前に、以下のソースから最新情報を取得してこのファイルを更新すること。
+
+Sources:
+- WebFetch: https://shopify.dev/changelog
+- WebFetch: https://shopify.dev/docs/api/admin-graphql/latest/objects/Metafield
+- WebFetch: https://shopify.dev/docs/apps/build/webhooks
+-->
+
 > 最終更新: 2026-03-20（公式ドキュメント精査済み）
 
 ---

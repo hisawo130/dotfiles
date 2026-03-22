@@ -1,5 +1,14 @@
 # Shopify リファレンス
 
+<!-- UPDATE BEFORE USE
+このファイルを参照する前に、以下のソースから最新情報を取得してこのファイルを更新すること。
+
+Sources:
+- WebFetch: https://shopify.dev/changelog
+- WebFetch: https://github.com/Shopify/dawn/releases
+- WebFetch: https://shopify.dev/docs/storefronts/themes/tools/dawn
+-->
+
 > 最終更新: 2026-03-20（公式ドキュメント精査済み）
 > 対象バージョン: Dawn 15.4.1 / Online Store 2.0 / Winter '26 Edition
 

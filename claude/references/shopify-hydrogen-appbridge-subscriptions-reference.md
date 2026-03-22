@@ -1,5 +1,14 @@
 # Shopify Hydrogen / App Bridge / Selling Plans / B2B リファレンス
 
+<!-- UPDATE BEFORE USE
+このファイルを参照する前に、以下のソースから最新情報を取得してこのファイルを更新すること。
+
+Sources:
+- WebFetch: https://shopify.dev/changelog
+- WebFetch: https://shopify.dev/docs/storefronts/headless/hydrogen
+- WebFetch: https://shopify.dev/docs/api/app-bridge
+-->
+
 > 最終更新: 2026-03-20（公式ドキュメント精査済み）
 > ⚠️ B2Bテーマ対応・App Bridge 4の一部API・Remixとの比較は公式URLが404のため未確認
 

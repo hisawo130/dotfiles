@@ -1,5 +1,15 @@
 # Shopify カスタムアプリ リファレンス
 
+<!-- UPDATE BEFORE USE
+このファイルを参照する前に、以下のソースから最新情報を取得してこのファイルを更新すること。
+
+Sources:
+- WebFetch: https://shopify.dev/changelog
+- WebFetch: https://shopify.dev/docs/api/storefront
+- WebFetch: https://shopify.dev/docs/apps/build/checkout
+- WebFetch: https://shopify.dev/docs/api/functions
+-->
+
 > 最終更新: 2026-03-20（公式ドキュメント精査済み）
 > 対象: Storefront API / Checkout Extensibility / Shopify Functions / GraphQL Admin API
 
