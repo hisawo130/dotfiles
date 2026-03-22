@@ -19,9 +19,14 @@ echo "$FILE" | grep -qE '\.liquid$' || exit 0
 WARNINGS=""
 
 # --- Check 1: Unmatched Liquid tags ---
+# Note: \s is not POSIX ERE — use [[:space:]] for macOS compatibility
+# Note: grep -c exits 1 when count=0 but still outputs "0"; avoid || echo 0
+#       which would produce "0\n0". Use ${VAR:-0} as fallback instead.
 for tag in if for unless case capture comment form paginate; do
-  OPENS=$(grep -cE '\{%-?\s*'"$tag"'[\s%]' "$FILE" 2>/dev/null || echo 0)
-  CLOSES=$(grep -cE '\{%-?\s*end'"$tag"'' "$FILE" 2>/dev/null || echo 0)
+  OPENS=$(grep -cE '\{%-?[[:space:]]*'"$tag"'([[:space:]]|%)' "$FILE" 2>/dev/null)
+  OPENS=${OPENS:-0}
+  CLOSES=$(grep -cE '\{%-?[[:space:]]*end'"$tag"'' "$FILE" 2>/dev/null)
+  CLOSES=${CLOSES:-0}
   if [ "$OPENS" -ne "$CLOSES" ]; then
     WARNINGS="${WARNINGS}\n⚠️ {% ${tag} %} タグ不一致 (open: ${OPENS}, close: ${CLOSES})"
   fi
@@ -29,7 +34,8 @@ done
 
 # --- Check 2: {% include %} in Shopify OS 2.0 (should be {% render %}) ---
 if [ -f "shopify.theme.toml" ] || [ -f "config/settings_schema.json" ]; then
-  INCLUDES=$(grep -c '{% include ' "$FILE" 2>/dev/null || echo 0)
+  INCLUDES=$(grep -c '{% include ' "$FILE" 2>/dev/null)
+  INCLUDES=${INCLUDES:-0}
   if [ "$INCLUDES" -gt 0 ]; then
     WARNINGS="${WARNINGS}\n⚠️ {% include %} を${INCLUDES}箇所で検出。OS 2.0では {% render %} を使用してください"
   fi
@@ -37,7 +43,8 @@ fi
 
 # --- Check 3: Hardcoded asset URLs (ecforce) ---
 if [ -d "ec_force" ] || echo "$FILE" | grep -q "ec_force"; then
-  HARDCODED=$(grep -cE 'https?://[^{]*\.(css|js|png|jpg|svg)' "$FILE" 2>/dev/null || echo 0)
+  HARDCODED=$(grep -cE 'https?://[^{]*\.(css|js|png|jpg|svg)' "$FILE" 2>/dev/null)
+  HARDCODED=${HARDCODED:-0}
   if [ "$HARDCODED" -gt 0 ]; then
     WARNINGS="${WARNINGS}\n⚠️ ハードコードされたアセットURLを${HARDCODED}箇所で検出。{{ file_root_path }} を使用してください"
   fi

@@ -30,11 +30,13 @@ if echo "$STAGED" | grep -qE '(settings_data\.json|\.env|credentials|secret)'; t
   exit 0
 fi
 
-# --- Check 3: Uncommitted changes warning ---
-DIRTY=$(git status --porcelain 2>/dev/null | head -5)
-if [ -n "$DIRTY" ]; then
-  COUNT=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
-  jq -n --arg reason "未コミットの変更が${COUNT}件あります。意図的であれば再度pushしてください:\n$DIRTY" \
+# --- Check 3: Staged but not committed ---
+# Only block for staged (indexed) files not yet committed — not untracked files.
+# Untracked files are not pushed by git and should not block autonomous pushes.
+STAGED_UNCOMMITTED=$(git diff --cached --name-only 2>/dev/null)
+if [ -n "$STAGED_UNCOMMITTED" ]; then
+  COUNT=$(echo "$STAGED_UNCOMMITTED" | wc -l | tr -d ' ')
+  jq -n --arg reason "ステージ済みの未コミットファイルが${COUNT}件あります。コミット後にpushしてください:\n$STAGED_UNCOMMITTED" \
     '{"decision":"block","reason":$reason}'
   exit 0
 fi
