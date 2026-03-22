@@ -11,7 +11,7 @@
 - [feedback_autorun_tests.md](feedback_autorun_tests.md) — テスト実行・テスト結果に基づく改修は承認不要で自動実行
 
 ## Project
-_None yet_
+- [project_browser_mcp.md](project_browser_mcp.md) — browser MCP選定: 現在は@playwright/mcp、移行候補はbrowser-use CLI
 
 ## Reference
 
