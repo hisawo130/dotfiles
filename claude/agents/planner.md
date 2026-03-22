@@ -1,6 +1,6 @@
 ---
 name: planner
-description: Architecture and design agent. Use before implementation for complex features, system design, refactoring strategy, or when multiple approaches exist. Returns a concrete step-by-step plan with trade-offs noted.
+description: Architecture agent. Use when 5+ files change, a design decision is needed, or multiple valid approaches exist. Returns a step-by-step plan.
 tools: Read, Grep, Glob, WebFetch, WebSearch
 model: sonnet
 ---

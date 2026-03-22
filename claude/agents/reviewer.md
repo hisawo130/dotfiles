@@ -1,6 +1,6 @@
 ---
 name: reviewer
-description: Post-implementation reviewer. Use automatically after any task that changes 2 or more files, or includes git operations. Returns PASS or FAIL only — does not fix issues.
+description: Post-implementation reviewer. Use after tasks changing 3+ files with non-trivial logic, or including git operations. Returns PASS or FAIL only — does not fix issues.
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
