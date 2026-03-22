@@ -181,6 +181,7 @@ fetch("/api/endpoint", {
 | `SaveBar` | Admin上部バーの上にセーブ/破棄バーを表示 |
 | `TitleBar` | ページタイトルとプライマリ・セカンダリアクション |
 | `SessionToken` | 認証トークン取得（v3以前は手動取得、v4は自動） |
+| **Admin Intents** | AdminのSettings等の特定ページへ直接遷移。`StoreDetails`・`Locations`など対応（2026-03〜） |
 
 ❓ Modal・Redirect等の詳細APIは公式URLが404のため未確認。
 
@@ -318,7 +319,27 @@ selling_plan_groups/delete
 
 ---
 
-## 4. B2B / Wholesale（Shopify Plus 限定）
+### SubscriptionBillingAttemptState（2026-02〜）
+
+`SubscriptionBillingAttemptState` が GraphQL Admin API に追加。従来の複数フィールドを discriminated union で置き換え、状態チェックのコードが簡潔になる。
+
+```graphql
+query {
+  subscriptionBillingAttempt(id: "gid://shopify/SubscriptionBillingAttempt/XXX") {
+    id
+    state {
+      ... on SubscriptionBillingAttemptSuccessState { ... }
+      ... on SubscriptionBillingAttemptFailedState {
+        errorCode
+        errorMessage
+      }
+      ... on SubscriptionBillingAttemptPendingState { ... }
+    }
+  }
+}
+```
+
+---
 
 ### 概要
 

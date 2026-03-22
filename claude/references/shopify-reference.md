@@ -9,7 +9,7 @@ Sources:
 - WebFetch: https://shopify.dev/docs/storefronts/themes/tools/dawn
 -->
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-03-22（公式ドキュメント精査済み）
 > 対象バージョン: Dawn 15.4.1 / Online Store 2.0 / Winter '26 Edition
 
 ---
@@ -252,6 +252,7 @@ JavaScript では `window.Shopify.routes.root` を使用。
 - `metaobjectDefinitionCreate` の `fieldDefinitions` 入力がオプションに
 - MetaobjectDefinition に `createdAt`/`updatedAt` フィールド追加
 - JSON型メタフィールド値は **128KB上限** が2026-04 APIから適用
+- `inventoryLevels` / `inventoryLevel` クエリに `includeInactive: true` 引数追加（デフォルトはアクティブのみ）
 
 ---
 

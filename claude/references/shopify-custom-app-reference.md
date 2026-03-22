@@ -10,7 +10,7 @@ Sources:
 - WebFetch: https://shopify.dev/docs/api/functions
 -->
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-03-22（公式ドキュメント精査済み）
 > 対象: Storefront API / Checkout Extensibility / Shopify Functions / GraphQL Admin API
 
 ---
@@ -401,6 +401,17 @@ path = "target/wasm32-wasip1/release/discount.wasm"
 | タイムアウト / メモリ上限 | ❓公式非公開 |
 | パブリックアプリ | 全プランで利用可能（App Store経由） |
 | Validation数上限 | 1ストア最大25個 |
+| **Discount Function — ディスカウント詳細アクセス** | API v2026-04〜: カート・ラインアイテム・デリバリーレベルのディスカウント詳細をFunction内で参照可能。ただし**ディスカウント適用後に実行される場合のみ**アクセス可 |
+
+---
+
+### 払い戻し要件（2026-03〜）
+
+**すべてのアプリは、払い戻し（返金）を元の決済処理業者経由で実行する必要がある。**
+
+- ストアクレジットへの返金は `refundCreate` または `returnProcess` mutation を使用
+- アプリが独自の決済処理で払い戻しを行うことは禁止
+- 違反するアプリはレビューで却下または停止の対象
 
 ---
 
