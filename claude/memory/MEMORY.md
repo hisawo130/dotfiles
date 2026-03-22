@@ -7,6 +7,7 @@
 - [feedback_autonomy.md](feedback_autonomy.md) — Proceed without confirmation on all non-destructive actions
 - [feedback_ecforce_platform.md](feedback_ecforce_platform.md) — ecforce uses Liquid (not ERB/Slim); system-reminder can show stale CLAUDE.md
 - [feedback_reference_update_before_use.md](feedback_reference_update_before_use.md) — UPDATE BEFORE USEコメントがあるリファレンスは参照前にWebFetchで最新化する
+- [feedback_platform_routing.md](feedback_platform_routing.md) — ecforce/Shopify参照を絶対に混在させない。記法差異チェックリスト付き
 - [feedback_matrixify_docs.md](feedback_matrixify_docs.md) — Matrixifyタスク開始前に必ず公式ドキュメントをWebFetchで取得すること
 - [feedback_autorun_tests.md](feedback_autorun_tests.md) — テスト実行・テスト結果に基づく改修は承認不要で自動実行
 

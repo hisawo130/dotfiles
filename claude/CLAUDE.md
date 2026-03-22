@@ -263,6 +263,39 @@ When not explicitly specified, assume:
 - **CSS:** Follow existing class names and design patterns
 - **JS:** Vanilla JS or match the existing framework in use
 
+## Platform reference routing
+
+**タスク開始前に必ず確認し、該当プラットフォームのファイルのみ読む。絶対に混在させない。**
+
+| プラットフォーム | 参照ファイル |
+|---|---|
+| ecforce | `~/.claude/references/ecforce-reference.md` のみ |
+| Shopify テーマ | `~/.claude/references/shopify-reference.md` |
+| Shopify アプリ | `~/.claude/references/shopify-custom-app-reference.md` |
+| Shopify Flow | `~/.claude/references/shopify-flow-reference.md` |
+| Shopify Extensions | `~/.claude/references/shopify-theme-app-extensions-reference.md` |
+| Shopify Webhooks/Meta | `~/.claude/references/shopify-webhooks-metafields-reference.md` |
+| Shopify Hydrogen | `~/.claude/references/shopify-hydrogen-appbridge-subscriptions-reference.md` |
+
+ファイル先頭の `<!-- PLATFORM: ... -->` を必ず確認してから内容を使用する。
+
+## Shopify Liquid vs ecforce Liquid — 差異早見表
+
+両者ともLiquidだが記法が異なる。ecforceタスク中にShopify記法を書くと動作しない（逆も同様）。
+
+| 項目 | Shopify | ecforce |
+|---|---|---|
+| アセットURL | `{{ 'file.css' \| asset_url }}` | `{{ file_root_path }}/css/style.css` |
+| スタイルシート読み込み | `{{ 'file.css' \| asset_url \| stylesheet_tag }}` | `<link href="{{ file_root_path }}/css/file.css">` |
+| JavaScript読み込み | `{{ 'file.js' \| asset_url \| script_tag }}` | `{{ 'shop/products' \| javascript_include_tag }}` |
+| パーシャル読み込み | `{% render 'snippet-name' %}` | `{% include 'ec_force/shop/shared/header.html' %}` |
+| スキーマ定義 | `{% schema %}...{% endschema %}` | **存在しない**（管理画面UIで設定） |
+| ショップタグ | **存在しない** | `{{ 'header_prepend' \| shop_shared_tag }}` |
+| ファイル名規則 | `section-name.liquid` | `page-name.html.liquid` |
+| スマホ版 | 単一ファイル（CSSで対応） | `page-name.html+smartphone.liquid` |
+| content_for | `{% content_for 'blocks' %}` | `{% content_for title %}` etc.（metaタグ用） |
+| ブロック | `{{ block.shopify_attributes }}` | **存在しない** |
+
 ## Platform-specific notes
 
 ### Shopify

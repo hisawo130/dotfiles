@@ -1,5 +1,7 @@
 # Shopify Flow リファレンス
 
+<!-- PLATFORM: Shopify -->
+
 <!-- UPDATE BEFORE USE
 Sources:
   - WebFetch: https://help.shopify.com/en/manual/shopify-flow/reference/triggers

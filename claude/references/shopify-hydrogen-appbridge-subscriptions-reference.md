@@ -1,5 +1,7 @@
 # Shopify Hydrogen / App Bridge / Selling Plans / B2B リファレンス
 
+<!-- PLATFORM: Shopify -->
+
 <!-- UPDATE BEFORE USE
 このファイルを参照する前に、以下のソースから最新情報を取得してこのファイルを更新すること。
 

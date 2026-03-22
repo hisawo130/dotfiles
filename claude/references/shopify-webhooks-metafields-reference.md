@@ -1,5 +1,7 @@
 # Shopify Webhooks & Metafields / Metaobjects リファレンス
 
+<!-- PLATFORM: Shopify -->
+
 <!-- UPDATE BEFORE USE
 このファイルを参照する前に、以下のソースから最新情報を取得してこのファイルを更新すること。
 
