@@ -40,6 +40,16 @@ fi
 ln -sfn "$DOTFILES/claude/memory" "$HOME/.claude/projects/$MEMORY_PROJECT_DIR/memory"
 echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,hooks,references,statusline.py,memory}"
 
+# --- Playwright MCP (browser use) ---
+echo "→ Playwright MCP 設定..."
+if command -v npx &>/dev/null; then
+  npx @playwright/mcp@latest --version &>/dev/null || true
+  npx playwright install chromium --with-deps 2>/dev/null || npx playwright install chromium 2>/dev/null || true
+  echo "  完了: Chromium インストール済み"
+else
+  echo "  スキップ: node/npx が見つかりません（後で手動実行: npx playwright install chromium）"
+fi
+
 # --- scripts (claude-run 等) ---
 echo "→ scripts 設定..."
 chmod +x "$DOTFILES"/scripts/*.sh 2>/dev/null || true
