@@ -27,8 +27,18 @@ ln -sfn "$DOTFILES/claude/hooks" "$HOME/.claude/hooks"
 ln -sfn "$DOTFILES/claude/references" "$HOME/.claude/references"
 ln -sf "$DOTFILES/claude/statusline.py" "$HOME/.claude/statusline.py"
 chmod +x "$DOTFILES"/claude/hooks/*.sh 2>/dev/null || true
-mkdir -p "$HOME/.claude/projects/-Users-P130/memory"
-echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,hooks,references,statusline.py}"
+
+# Memory: symlink to dotfiles so it syncs across machines
+# Claude Code derives the project dir name by replacing / with - in $HOME
+MEMORY_PROJECT_DIR=$(echo "$HOME" | tr '/' '-')
+mkdir -p "$HOME/.claude/projects/$MEMORY_PROJECT_DIR"
+# Backup existing real directory if present
+if [ -d "$HOME/.claude/projects/$MEMORY_PROJECT_DIR/memory" ] && [ ! -L "$HOME/.claude/projects/$MEMORY_PROJECT_DIR/memory" ]; then
+  mv "$HOME/.claude/projects/$MEMORY_PROJECT_DIR/memory" "$HOME/.claude/projects/$MEMORY_PROJECT_DIR/memory.bak.$(date +%Y%m%d%H%M%S)"
+  echo "  既存 memory/ をバックアップ"
+fi
+ln -sfn "$DOTFILES/claude/memory" "$HOME/.claude/projects/$MEMORY_PROJECT_DIR/memory"
+echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,hooks,references,statusline.py,memory}"
 
 # --- scripts (claude-run 等) ---
 echo "→ scripts 設定..."

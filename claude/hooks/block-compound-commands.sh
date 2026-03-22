@@ -68,8 +68,12 @@ if [ "$BLOCKED" -eq 0 ] && echo "$STRIPPED" | grep -qE 'sudo[[:space:]]+(rm|chmo
 fi
 
 # 5. Write to any /dev/ device (not just /dev/sda)
-if [ "$BLOCKED" -eq 0 ] && echo "$STRIPPED" | grep -qE '>[[:space:]]*/dev/'; then
-  BLOCKED=1
+# Exclude /dev/null which is safe for output suppression (2>/dev/null, >/dev/null)
+if [ "$BLOCKED" -eq 0 ]; then
+  DEVCHECK=$(echo "$STRIPPED" | sed 's/[0-9]*>[[:space:]]*\/dev\/null//g')
+  if echo "$DEVCHECK" | grep -qE '>[[:space:]]*/dev/'; then
+    BLOCKED=1
+  fi
 fi
 
 if [ "$BLOCKED" -eq 1 ]; then
