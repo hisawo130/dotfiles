@@ -9,6 +9,18 @@ git clone https://github.com/hisawo130/dotfiles.git ~/dotfiles
 bash ~/dotfiles/setup.sh
 ```
 
+セットアップ後、`~/.secrets` に API キーを追記:
+
+```bash
+# ANTHROPIC_API_KEY の取得
+# 1. https://console.anthropic.com/ にアクセス
+# 2. サインアップ / ログイン
+# 3. 左メニュー「API Keys」→「Create Key」
+# 4. 発行されたキー（sk-ant-... で始まる文字列）をコピー
+
+echo 'export ANTHROPIC_API_KEY="sk-ant-..."' >> ~/.secrets
+```
+
 ## 構成
 
 ```
@@ -52,7 +64,9 @@ setup.sh             # シンボリックリンク作成スクリプト
 | `~/.claude/settings.json` | `claude/settings.json` |
 | `~/.claude/agents/` | `claude/agents/` |
 | `~/.claude/commands/` | `claude/commands/` |
+| `~/.claude/hooks/` | `claude/hooks/` |
 | `~/.claude/references/` | `claude/references/` |
+| `~/.claude/projects/*/memory/` | `claude/memory/` |
 | `~/.zshrc` | `zsh/.zshrc` |
 | `~/.gitignore_global` | `git/.gitignore_global` |
 
