@@ -9,7 +9,7 @@ Sources:
 - WebFetch: https://shopify.dev/docs/api/app-bridge
 -->
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-03-22（公式ドキュメント精査済み）
 > ⚠️ B2Bテーマ対応・App Bridge 4の一部API・Remixとの比較は公式URLが404のため未確認
 
 ---
@@ -103,6 +103,22 @@ const PRODUCT_QUERY = `#graphql
 顧客データは2段階で保護が必要:
 1. サブリクエスト: `CacheNone()`
 2. フルページ: レスポンスヘッダに `private, max-age=<秒>` または `no-store`
+
+---
+
+### Customer Account API — market-aware ログインURL（2026-02〜）
+
+ヘッドレスストアフロントで多言語・多地域対応のログインURLを構築できる。
+
+```
+https://{shop}.account.myshopify.com/oauth/authorize
+  ?client_id=CLIENT_ID
+  &...
+  &locale=ja          # 言語コード（BCP47形式）
+  &region_country=JP  # 地域・国コード
+```
+
+**利用シナリオ**: HydrogenのロケールルーティングとCustomer Account APIを組み合わせる際、マーケットごとに最適化されたログインフローを提供できる。
 
 ---
 

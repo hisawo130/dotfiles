@@ -9,7 +9,7 @@ Sources:
 - WebFetch: https://shopify.dev/docs/apps/build/webhooks
 -->
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-03-22（公式ドキュメント精査済み）
 
 ---
 
@@ -468,6 +468,18 @@ type = "multi_line_text_field"
 
 ---
 
+## 2026 API変更
+
+| 変更 | 内容 | APIバージョン |
+|------|------|--------------|
+| **Checkout ID削除（破壊的変更）** | checkoutsウェブフックから `id` フィールド削除。ordersウェブフックから `checkout_id` フィールド削除。チェックアウトトークン（`token`）で代替 | 2026-04〜 |
+| `metaobjectDefinitionCreate` `fieldDefinitions` オプション化 | 定義作成時にフィールド定義なしで作成可能に | 2026-04〜 |
+| `MetaobjectDefinition` に `createdAt`/`updatedAt` 追加 | 定義の作成・更新日時を取得可能に | 2026-04〜 |
+| JSON型メタフィールド値 128KB上限 | `json` 型メタフィールドの値が最大128KBに制限 | 2026-04〜 |
+| `analyticsQueryable` — MetafieldDefinition新機能 | `analyticsQueryable` を有効化するとShopify AnalyticsでProductsなどのメタフィールドデータを分析可能に | 2026-04〜 |
+
+---
+
 ## 実務上の注意点まとめ
 
 | 項目 | 注意事項 |
@@ -475,6 +487,7 @@ type = "multi_line_text_field"
 | Webhook冪等性 | `X-Shopify-Event-Id` をDBに保存し重複スキップ必須 |
 | Mandatory webhooks | Public App審査時は3件全部実装必須 |
 | HMAC検証 | raw body使用・`timingSafeEqual` 使用・Pub/Subでは不要 |
+| **⚠️ Checkout ID削除 (2026-04)** | `CHECKOUTS_*` ウェブフックの `id` フィールドと `ORDERS_*` の `checkout_id` を参照しているコードは修正必須。`token` で代替 |
 | Metafield type変更 | 後から変更不可。削除→再作成のみ |
 | Storefront公開 | Definition作成時に `access.storefront: PUBLIC_READ` が必要 |
 | Liquid vs Storefront API | Liquidはstorefront設定に関係なく常にアクセス可能 |

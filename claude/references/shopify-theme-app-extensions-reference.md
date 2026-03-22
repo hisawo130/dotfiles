@@ -9,7 +9,7 @@ Sources:
 - WebFetch: https://shopify.dev/docs/apps/build/customer-accounts
 -->
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-03-22（公式ドキュメント精査済み）
 
 ---
 
@@ -376,3 +376,11 @@ export default function Extension() {
 | ⚠️ `window` / `document` 制限 | 直接アクセスは制限される |
 | ⚠️ ReactではなくPreact | `useState` 等は `preact/hooks` からimport |
 | ⚠️ importパス | `@shopify/ui-extensions/customer-account`（`/checkout` は2023-10以降非推奨） |
+
+---
+
+### 2026年の変更点
+
+| 変更 | 内容 | 時期 |
+|---|---|---|
+| 新規開発ストアでデフォルト有効化 | 2026年3月以降に作成した新規**開発ストア**では、Checkout UI ExtensionsとCustomer Account UI ExtensionsがデフォルトでON。明示的な有効化不要 | 2026-03〜 |
