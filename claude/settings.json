@@ -101,7 +101,14 @@
       "mcp__claude_ai_Google_Calendar__gcal_respond_to_event",
       "mcp__claude_ai_Google_Calendar__gcal_update_event",
       "WebFetch",
-      "WebSearch"
+      "WebSearch",
+      "Bash(dig:*)",
+      "Bash(nslookup:*)",
+      "Bash(host:*)",
+      "Bash(ping:*)",
+      "Bash(traceroute:*)",
+      "Bash(whois:*)",
+      "Bash(nmap:*)"
     ],
     "deny": [
       "Bash(rm -rf /)",
