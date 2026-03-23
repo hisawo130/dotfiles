@@ -99,7 +99,9 @@
       "mcp__claude_ai_Google_Calendar__gcal_list_calendars",
       "mcp__claude_ai_Google_Calendar__gcal_list_events",
       "mcp__claude_ai_Google_Calendar__gcal_respond_to_event",
-      "mcp__claude_ai_Google_Calendar__gcal_update_event"
+      "mcp__claude_ai_Google_Calendar__gcal_update_event",
+      "WebFetch",
+      "WebSearch"
     ],
     "deny": [
       "Bash(rm -rf /)",
