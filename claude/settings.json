@@ -173,7 +173,8 @@
       "Bash(fold:*)",
       "Bash(expand:*)",
       "Bash(pr:*)",
-      "Bash(fmt:*)"
+      "Bash(fmt:*)",
+      "Read(//Users/P130/Library/CloudStorage/GoogleDrive-usui-h@cin-group.com/**)"
     ],
     "deny": [
       "Bash(rm -rf /)",
