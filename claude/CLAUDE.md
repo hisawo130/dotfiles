@@ -72,6 +72,24 @@ Skip for non-project tasks (shell help, dotfiles management, general questions).
 - When uncertain, say so explicitly. Do not hedge with vague qualifiers.
 - **Questions to the user must be in Japanese.** Never ask questions in English.
 
+## Thinking
+
+Use extended thinking autonomously based on task complexity. No user instruction needed.
+
+**Use thinking when:**
+- Multi-step architectural decisions or design trade-offs
+- Debugging non-obvious failures (logic errors, race conditions, cryptic error messages)
+- Tasks spanning 5+ files with complex interdependencies
+- Any situation where the wrong first move is costly to undo
+
+**Skip thinking when:**
+- Single-file edits with an obvious implementation
+- Direct lookups, file reads, or web fetches
+- Straightforward git operations or shell commands
+- Repeating a pattern already established in the session
+
+The threshold: if the task could be fully resolved by a competent developer in one attempt without pausing, skip thinking. If it requires mentally holding multiple constraints at once, use it.
+
 ## Code rules
 
 - **Write complete files.** Never output partial snippets or placeholder comments like `// ... rest of code`. Every file write must be the entire file content.
