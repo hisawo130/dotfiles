@@ -267,6 +267,18 @@ Skip inapplicable steps. For document-specific commit rules, see Git & document 
 - At the end of a significant implementation session, note the single most important bias or assumption that may have influenced the work.
 - When context is running low, use `/compact` proactively before losing important details.
 - Prefer `/clear` between unrelated tasks.
+- **Update state.md after significant sub-tasks** (not just final completion) — this makes crash recovery useful.
+
+### Crash recovery
+
+SessionStart hookが `🔄 クラッシュリカバリー` を注入した場合:
+1. state.md の Focus / In Progress を即座に確認
+2. git status で中断ポイントを特定
+3. 最初の出力に `再開: <focus> | 未コミット: <count>件` を含める
+4. 未コミットの変更がある場合はWIPコミットを提案してから継続
+5. state.md を現在の作業状態に更新
+
+**仕組み:** 正常終了 → Stop hook が `.session-clean` を書く。クラッシュ/強制終了 → マーカーなし → recovery-detect.sh が検出。
 
 ### Session learning (auto-save)
 

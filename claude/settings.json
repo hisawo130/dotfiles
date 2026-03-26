@@ -329,6 +329,11 @@
             "async": true,
             "timeout": 90,
             "statusMessage": "学びを抽出中..."
+          },
+          {
+            "type": "command",
+            "command": "mkdir -p \"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')\" && touch \"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/.session-clean\"",
+            "async": true
           }
         ]
       }
