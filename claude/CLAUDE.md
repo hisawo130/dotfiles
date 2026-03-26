@@ -224,7 +224,7 @@ Multiple independent research → launch `researcher` agents in parallel.
 Pipeline: `planner` → `executor` → `reviewer` (use only needed stages).
 `reviewer` FAIL → retry `executor` once → if still FAIL, report to user with exact FAIL items.
 
-**Context protection:** sub-agents run in isolated contexts. Delegate liberally to keep main context available for multi-round work.
+**Context protection:** sub-agents run in isolated contexts — use them when isolation matters (large impl, parallel fetch, review). Don't delegate small tasks; the overhead exceeds the benefit.
 
 ## Skill discovery
 
@@ -270,7 +270,7 @@ Skip inapplicable steps. For document-specific commit rules, see Git & document 
 - When context is running low, use `/compact` proactively before losing important details.
 - Prefer `/clear` between unrelated tasks.
 - **Update state.md after significant sub-tasks** (not just final completion) — this makes crash recovery useful.
-- **Context pressure rule:** delegate ALL research and implementation to sub-agents (researcher/executor). Main agent handles orchestration only — this preserves main context across multiple task rounds.
+- **Context pressure rule:** use sub-agents when the task is large (5+ files, parallel research, post-impl review). For single-file edits, quick fixes, and simple git ops → main agent acts directly. Over-delegating to sub-agents adds overhead and hides intermediate state.
 - **When context feels heavy:** run `/compact` before starting the next unrelated task, not after.
 
 ### Crash recovery
