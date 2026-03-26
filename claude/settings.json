@@ -275,6 +275,14 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/shopify-session-start.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/ecforce-session-start.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/stale-branch-check.sh"
           }
         ]
       }
@@ -353,6 +361,17 @@
           {
             "type": "command",
             "command": "_dirty=$(git -C \"$PWD\" status --porcelain 2>/dev/null | grep -v '^?'); [ -n \"$_dirty\" ] && jq -n --arg d \"$_dirty\" '{\"systemMessage\": (\"⚠️ コンパクト前に未コミットの変更があります。コンパクト後に履歴が失われる前にコミットしてください:\\n\" + $d)}' || true"
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "_sf=\"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/state.md\"; [ -f \"$_sf\" ] && [ -s \"$_sf\" ] && jq -n --rawfile s \"$_sf\" '{\"systemMessage\": (\"📋 コンパクト後 — プロジェクト状態を再注入:\\n\" + $s)}' || true"
           }
         ]
       }
