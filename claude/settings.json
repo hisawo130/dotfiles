@@ -174,7 +174,35 @@
       "Bash(expand:*)",
       "Bash(pr:*)",
       "Bash(fmt:*)",
-      "Read(//Users/P130/Library/CloudStorage/GoogleDrive-usui-h@cin-group.com/**)"
+      "Read(//Users/P130/Library/CloudStorage/GoogleDrive-usui-h@cin-group.com/**)",
+      "Bash(rm:*)",
+      "Bash(chmod:*)",
+      "Bash(rsync:*)",
+      "Bash(tar:*)",
+      "Bash(bun:*)",
+      "Bash(deno:*)",
+      "Bash(claude:*)",
+      "Bash(code:*)",
+      "Bash(supabase:*)",
+      "Bash(vercel:*)",
+      "Bash(gcloud:*)",
+      "Bash(aws:*)",
+      "Bash(terraform:*)",
+      "Bash(docker:*)",
+      "Bash(podman:*)",
+      "Bash(composer:*)",
+      "Bash(php:*)",
+      "Bash(bundle exec:*)",
+      "Bash(rake:*)",
+      "Bash(rails:*)",
+      "Bash(set:*)",
+      "Bash(unset:*)",
+      "Bash(declare:*)",
+      "Bash(local:*)",
+      "Bash(return:*)",
+      "Bash(exit:*)",
+      "Bash(hash:*)",
+      "Bash(eval:*)"
     ],
     "deny": [
       "Bash(rm -rf /)",
@@ -294,6 +322,25 @@
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.py"
+  },
+  "autoMode": {
+    "allow": [
+      "File read/write/delete operations within the home directory or project directories",
+      "Git operations including add, commit, push, pull, branch, merge, rebase",
+      "Package management with npm, yarn, pnpm, bun, pip, brew, gem, composer",
+      "Running build, test, lint, and format commands",
+      "Creating, renaming, or deleting files and directories (non-recursive rm)",
+      "Shopify CLI and theme operations",
+      "Shell script execution for automation tasks",
+      "Reading and writing dotfiles under ~/.claude or ~/dotfiles",
+      "GitHub CLI (gh) operations for PRs, issues, and repo management",
+      "Web fetching and searching for research tasks"
+    ],
+    "environment": [
+      "User is a web/frontend developer working with Shopify and ecforce platforms",
+      "All git operations are reversible; non-destructive actions should proceed without confirmation",
+      "Timezone is JST; user operates autonomously and prefers uninterrupted execution"
+    ]
   },
   "effortLevel": "high",
   "skipAutoPermissionPrompt": true,
