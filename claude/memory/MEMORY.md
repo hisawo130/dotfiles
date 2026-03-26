@@ -26,6 +26,9 @@
 - `shopify-hydrogen-appbridge-subscriptions-reference.md` — Hydrogen・App Bridge・Selling Plans・B2B
 - `ecforce-reference.md` — ecforceフロントエンド完全技術リファレンス
 
+**セッション学びログ（自動蓄積）:**
+- `~/.claude/learnings/YYYY-MM-DD.md` — Stop hookが毎セッション終了時に自動保存。`ls ~/.claude/learnings/` で一覧、`cat ~/.claude/learnings/$(date +%Y-%m-%d).md` で今日分を参照
+
 **メモリ固有（dotfilesに含めない補助情報）:**
 - [reference_matrixify.md](reference_matrixify.md) — Shopify Matrixify機能・仕様・落とし穴
 - [shopify_theme_architecture.md](shopify_theme_architecture.md) — DawnバージョンHistory・Theme Blocks・Sectionスキーマ
