@@ -259,6 +259,10 @@
           {
             "type": "command",
             "command": "_stale=$(find \"$HOME/dotfiles/claude/references\" -name '*.md' -mtime +14 2>/dev/null | while read -r f; do echo \"$(basename \"$f\"): $(stat -f '%Sm' -t '%Y-%m-%d' \"$f\")\"; done); [ -n \"$_stale\" ] && jq -n --arg s \"$_stale\" '{\"systemMessage\":(\"⚠️ 以下のリファレンスが14日以上未更新:\\n\" + $s)}' || true"
+          },
+          {
+            "type": "command",
+            "command": "_sf=\"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/state.md\"; [ -f \"$_sf\" ] && [ -s \"$_sf\" ] && jq -n --rawfile s \"$_sf\" '{\"systemMessage\": (\"📋 Project state loaded:\\n\" + $s)}' || true"
           }
         ]
       }
