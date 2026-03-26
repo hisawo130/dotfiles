@@ -271,6 +271,10 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/recovery-detect.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/shopify-session-start.sh"
           }
         ]
       }
