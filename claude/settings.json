@@ -305,5 +305,6 @@
         "--headless"
       ]
     }
-  }
+  },
+  "skipDangerousModePermissionPrompt": true
 }
