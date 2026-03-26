@@ -56,8 +56,20 @@ elif [ -d "$CWD/ec_force" ] || [ -d "$CWD/layouts/ec_force" ]; then
   DOMAIN_HINT="ecforce"
 elif [ -f "$CWD/wp-config.php" ] || [ -d "$CWD/wp-content" ]; then
   DOMAIN_HINT="wordpress"
+elif [ -f "$CWD/package.json" ] && grep -q '"@shopify/hydrogen' "$CWD/package.json" 2>/dev/null; then
+  DOMAIN_HINT="shopify-hydrogen"
 elif [ -f "$CWD/package.json" ] && grep -q '"@shopify/' "$CWD/package.json" 2>/dev/null; then
   DOMAIN_HINT="shopify-app"
+elif [ -f "$CWD/package.json" ] && grep -q '"next"' "$CWD/package.json" 2>/dev/null; then
+  DOMAIN_HINT="react-nextjs"
+elif [ -f "$CWD/package.json" ] && grep -q '"nuxt"' "$CWD/package.json" 2>/dev/null; then
+  DOMAIN_HINT="vue-nuxt"
+elif [ -f "$CWD/wrangler.toml" ] || [ -f "$CWD/wrangler.jsonc" ]; then
+  DOMAIN_HINT="cloudflare"
+elif [ -d "$CWD/.github/workflows" ]; then
+  DOMAIN_HINT="github-actions"
+elif [ -d "$CWD/app/Plugin" ] || [ -f "$CWD/app/config/eccube/config.yaml" ]; then
+  DOMAIN_HINT="ec-cube"
 fi
 
 # ── Extract learnings + domain via claude -p ──────────────────────────────
@@ -70,13 +82,28 @@ DOMAIN: <domain>
 - 学び3（あれば）
 
 【domainの選択肢】
-ログに合うものを1つ選ぶ（デフォルトヒント: ${DOMAIN_HINT}）:
-- shopify    … Shopifyテーマ・Liquid・セクション・Dawn
-- ecforce    … ecforceテンプレート・Liquid・スマホ版
-- wordpress  … WordPress・WooCommerce・テーマ・プラグイン
-- matrixify  … MatrixifyのCSV/Excelインポート・エクスポート・データ移行
-- shopify-app … Shopifyカスタムアプリ・API・Functions
-- general    … ツール・git・CLI・複数領域横断
+ログの内容に最も合うものを1つ選ぶ（デフォルトヒント: ${DOMAIN_HINT}）:
+- shopify          … Shopifyテーマ・Liquid・セクション・Dawn・OS2.0
+- shopify-app      … Shopifyカスタムアプリ・Storefront API・Functions・GraphQL
+- shopify-flow     … Shopify Flowワークフロー・トリガー・アクション
+- shopify-extensions … Theme App/Checkout UI/Customer Account Extensions
+- shopify-hydrogen … Hydrogen・Oxygen・ヘッドレスStorefront
+- shopify-webhooks … Webhooks・Metafields・Metaobjects
+- ecforce          … ecforceテンプレート・Liquid・スマホ版
+- wordpress        … WordPress・WooCommerce・テーマ・プラグイン
+- ec-cube          … EC-CUBE 4系・Symfony・Twig・プラグイン
+- matrixify        … MatrixifyのCSV/Excelインポート・エクスポート・データ移行
+- ga4-gtm          … Google Analytics 4・GTM・イベント計測・コンバージョン
+- klaviyo          … Klaviyoメール/SMS・フロー・セグメント・Shopify連携
+- line             … LINE公式アカウント・LINE API・Messaging API
+- react-nextjs     … React・Next.js・App Router・TypeScript
+- vue-nuxt         … Vue.js・Nuxt・Composition API
+- github-actions   … CI/CD・GitHub Actionsワークフロー
+- cloudflare       … DNS・CDN・Pages・Workers・リダイレクト
+- make-zapier      … Make(Integromat)・Zapier・ノーコード自動化
+- cms              … microCMS・Contentful・Storyblok・ヘッドレスCMS
+- stripe           … Stripe決済API・Webhook・サブスクリプション
+- general          … ツール・git・CLI・複数領域横断・その他
 
 【学びの抽出ルール】
 - 具体的・非自明なもののみ（プラットフォーム固有の罠、バグの根本原因、有効だったパターン、ユーザーが修正した誤り）
@@ -98,8 +125,8 @@ RAW=$(CLAUDE_LEARNING_EXTRACT=1 claude -p \
 DOMAIN=$(echo "$RAW" | grep '^DOMAIN:' | head -1 | sed 's/^DOMAIN: *//' | tr -d '[:space:][:cntrl:]')
 LEARNING=$(echo "$RAW" | grep '^- ' | head -5)
 
-# Fallback to hint if domain is empty or invalid
-VALID_DOMAINS="shopify ecforce wordpress matrixify shopify-app general"
+# Validate domain
+VALID_DOMAINS="shopify shopify-app shopify-flow shopify-extensions shopify-hydrogen shopify-webhooks ecforce wordpress ec-cube matrixify ga4-gtm klaviyo line react-nextjs vue-nuxt github-actions cloudflare make-zapier cms stripe general"
 echo "$VALID_DOMAINS" | grep -qw "${DOMAIN:-}" || DOMAIN="$DOMAIN_HINT"
 
 DOMAIN_FILE="$LEARNINGS_DIR/${DOMAIN}.md"
@@ -107,7 +134,6 @@ DOMAIN_FILE="$LEARNINGS_DIR/${DOMAIN}.md"
 # ── Write to domain file ───────────────────────────────────────────────────
 mkdir -p "$LEARNINGS_DIR"
 
-# Create file if not exists
 if [ ! -f "$DOMAIN_FILE" ]; then
   echo "# $(echo "$DOMAIN" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1') Learnings" > "$DOMAIN_FILE"
 fi
@@ -119,7 +145,6 @@ if [ -n "$LEARNING" ]; then
     echo "$LEARNING"
   } >> "$DOMAIN_FILE"
 else
-  # No learnings — skip writing (don't pollute with empty entries)
   exit 0
 fi
 

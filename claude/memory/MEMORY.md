@@ -27,7 +27,7 @@
 - `ecforce-reference.md` — ecforceフロントエンド完全技術リファレンス
 
 **セッション学びログ（ドメイン別・自動蓄積）:**
-- `~/.claude/learnings/shopify.md` / `ecforce.md` / `wordpress.md` / `matrixify.md` / `shopify-app.md` / `general.md`
+- ドメイン: `shopify` / `shopify-app` / `shopify-flow` / `shopify-extensions` / `shopify-hydrogen` / `shopify-webhooks` / `ecforce` / `wordpress` / `ec-cube` / `matrixify` / `ga4-gtm` / `klaviyo` / `line` / `react-nextjs` / `vue-nuxt` / `github-actions` / `cloudflare` / `make-zapier` / `cms` / `stripe` / `general`
 - Stop hookが毎セッション終了時にドメインを自動判定して追記。auto-context時に該当ドメインのみ末尾60行をロード
 
 **メモリ固有（dotfilesに含めない補助情報）:**

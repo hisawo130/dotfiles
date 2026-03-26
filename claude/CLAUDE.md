@@ -61,14 +61,33 @@ On the first task in any project directory, silently perform:
    - Follow the UPDATE BEFORE USE protocol if the file has that block
 
 3. **Load domain learnings** — read the last 60 lines of the matching file from `~/.claude/learnings/`:
-   - Shopify theme → `shopify.md`
-   - Shopify app → `shopify-app.md`
-   - ecforce theme → `ecforce.md`
-   - Shopify Flow / generic → `general.md`
-   - Matrixify task (keyword in user message) → `matrixify.md`
-   - WordPress → `wordpress.md`
-   - If file is empty or missing → skip silently
+
+   | Project type / keyword | Learnings file |
+   |---|---|
+   | Shopify theme | `shopify.md` |
+   | Shopify custom app | `shopify-app.md` |
+   | Shopify Flow | `shopify-flow.md` |
+   | Shopify Extensions | `shopify-extensions.md` |
+   | Shopify Hydrogen | `shopify-hydrogen.md` |
+   | Shopify Webhooks/Metafields | `shopify-webhooks.md` |
+   | ecforce | `ecforce.md` |
+   | WordPress / WooCommerce | `wordpress.md` |
+   | EC-CUBE | `ec-cube.md` |
+   | Matrixify (keyword in message) | `matrixify.md` |
+   | GA4 / GTM (keyword in message) | `ga4-gtm.md` |
+   | Klaviyo (keyword in message) | `klaviyo.md` |
+   | LINE API (keyword in message) | `line.md` |
+   | React / Next.js | `react-nextjs.md` |
+   | Vue / Nuxt | `vue-nuxt.md` |
+   | GitHub Actions | `github-actions.md` |
+   | Cloudflare (keyword in message) | `cloudflare.md` |
+   | Make / Zapier (keyword in message) | `make-zapier.md` |
+   | Headless CMS (keyword in message) | `cms.md` |
+   | Stripe (keyword in message) | `stripe.md` |
+   | Otherwise | `general.md` |
+
    - **Do NOT load all domain files at once** — load only the one that matches
+   - If file is empty (header only) or missing → skip silently
 
 4. **Announce context** in the first line of the first response:
    > 📍 [Project type] | [key version/framework] | [reference loaded or N/A]
