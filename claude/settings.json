@@ -314,6 +314,13 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/session-end-notify.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/save-learnings.sh",
+            "async": true,
+            "timeout": 90,
+            "statusMessage": "学びを抽出中..."
           }
         ]
       }
