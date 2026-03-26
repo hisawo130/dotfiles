@@ -1,10 +1,9 @@
 #!/bin/bash
 # save-learnings.sh
-# Claude Code Stop hook: extract session learnings and save globally.
-# Triggered on session close. Reads transcript, calls claude -p to distill
-# non-obvious learnings, appends to ~/.claude/learnings/YYYY-MM-DD.md.
+# Claude Code Stop hook: extract session learnings and save by domain.
+# Writes to ~/.claude/learnings/<domain>.md (not date-based).
 
-# Recursion guard: this script itself spawns claude -p; prevent re-entry
+# Recursion guard
 [ "${CLAUDE_LEARNING_EXTRACT:-}" = "1" ] && exit 0
 
 # ── Config ────────────────────────────────────────────────────────────────
@@ -13,32 +12,24 @@ DATE=$(date +%Y-%m-%d)
 TIME=$(date +%H:%M)
 CWD=$(pwd)
 DIR=$(basename "$CWD")
-LEARNINGS_FILE="$LEARNINGS_DIR/$DATE.md"
-MAX_TRANSCRIPT_CHARS=6000  # context sent to claude -p
+MAX_TRANSCRIPT_CHARS=6000
 
-# ── Read hook input from stdin ────────────────────────────────────────────
+# ── Read hook input ───────────────────────────────────────────────────────
 HOOK_INPUT=$(cat /dev/stdin 2>/dev/null || true)
 SESSION_ID=$(echo "$HOOK_INPUT" | jq -r '.session_id // ""' 2>/dev/null || true)
-
 [ -z "$SESSION_ID" ] && exit 0
 
 # ── Find transcript ────────────────────────────────────────────────────────
-# Claude Code stores transcripts at:
-#   ~/.claude/projects/<sanitized-cwd>/<session_id>.jsonl
-# Sanitize: replace / with -
 SANITIZED_CWD=$(echo "$CWD" | sed 's|/|-|g')
 TRANSCRIPT="$HOME/.claude/projects/${SANITIZED_CWD}/${SESSION_ID}.jsonl"
 
 if [ ! -f "$TRANSCRIPT" ]; then
-  # Fallback: search by session_id
   TRANSCRIPT=$(grep -rl "\"$SESSION_ID\"" "$HOME/.claude/projects" \
     --include="*.jsonl" -l 2>/dev/null | head -1 || true)
 fi
-
 [ -z "$TRANSCRIPT" ] || [ ! -f "$TRANSCRIPT" ] && exit 0
 
 # ── Extract text content from transcript ──────────────────────────────────
-# Format: JSONL, each line has .type (assistant/user), .message.content[]
 CONTEXT=$(jq -r '
   select(.type == "user" or .type == "assistant") |
   "[" + .type + "] " +
@@ -57,47 +48,87 @@ CONTEXT=$(jq -r '
 
 [ -z "$CONTEXT" ] && exit 0
 
-# ── Extract learnings via claude -p ───────────────────────────────────────
-PROMPT="以下はClaudeセッションの会話ログ（末尾${MAX_TRANSCRIPT_CHARS}文字）です。
+# ── Detect domain hint from project structure ──────────────────────────────
+DOMAIN_HINT="general"
+if [ -f "$CWD/shopify.theme.toml" ] || [ -f "$CWD/config/settings_schema.json" ]; then
+  DOMAIN_HINT="shopify"
+elif [ -d "$CWD/ec_force" ] || [ -d "$CWD/layouts/ec_force" ]; then
+  DOMAIN_HINT="ecforce"
+elif [ -f "$CWD/wp-config.php" ] || [ -d "$CWD/wp-content" ]; then
+  DOMAIN_HINT="wordpress"
+elif [ -f "$CWD/package.json" ] && grep -q '"@shopify/' "$CWD/package.json" 2>/dev/null; then
+  DOMAIN_HINT="shopify-app"
+fi
 
-【抽出ルール】
-- 具体的・非自明な学びのみ（プラットフォーム固有の罠、発見したバグの根本原因、有効だったパターン、ユーザーが修正した誤り）
+# ── Extract learnings + domain via claude -p ──────────────────────────────
+PROMPT="以下はClaudeセッションの会話ログです。
+
+【出力フォーマット — 必ずこの形式を守ること】
+DOMAIN: <domain>
+- 学び1（あれば）
+- 学び2（あれば）
+- 学び3（あれば）
+
+【domainの選択肢】
+ログに合うものを1つ選ぶ（デフォルトヒント: ${DOMAIN_HINT}）:
+- shopify    … Shopifyテーマ・Liquid・セクション・Dawn
+- ecforce    … ecforceテンプレート・Liquid・スマホ版
+- wordpress  … WordPress・WooCommerce・テーマ・プラグイン
+- matrixify  … MatrixifyのCSV/Excelインポート・エクスポート・データ移行
+- shopify-app … Shopifyカスタムアプリ・API・Functions
+- general    … ツール・git・CLI・複数領域横断
+
+【学びの抽出ルール】
+- 具体的・非自明なもののみ（プラットフォーム固有の罠、バグの根本原因、有効だったパターン、ユーザーが修正した誤り）
 - 最大3つ、日本語箇条書き（- で始める）
-- 汎用アドバイス・自明な内容・「〜を実装した」という作業ログは除く
-- 学びがない場合は何も出力しない（空行のみ）
+- 汎用アドバイス・自明な内容・作業ログは含めない
+- 学びがなければ「DOMAIN: ${DOMAIN_HINT}」のみ出力（学び行なし）
 
 ---
 $CONTEXT"
 
-LEARNING=$(CLAUDE_LEARNING_EXTRACT=1 claude -p \
+RAW=$(CLAUDE_LEARNING_EXTRACT=1 claude -p \
   --max-turns 2 \
   --dangerously-skip-permissions \
-  "$PROMPT" 2>/dev/null | \
-  grep -E '^- ' | \
-  head -5 || true)
+  "$PROMPT" 2>/dev/null || true)
 
-# ── Write to learnings file ────────────────────────────────────────────────
+[ -z "$RAW" ] && exit 0
+
+# ── Parse domain and learnings ────────────────────────────────────────────
+DOMAIN=$(echo "$RAW" | grep '^DOMAIN:' | head -1 | sed 's/^DOMAIN: *//' | tr -d '[:space:][:cntrl:]')
+LEARNING=$(echo "$RAW" | grep '^- ' | head -5)
+
+# Fallback to hint if domain is empty or invalid
+VALID_DOMAINS="shopify ecforce wordpress matrixify shopify-app general"
+echo "$VALID_DOMAINS" | grep -qw "${DOMAIN:-}" || DOMAIN="$DOMAIN_HINT"
+
+DOMAIN_FILE="$LEARNINGS_DIR/${DOMAIN}.md"
+
+# ── Write to domain file ───────────────────────────────────────────────────
 mkdir -p "$LEARNINGS_DIR"
-[ ! -f "$LEARNINGS_FILE" ] && echo "# $DATE" > "$LEARNINGS_FILE"
 
-{
-  echo ""
-  echo "## $TIME | $DIR"
-  if [ -n "$LEARNING" ]; then
+# Create file if not exists
+if [ ! -f "$DOMAIN_FILE" ]; then
+  echo "# $(echo "$DOMAIN" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1') Learnings" > "$DOMAIN_FILE"
+fi
+
+if [ -n "$LEARNING" ]; then
+  {
+    echo ""
+    echo "## $DATE $TIME | $DIR"
     echo "$LEARNING"
-  else
-    # No learnings extracted — write a minimal work log from git
-    COMMITS=$(git -C "$CWD" log --oneline -3 2>/dev/null | sed 's/^/- /' || true)
-    [ -n "$COMMITS" ] && echo "$COMMITS" || echo "- (作業内容なし)"
-  fi
-} >> "$LEARNINGS_FILE"
+  } >> "$DOMAIN_FILE"
+else
+  # No learnings — skip writing (don't pollute with empty entries)
+  exit 0
+fi
 
 # ── Sync to dotfiles ───────────────────────────────────────────────────────
 DOTFILES="$HOME/dotfiles"
 if git -C "$DOTFILES" rev-parse --is-inside-work-tree &>/dev/null; then
-  git -C "$DOTFILES" add "claude/learnings/$DATE.md" 2>/dev/null
+  git -C "$DOTFILES" add "claude/learnings/${DOMAIN}.md" 2>/dev/null
   if ! git -C "$DOTFILES" diff --cached --quiet 2>/dev/null; then
-    git -C "$DOTFILES" commit -m "docs: 学びログ追加 ($DATE $TIME | $DIR)" 2>/dev/null
+    git -C "$DOTFILES" commit -m "docs: [${DOMAIN}] 学びログ追加 ($DATE $TIME | $DIR)" 2>/dev/null
     git -C "$DOTFILES" push 2>/dev/null || true
   fi
 fi

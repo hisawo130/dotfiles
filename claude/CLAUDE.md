@@ -60,7 +60,17 @@ On the first task in any project directory, silently perform:
    - ecforce theme → `ecforce-reference.md`
    - Follow the UPDATE BEFORE USE protocol if the file has that block
 
-3. **Announce context** in the first line of the first response:
+3. **Load domain learnings** — read the last 60 lines of the matching file from `~/.claude/learnings/`:
+   - Shopify theme → `shopify.md`
+   - Shopify app → `shopify-app.md`
+   - ecforce theme → `ecforce.md`
+   - Shopify Flow / generic → `general.md`
+   - Matrixify task (keyword in user message) → `matrixify.md`
+   - WordPress → `wordpress.md`
+   - If file is empty or missing → skip silently
+   - **Do NOT load all domain files at once** — load only the one that matches
+
+4. **Announce context** in the first line of the first response:
    > 📍 [Project type] | [key version/framework] | [reference loaded or N/A]
 
 Skip for non-project tasks (shell help, dotfiles management, general questions).
