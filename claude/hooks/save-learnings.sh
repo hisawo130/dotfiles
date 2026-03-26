@@ -92,4 +92,14 @@ mkdir -p "$LEARNINGS_DIR"
   fi
 } >> "$LEARNINGS_FILE"
 
+# ── Sync to dotfiles ───────────────────────────────────────────────────────
+DOTFILES="$HOME/dotfiles"
+if git -C "$DOTFILES" rev-parse --is-inside-work-tree &>/dev/null; then
+  git -C "$DOTFILES" add "claude/learnings/$DATE.md" 2>/dev/null
+  if ! git -C "$DOTFILES" diff --cached --quiet 2>/dev/null; then
+    git -C "$DOTFILES" commit -m "docs: 学びログ追加 ($DATE $TIME | $DIR)" 2>/dev/null
+    git -C "$DOTFILES" push 2>/dev/null || true
+  fi
+fi
+
 exit 0
