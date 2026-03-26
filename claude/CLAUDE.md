@@ -57,7 +57,7 @@ On the first task in any project directory, silently perform:
    - Contains: current focus, in-progress items, decisions made, known issues
    - SessionStart hook injects this automatically; re-read if context feels stale
 
-4. **Load domain learnings** — read the last 60 lines of the matching file from `~/.claude/learnings/`:
+4. **Load domain learnings** — read the last 30 lines of the matching file from `~/.claude/learnings/`:
 
    | Project type / keyword | Learnings file |
    |---|---|
@@ -224,6 +224,8 @@ Multiple independent research → launch `researcher` agents in parallel.
 Pipeline: `planner` → `executor` → `reviewer` (use only needed stages).
 `reviewer` FAIL → retry `executor` once → if still FAIL, report to user with exact FAIL items.
 
+**Context protection:** sub-agents run in isolated contexts. Delegate liberally to keep main context available for multi-round work.
+
 ## Skill discovery
 
 When a sub-agent identifies a reusable pattern (a sequence of steps that could apply to future tasks), it should flag it with:
@@ -254,7 +256,7 @@ After completing any implementation, execute this sequence automatically:
 
 1. **Validate** — Run existing tests/linters if the project has them. Fix failures silently (up to 2 retries).
 2. **Review** — If 3+ files changed with non-trivial logic → invoke `reviewer` agent. Skip for simple edits, doc changes, or pure git operations.
-3. **Commit** — Use conventional commit format from Git & commit rules above. Message in Japanese.
+3. **Commit immediately** — stage only task-relevant files and commit *before* reporting to the user. **No exceptions for small changes.** One user request = one commit. Message in Japanese, conventional format.
 4. **Push** — Push if the task explicitly or implicitly requires it (PR creation, deploy, sync, or stated plan).
 5. **Update project state** — if decisions were made, in-progress items changed, or next-session context exists, update `~/.claude/projects/<sanitized-cwd>/state.md` (create if needed, ≤ 50 lines). Skip for trivial tasks.
 6. **Report** — One line: `変更: <files> | レビュー: PASS/SKIP | コミット: <hash>`
@@ -268,6 +270,8 @@ Skip inapplicable steps. For document-specific commit rules, see Git & document 
 - When context is running low, use `/compact` proactively before losing important details.
 - Prefer `/clear` between unrelated tasks.
 - **Update state.md after significant sub-tasks** (not just final completion) — this makes crash recovery useful.
+- **Context pressure rule:** delegate ALL research and implementation to sub-agents (researcher/executor). Main agent handles orchestration only — this preserves main context across multiple task rounds.
+- **When context feels heavy:** run `/compact` before starting the next unrelated task, not after.
 
 ### Crash recovery
 
@@ -337,37 +341,19 @@ When not explicitly specified, assume:
 
 ## Platform-specific notes
 
-### Shopify
+Full details are in the reference files. Only critical traps listed here.
 
-- Theme: specify Dawn version or custom theme name
-- Always use section schema `{% schema %}` for customizer settings
-- Asset references: `{{ 'filename.css' | asset_url | stylesheet_tag }}`
-- Test on both desktop and mobile preview in theme editor
-- Check for impact on other sections that share the same CSS namespace
-
-**Common traps (auto-check before finishing):**
+### Shopify — auto-check before finishing
 - `settings_data.json` accidentally staged → warn and unstage
 - `{% include %}` used instead of `{% render %}` → replace automatically
-- Schema setting IDs changed/removed → flag as breaking change
-- Hardcoded domain or asset URL → replace with Liquid filter
+- Schema setting IDs renamed/removed → flag as breaking change
+- Hardcoded asset URL → replace with `{{ 'file.css' | asset_url }}`
 
-### ecforce
-
-- Template engine: **Liquid** (`.html.liquid`、スマホ版は `+smartphone` サフィックス)
-- Layouts: `layouts/ec_force/shop/order.html.liquid`（購入フロー）/ `layouts/ec_force/shop.html.liquid`（その他）
-- Partials: `{% include 'ec_force/shop/shared/header.html' %}` 形式
-- Assets: 管理画面のファイルアップローダー。参照は `{{ file_root_path }}/css/style.css`
-- **保存 = 即本番反映**（現在のテーマ直接編集時）。必ずテーマを複製してから編集 → プレビュー確認 → テーマ切り替えの順で行う
-- ローカル環境での開発不可（Liquidはサーバーサイドレンダリングのみ）
-- デフォルトCSSに `!important` 多用 → CSS詳細度競合に注意
-- 新規URLルート追加・フォーム項目変更・サーバーサイド処理変更は不可
-- Check order flow pages (cart → order input → confirm → complete) for side effects
-
-**Common traps (auto-check before finishing):**
-- Editing active theme directly → always duplicate first; flag if can't confirm
-- Hardcoded asset URL (not using `{{ file_root_path }}`) → replace automatically
-- Missing `+smartphone` variant when desktop template changed → flag for manual check
-- CSS `!important` added → note specificity risk in response
+### ecforce — auto-check before finishing
+- **保存 = 即本番反映** — must duplicate theme before any edit
+- `{{ file_root_path }}` not used for asset URL → replace automatically
+- Desktop template changed without `+smartphone` variant → flag for manual check
+- `!important` added → note specificity risk
 
 ## Headless / remote execution
 

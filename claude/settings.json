@@ -226,6 +226,10 @@
           {
             "type": "command",
             "command": "_d=$HOME/.cache; mkdir -p \"$_d\"; _f=$_d/dotfiles_pull_check; [ ! -f \"$_f\" ] && { git -C \"$HOME/dotfiles\" pull --ff-only -q 2>/dev/null && touch \"$_f\"; } 2>/dev/null || true"
+          },
+          {
+            "type": "command",
+            "command": "_dirty=$(git -C \"$PWD\" status --porcelain 2>/dev/null | grep -v '^?' | head -5); [ -n \"$_dirty\" ] && jq -n --arg d \"$_dirty\" '{\"systemMessage\": (\"💾 未コミットの変更があります — 前のタスクをコミットしてから作業してください:\\n\" + $d)}' || true"
           }
         ]
       }
@@ -334,6 +338,17 @@
             "type": "command",
             "command": "mkdir -p \"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')\" && touch \"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/.session-clean\"",
             "async": true
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "_dirty=$(git -C \"$PWD\" status --porcelain 2>/dev/null | grep -v '^?'); [ -n \"$_dirty\" ] && jq -n --arg d \"$_dirty\" '{\"systemMessage\": (\"⚠️ コンパクト前に未コミットの変更があります。コンパクト後に履歴が失われる前にコミットしてください:\\n\" + $d)}' || true"
           }
         ]
       }
