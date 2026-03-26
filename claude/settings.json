@@ -263,6 +263,10 @@
           {
             "type": "command",
             "command": "_sf=\"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/state.md\"; [ -f \"$_sf\" ] && [ -s \"$_sf\" ] && jq -n --rawfile s \"$_sf\" '{\"systemMessage\": (\"📋 Project state loaded:\\n\" + $s)}' || true"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/recovery-detect.sh"
           }
         ]
       }
