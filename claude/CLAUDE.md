@@ -57,34 +57,11 @@ On the first task in any project directory, silently perform:
    - Contains: current focus, in-progress items, decisions made, known issues
    - SessionStart hook injects this automatically; re-read if context feels stale
 
-4. **Load domain learnings** — read the last 30 lines of the matching file from `~/.claude/learnings/`:
-
-   | Project type / keyword | Learnings file |
-   |---|---|
-   | Shopify theme | `shopify.md` |
-   | Shopify custom app | `shopify-app.md` |
-   | Shopify Flow | `shopify-flow.md` |
-   | Shopify Extensions | `shopify-extensions.md` |
-   | Shopify Hydrogen | `shopify-hydrogen.md` |
-   | Shopify Webhooks/Metafields | `shopify-webhooks.md` |
-   | ecforce | `ecforce.md` |
-   | WordPress / WooCommerce | `wordpress.md` |
-   | EC-CUBE | `ec-cube.md` |
-   | Matrixify (keyword in message) | `matrixify.md` |
-   | GA4 / GTM (keyword in message) | `ga4-gtm.md` |
-   | Klaviyo (keyword in message) | `klaviyo.md` |
-   | LINE API (keyword in message) | `line.md` |
-   | React / Next.js | `react-nextjs.md` |
-   | Vue / Nuxt | `vue-nuxt.md` |
-   | GitHub Actions | `github-actions.md` |
-   | Cloudflare (keyword in message) | `cloudflare.md` |
-   | Make / Zapier (keyword in message) | `make-zapier.md` |
-   | Headless CMS (keyword in message) | `cms.md` |
-   | Stripe (keyword in message) | `stripe.md` |
-   | Otherwise | `general.md` |
-
-   - **Do NOT load all domain files at once** — load only the one that matches
-   - If file is empty (header only) or missing → skip silently
+4. **Load domain learnings** — read last 30 lines of `~/.claude/learnings/<domain>.md`. Match by project type (step 1) or keyword in message:
+   - shopify / shopify-app / shopify-flow / shopify-extensions / shopify-hydrogen / shopify-webhooks
+   - ecforce / wordpress / ec-cube / matrixify / ga4-gtm / klaviyo / line / react-nextjs / vue-nuxt
+   - github-actions / cloudflare / make-zapier / cms / stripe / general
+   - Load **only the one matching file**. Skip if empty or missing.
 
 5. **Announce context** in the first line of the first response:
    > 📍 [Project type] | [key version/framework] | [reference loaded or N/A]
@@ -123,26 +100,16 @@ The threshold: if the task could be fully resolved by a competent developer in o
 - **Respect platform idioms.** Shopify: Liquid + JSON schema, section/block architecture, asset pipeline. ecforce: Liquid templates (`.html.liquid`), file uploader for assets.
 - **No cosmetic refactoring.** Do not reorganize, reformat, or "improve" code outside the scope of the current task.
 
-## Pre-change checklist
+## Quality checks
 
-Verify internally before finishing. No output for these items unless a problem is found:
-
-1. **Full code** — Complete file(s) written, no omissions
-2. **File path** — Exact location specified
-3. **Dependencies** — Versions pinned if newly introduced
-4. **Verification** — Mentally trace the expected outcome; only output test steps if non-obvious
-5. **Rollback** — Know how to revert; only surface if the change is high-risk
-
-## Precision protocol
-
-Additional accuracy measures enforced automatically after implementation:
+Enforced automatically — no output unless a problem is found. Pin dependency versions when newly introduced. Know rollback path before any high-risk change.
 
 1. **Re-read after write** — After editing a `.liquid` file, re-read the changed region to verify correctness. Never assume a write produced the intended result.
 2. **Diff sanity** — Before commit, run `git diff --staged` and verify:
    - No unintended whitespace-only changes
    - No files outside the task scope
    - No `settings_data.json` or lock files accidentally staged
-3. **Impact trace** — For template/section changes, trace which pages render the modified template. List them in the response.
+3. **Impact trace** — For template/section changes, list affected pages. Skip for single-template changes (no blast radius).
 4. **Liquid syntax verify** — After editing any `.liquid` file, check:
    - Matched open/close tags (`{% if %}...{% endif %}`, `{% for %}...{% endfor %}`)
    - `{% render %}` not `{% include %}` (Shopify OS 2.0)
@@ -154,7 +121,7 @@ Additional accuracy measures enforced automatically after implementation:
    - Default values are valid for the setting type
 6. **Cross-platform guard** — When editing ecforce desktop template, check for corresponding `+smartphone` variant. Flag if it exists and may need the same change.
 
-These checks are automated by PostToolUse hooks on Write/Edit for `.liquid` files and PreToolUse hooks on `git push`.
+Automated by PostToolUse hooks on Write/Edit (`.liquid`) and PreToolUse hooks (`git push`).
 
 ## Proactive awareness
 
@@ -166,14 +133,6 @@ Handle these automatically during implementation — never ask:
 - **High-risk flag:** Checkout flow, payment, or auth changes → always flag as 🔴 HIGH RISK regardless of change size.
 - **Stale branch warning:** If current branch is 10+ commits behind main/master, warn before starting work.
 - **Schema backup:** Before modifying `settings_data.json` or `{% schema %}`, note the original values for rollback.
-
-## Operational rules
-
-- State impact scope only when 3+ pages/sections are affected. Single-template changes: skip the trace.
-- Note backward compatibility only when a breaking change is detected (setting ID renamed, URL structure changed, etc.). Do not annotate every change.
-- DNS or domain changes require: switchover plan + current/target TTL values + rollback procedure.
-- Before any significant change, run `git status` silently. Report only if unexpected uncommitted changes exist.
-- Environment and constraints are declared automatically via the Auto-context protocol above.
 
 ## Git & commit rules
 
@@ -198,17 +157,11 @@ Types: `feat` / `fix` / `refactor` / `docs` / `chore` / `style` / `test`
 
 **Reference file commits:** After updating any file in `~/dotfiles/claude/references/`: `git -C ~/dotfiles add claude/references/ && git -C ~/dotfiles commit -m "docs: リファレンス更新" && git -C ~/dotfiles push`
 
+**DNS/domain changes:** Include switchover plan + current/target TTL values + rollback procedure.
+
 ## Reference document update rule
 
-Any file containing an `UPDATE BEFORE USE` block at the top must be refreshed before its contents are used:
-
-1. Read the `Sources:` list in the block.
-2. For `WebFetch:` sources — fetch each URL and compare against current content.
-3. For `Scan:` sources — read the listed local paths and compare.
-4. Apply any new or changed information to the file body.
-5. Run `git add + git commit + git push` immediately after updating.
-
-When creating a new reference document, always add an `UPDATE BEFORE USE` block at the top with appropriate `Sources:` entries (WebFetch URLs or local Scan paths).
+Files with an `UPDATE BEFORE USE` block: read its `Sources:`, fetch/compare each, apply changes, then commit+push immediately. When creating reference docs, add this block with WebFetch or Scan sources.
 
 ## Agent architecture
 
@@ -238,15 +191,9 @@ The main agent reviews candidates and decides whether to create a permanent skil
 
 Handle failures autonomously without escalating:
 
-- **Test failure:** Fix root cause and re-run, up to 2 iterations. If still failing, report with: error message, file:line, and what was tried.
-- **Lint failure:** Auto-fix (formatter, missing import, type error) without asking.
-- **Build failure:** Read full error output. Check dependency issues, version mismatches, missing files. Fix and retry.
-- **Tool/command error:** Retry once with a different approach, then report.
-- **Network/API error:** Retry once after brief delay. If persistent, continue with cached/local data and note the failure.
-- **Permission error:** Do not use `sudo`. Report the issue and suggest manual resolution.
-- **Vague requirements:** State assumption, implement, note alternatives at the end.
-- **Missing file:** If a referenced file doesn't exist, create it at the most conventional path for the project type. Do not ask.
-- **Ambiguous target:** If a task names an entity (function, section, component) matching multiple files, pick the most recently modified or most central to the described feature. Proceed without asking.
+- **Test failure:** Fix root cause, re-run up to 2 iterations. If still failing: report error message, file:line, and what was tried.
+- **Permission error:** Do not use `sudo`. Report and suggest manual resolution.
+- **Ambiguous target:** Pick most recently modified or most central to the feature. Proceed without asking.
 
 Never suppress errors or add workarounds that hide failures. Report the exact error, not a summary.
 
@@ -267,11 +214,8 @@ Skip inapplicable steps. For document-specific commit rules, see Git & document 
 
 - At session start, if uncommitted changes exist in the working directory, summarize them before starting new work.
 - At the end of a significant implementation session, note the single most important bias or assumption that may have influenced the work.
-- When context is running low, use `/compact` proactively before losing important details.
-- Prefer `/clear` between unrelated tasks.
+- When context is running low, use `/compact` proactively. Prefer `/clear` between unrelated tasks.
 - **Update state.md after significant sub-tasks** (not just final completion) — this makes crash recovery useful.
-- **Context pressure rule:** use sub-agents when the task is large (5+ files, parallel research, post-impl review). For single-file edits, quick fixes, and simple git ops → main agent acts directly. Over-delegating to sub-agents adds overhead and hides intermediate state.
-- **When context feels heavy:** run `/compact` before starting the next unrelated task, not after.
 
 ### Crash recovery
 
@@ -357,13 +301,8 @@ Full details are in the reference files. Only critical traps listed here.
 
 ## Headless / remote execution
 
-When running via `claude -p` (print/headless mode) or `claude-run`:
+When running via `claude -p` or `claude-run`:
 
-- **No interactive prompts** — never pause to ask questions; make the safest assumption and document it in output
-- **No confirmation dialogs** — `--dangerously-skip-permissions` is set; proceed directly
-- **JSON output preferred** — use `--output-format json` for CI pipelines so output is parsable
-- **Bound by `--max-turns`** — stop cleanly when turn limit reached; summarize what was done vs. remaining
-- **Error = exit non-zero** — if a critical step fails, output error details to stdout and exit 1
-- **Secrets via env** — ANTHROPIC_API_KEY must be in `~/.secrets` or environment before running headlessly
-- **Read `scripts/claude-run.sh`** for flag reference; read `claude/templates/claude.yml` for CI usage
-- **Scope creep prevention** — in headless mode, do exactly what the prompt says; skip tangential improvements unless explicitly instructed
+- No interactive prompts — make safest assumption and document it in output
+- `--dangerously-skip-permissions` is set; proceed directly
+- Critical failure → output error details to stdout and exit non-zero
