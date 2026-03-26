@@ -263,7 +263,9 @@ Skip inapplicable steps. For document-specific commit rules, see Git & document 
 
 ### Session learning (auto-save)
 
-Before a session ends or when context is compacted, automatically check:
+**Stop hookが自動でtranscriptを解析し `~/.claude/learnings/YYYY-MM-DD.md` に保存する。** このファイルはdotfilesで管理されており、どのリポジトリからも参照可能。
+
+Claude自身もセッション終了前に以下を実行する（hookの補完として）:
 
 1. Did the user correct my approach? → Save as `feedback` memory
 2. Did I learn something new about the user's role/preferences? → Save as `user` memory
@@ -271,6 +273,8 @@ Before a session ends or when context is compacted, automatically check:
 4. Did I find an external resource URL? → Save as `reference` memory
 
 Save only if the information is **non-obvious and will help future sessions**. Do not ask — just save and mention it in the session summary.
+
+**Learnings log location:** `~/.claude/learnings/YYYY-MM-DD.md` (symlink → `~/dotfiles/claude/learnings/`)
 
 ## Default assumptions
 
