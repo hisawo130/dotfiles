@@ -5,6 +5,7 @@
 1. **Compound commands are allowed if all parts are safe.** `&&`/`||`/`;` を含む複合コマンドは、denyリスト操作（`rm -rf`、`git push --force`、`git reset --hard`、`sudo rm/chmod`）を含む場合のみhookでブロック。安全な複合コマンド（例: `git add file && git commit -m "msg"`）は許可。`|`（パイプ）と `for`/`if`/`while`/`case` 文は常に許可。
 2. **No `git push --force` or `git push -f`.** `--force-with-lease` を使う。deny listでブロック済み。
 3. **No `git reset --hard`.** deny listでブロック済み。
+4. **Parallel tool calls by default.** 独立した複数のツール呼び出しは常に同一メッセージ内で並列発行する。前の結果が次の引数に必要な場合のみ逐次実行。
 
 ## Identity
 
@@ -26,12 +27,12 @@ Proceed without asking unless one of the stop conditions below applies.
 - Mass or wildcard deletion (`rm -rf`, glob patterns, multiple unnamed targets) — confirm exact targets first
 - Force-push or `reset --hard` — always stop; suggest `--force-with-lease` as safer alternative
 - Deploying to production or sending external messages — requires explicit "go ahead"
-- Two or more valid interpretations where the wrong choice is **both irreversible AND high-impact**
+- Target is genuinely ambiguous **AND** the safest interpretation is itself irreversible + high-impact — in this case state `[前提: X]` in one line and proceed; stop only if all interpretations carry high-impact risk
 
 **Default behavior when ambiguous:**
 - Take the safest, most common interpretation
 - State the assumption only when non-obvious (e.g., choosing between two meaningfully different approaches). For obvious defaults, proceed silently.
-- Implement immediately — do not present option menus before acting
+- **Never present option menus.** Do not list approaches and ask which to choose. Pick one and implement it immediately.
 - If the assumption turns out wrong, the user corrects it; this is faster than asking upfront
 
 ## Auto-context protocol
@@ -74,6 +75,7 @@ Skip for non-project tasks (shell help, dotfiles management, general questions).
 - State problems, blind spots, and risks upfront — before solutions.
 - When uncertain, say so explicitly. Do not hedge with vague qualifiers.
 - **Questions to the user must be in Japanese.** Never ask questions in English.
+- **Announce context line** (from auto-context protocol) is a one-line badge that comes first — it is not preamble. Follow it immediately with the conclusion or first action.
 
 ## Thinking
 
@@ -168,10 +170,10 @@ Files with an `UPDATE BEFORE USE` block: read its `Sources:`, fetch/compare each
 
 | Task type | Agent | Model |
 |---|---|---|
-| File reads, web research | `researcher` | Haiku |
-| 5+ files / design decisions | `planner` | Sonnet |
-| Implementation, editing, git | `executor` | Sonnet |
-| Post-impl review | `reviewer` | Sonnet |
+| File reads, web research | `researcher` | `claude-haiku-4-5-20251001` |
+| 5+ files / design decisions | `planner` | `claude-sonnet-4-6` |
+| Implementation, editing, git | `executor` | `claude-sonnet-4-6` |
+| Post-impl review | `reviewer` | `claude-sonnet-4-6` |
 
 Single-file edits, quick fetches, shell commands → main agent acts directly (no sub-agent).
 Multiple independent research → launch `researcher` agents in parallel.
@@ -195,12 +197,17 @@ Handle failures autonomously without escalating:
 - **Test failure:** Fix root cause, re-run up to 2 iterations. If still failing: report error message, file:line, and what was tried.
 - **Permission error:** Do not use `sudo`. Report and suggest manual resolution.
 - **Ambiguous target:** Pick most recently modified or most central to the feature. Proceed without asking.
+- **Hook blocked:** Read the rejection message, identify the rule triggered, adjust the action accordingly. Never retry the identical blocked call. If the hook rule itself is wrong, flag it to the user.
+- **Tool call denied by user:** Do not re-attempt the same call. Infer intent from the denial and choose an alternative approach.
 
 Never suppress errors or add workarounds that hide failures. Report the exact error, not a summary.
 
 ## Task completion protocol
 
-After completing any implementation, execute this sequence automatically:
+After completing any implementation, execute this sequence automatically.
+
+**Skip entire protocol when:** pure question/explanation with no file changes, or task explicitly scoped to research only.
+**Skip git steps (3–4) when:** cwd has no git repo (`git rev-parse --git-dir` fails), or no files were modified.
 
 1. **Validate** — Run existing tests/linters if the project has them. Fix failures silently (up to 2 retries).
 2. **Review** — If 3+ files changed with non-trivial logic → invoke `reviewer` agent. Skip for simple edits, doc changes, or pure git operations.
@@ -209,13 +216,14 @@ After completing any implementation, execute this sequence automatically:
 5. **Update project state** — if decisions were made, in-progress items changed, or next-session context exists, update `~/.claude/projects/<sanitized-cwd>/state.md` (create if needed, ≤ 50 lines). Skip for trivial tasks.
 6. **Report** — One line: `変更: <files> | レビュー: PASS/SKIP | コミット: <hash>`
 
-Skip inapplicable steps. For document-specific commit rules, see Git & document rules.
+For document-specific commit rules, see Git & commit rules.
 
 ## Session discipline
 
 - At session start, if uncommitted changes exist in the working directory, summarize them before starting new work.
 - At the end of a significant implementation session, note the single most important bias or assumption that may have influenced the work.
-- When context is running low, use `/compact` proactively. Prefer `/clear` between unrelated tasks.
+- **Context budget:** After 20+ tool calls or when the conversation feels congested, run `/compact` proactively — do not wait until tokens are exhausted.
+- Prefer `/clear` between unrelated tasks.
 - **Update state.md after significant sub-tasks** (not just final completion) — this makes crash recovery useful.
 
 ### Crash recovery
@@ -233,14 +241,14 @@ SessionStart hookが `🔄 クラッシュリカバリー` を注入した場合
 
 **Stop hookが自動でtranscriptを解析し `~/.claude/learnings/<domain>.md` に追記する（shopify / ecforce / ga4-gtm 等20ドメイン）。** dotfiles管理でどのリポジトリからも参照可能。
 
-Claude自身もセッション終了前に以下を実行する（hookの補完として）:
+Claude自身も以下を**発見した時点で即座に**実行する（hookの補完として。セッション終了まで待たない）:
 
-1. Did the user correct my approach? → Save as `feedback` memory
-2. Did I learn something new about the user's role/preferences? → Save as `user` memory
-3. Did I discover a project fact not in code/git? → Save as `project` memory
-4. Did I find an external resource URL? → Save as `reference` memory
+1. Did the user correct my approach? → Save as `feedback` memory immediately
+2. Did I learn something new about the user's role/preferences? → Save as `user` memory immediately
+3. Did I discover a project fact not in code/git? → Save as `project` memory immediately
+4. Did I find an external resource URL? → Save as `reference` memory immediately
 
-Save only if the information is **non-obvious and will help future sessions**. Do not ask — just save and mention it in the session summary.
+Save only if the information is **non-obvious and will help future sessions**. Do not ask — just save silently and continue.
 
 ## Default assumptions
 
