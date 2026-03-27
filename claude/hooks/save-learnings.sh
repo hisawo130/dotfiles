@@ -1,7 +1,7 @@
 #!/bin/bash
 # save-learnings.sh
 # Claude Code Stop hook: extract session learnings and save by domain.
-# Writes to ~/.claude/learnings/<domain>.md (not date-based).
+# Rule-based extraction (no claude -p dependency).
 
 # Recursion guard
 [ "${CLAUDE_LEARNING_EXTRACT:-}" = "1" ] && exit 0
@@ -12,7 +12,6 @@ DATE=$(date +%Y-%m-%d)
 TIME=$(date +%H:%M)
 CWD=$(pwd)
 DIR=$(basename "$CWD")
-MAX_TRANSCRIPT_CHARS=6000
 
 # ── Read hook input ───────────────────────────────────────────────────────
 HOOK_INPUT=$(cat /dev/stdin 2>/dev/null || true)
@@ -29,124 +28,129 @@ if [ ! -f "$TRANSCRIPT" ]; then
 fi
 [ -z "$TRANSCRIPT" ] || [ ! -f "$TRANSCRIPT" ] && exit 0
 
-# ── Extract text content from transcript ──────────────────────────────────
-CONTEXT=$(jq -r '
-  select(.type == "user" or .type == "assistant") |
-  "[" + .type + "] " +
-  (
-    .message.content // [] |
-    if type == "array" then
-      map(select(.type == "text") | .text) | join(" ")
-    elif type == "string" then .
-    else ""
-    end
-  )
-' "$TRANSCRIPT" 2>/dev/null | \
-  grep -v '^\[user\] \[' | \
-  grep -v '^\[assistant\] $' | \
-  tail -c "$MAX_TRANSCRIPT_CHARS" || true)
+# ── Extract text content ───────────────────────────────────────────────────
+ASSISTANT_TEXT=$(jq -r '
+  select(.type == "assistant") |
+  (.message.content // []) |
+  if type == "array" then
+    map(select(.type == "text") | .text) | join("\n")
+  else "" end
+' "$TRANSCRIPT" 2>/dev/null)
 
-[ -z "$CONTEXT" ] && exit 0
+USER_TEXT=$(jq -r '
+  select(.type == "user") |
+  (.message.content) |
+  if type == "string" and (length > 5) then . else "" end
+' "$TRANSCRIPT" 2>/dev/null)
 
-# ── Detect domain hint from project structure ──────────────────────────────
-DOMAIN_HINT="general"
+# Skip trivial sessions
+TOTAL_LEN=$(( ${#ASSISTANT_TEXT} + ${#USER_TEXT} ))
+[ "$TOTAL_LEN" -lt 200 ] && exit 0
+
+# ── Detect domain from project structure ──────────────────────────────────
+DOMAIN="general"
 if [ -f "$CWD/shopify.theme.toml" ] || [ -f "$CWD/config/settings_schema.json" ]; then
-  DOMAIN_HINT="shopify"
+  DOMAIN="shopify"
 elif [ -d "$CWD/ec_force" ] || [ -d "$CWD/layouts/ec_force" ]; then
-  DOMAIN_HINT="ecforce"
+  DOMAIN="ecforce"
 elif [ -f "$CWD/wp-config.php" ] || [ -d "$CWD/wp-content" ]; then
-  DOMAIN_HINT="wordpress"
+  DOMAIN="wordpress"
 elif [ -f "$CWD/package.json" ] && grep -q '"@shopify/hydrogen' "$CWD/package.json" 2>/dev/null; then
-  DOMAIN_HINT="shopify-hydrogen"
+  DOMAIN="shopify-hydrogen"
 elif [ -f "$CWD/package.json" ] && grep -q '"@shopify/' "$CWD/package.json" 2>/dev/null; then
-  DOMAIN_HINT="shopify-app"
+  DOMAIN="shopify-app"
 elif [ -f "$CWD/package.json" ] && grep -q '"next"' "$CWD/package.json" 2>/dev/null; then
-  DOMAIN_HINT="react-nextjs"
+  DOMAIN="react-nextjs"
 elif [ -f "$CWD/package.json" ] && grep -q '"nuxt"' "$CWD/package.json" 2>/dev/null; then
-  DOMAIN_HINT="vue-nuxt"
+  DOMAIN="vue-nuxt"
 elif [ -f "$CWD/wrangler.toml" ] || [ -f "$CWD/wrangler.jsonc" ]; then
-  DOMAIN_HINT="cloudflare"
+  DOMAIN="cloudflare"
 elif [ -d "$CWD/.github/workflows" ]; then
-  DOMAIN_HINT="github-actions"
+  DOMAIN="github-actions"
 elif [ -d "$CWD/app/Plugin" ] || [ -f "$CWD/app/config/eccube/config.yaml" ]; then
-  DOMAIN_HINT="ec-cube"
+  DOMAIN="ec-cube"
 fi
 
-# ── Extract learnings + domain via claude -p ──────────────────────────────
-PROMPT="以下はClaudeセッションの会話ログです。
+# Keyword-based domain override (for sessions in non-project dirs)
+if [ "$DOMAIN" = "general" ]; then
+  COMBINED_TEXT="$ASSISTANT_TEXT$USER_TEXT"
+  if echo "$COMBINED_TEXT" | grep -qiE '(shopify|liquid.*section|dawn theme|{% schema %}|storefront api)'; then
+    DOMAIN="shopify"
+  elif echo "$COMBINED_TEXT" | grep -qiE '(ecforce|ec_force|file_root_path|\.html\.liquid)'; then
+    DOMAIN="ecforce"
+  elif echo "$COMBINED_TEXT" | grep -qiE '(google analytics|gtm|ga4|dataLayer|google tag)'; then
+    DOMAIN="ga4-gtm"
+  elif echo "$COMBINED_TEXT" | grep -qiE '(klaviyo|flow trigger|email segment)'; then
+    DOMAIN="klaviyo"
+  elif echo "$COMBINED_TEXT" | grep -qiE '(matrixify|shopify export|csv import|bulkimport)'; then
+    DOMAIN="matrixify"
+  elif echo "$COMBINED_TEXT" | grep -qiE '(github actions|workflow run|\.github/workflows)'; then
+    DOMAIN="github-actions"
+  elif echo "$COMBINED_TEXT" | grep -qiE '(cloudflare|wrangler|workers|pages deploy)'; then
+    DOMAIN="cloudflare"
+  elif echo "$COMBINED_TEXT" | grep -qiE '(make\.com|integromat|zapier|シナリオ|モジュール)'; then
+    DOMAIN="make-zapier"
+  fi
+fi
 
-【出力フォーマット — 必ずこの形式を守ること】
-DOMAIN: <domain>
-- 学び1（あれば）
-- 学び2（あれば）
-- 学び3（あれば）
+# ── Extract learning signals ───────────────────────────────────────────────
+# 1. Warning / important patterns in assistant text (lines with actionable info)
+WARNINGS=$(echo "$ASSISTANT_TEXT" | \
+  grep -E '(注意|重要|必ず|NG|禁止|避ける|罠|落とし穴|原因は|根本原因|理由は|ポイントは|コツは|⚠️|🚨|🔴|エラーの原因|注意点|気をつける|注意が必要)' | \
+  awk 'length > 15 && length < 250' | \
+  sed 's/^[[:space:]]*//' | \
+  sed 's/\*\*//g' | \
+  head -3)
 
-【domainの選択肢】
-ログの内容に最も合うものを1つ選ぶ（デフォルトヒント: ${DOMAIN_HINT}）:
-- shopify          … Shopifyテーマ・Liquid・セクション・Dawn・OS2.0
-- shopify-app      … Shopifyカスタムアプリ・Storefront API・Functions・GraphQL
-- shopify-flow     … Shopify Flowワークフロー・トリガー・アクション
-- shopify-extensions … Theme App/Checkout UI/Customer Account Extensions
-- shopify-hydrogen … Hydrogen・Oxygen・ヘッドレスStorefront
-- shopify-webhooks … Webhooks・Metafields・Metaobjects
-- ecforce          … ecforceテンプレート・Liquid・スマホ版
-- wordpress        … WordPress・WooCommerce・テーマ・プラグイン
-- ec-cube          … EC-CUBE 4系・Symfony・Twig・プラグイン
-- matrixify        … MatrixifyのCSV/Excelインポート・エクスポート・データ移行
-- ga4-gtm          … Google Analytics 4・GTM・イベント計測・コンバージョン
-- klaviyo          … Klaviyoメール/SMS・フロー・セグメント・Shopify連携
-- line             … LINE公式アカウント・LINE API・Messaging API
-- react-nextjs     … React・Next.js・App Router・TypeScript
-- vue-nuxt         … Vue.js・Nuxt・Composition API
-- github-actions   … CI/CD・GitHub Actionsワークフロー
-- cloudflare       … DNS・CDN・Pages・Workers・リダイレクト
-- make-zapier      … Make(Integromat)・Zapier・ノーコード自動化
-- cms              … microCMS・Contentful・Storyblok・ヘッドレスCMS
-- stripe           … Stripe決済API・Webhook・サブスクリプション
-- general          … ツール・git・CLI・複数領域横断・その他
+# 2. User corrections (user flagged something was wrong)
+CORRECTIONS=$(echo "$USER_TEXT" | \
+  grep -E '(違う|NG|じゃなく|でなく|やり直し|ダメ|だめ|間違|直して|修正して|そうじゃない|異なる)' | \
+  awk 'length > 5 && length < 150' | \
+  head -2)
 
-【学びの抽出ルール】
-- 具体的・非自明なもののみ（プラットフォーム固有の罠、バグの根本原因、有効だったパターン、ユーザーが修正した誤り）
-- 最大3つ、日本語箇条書き（- で始める）
-- 汎用アドバイス・自明な内容・作業ログは含めない
-- 学びがなければ「DOMAIN: ${DOMAIN_HINT}」のみ出力（学び行なし）
+# 3. Session task summary: first meaningful user request
+FIRST_REQUEST=$(echo "$USER_TEXT" | \
+  grep -v '^$' | grep -v '^\[' | \
+  awk 'length > 8' | head -1 | cut -c1-120)
 
----
-$CONTEXT"
+# 4. Completion/result line from assistant
+COMPLETION=$(echo "$ASSISTANT_TEXT" | \
+  grep -E '(変更:|コミット:|作成しました|更新しました|修正しました|追加しました|完了しました|対応しました)' | \
+  tail -1 | cut -c1-150)
 
-RAW=$(CLAUDE_LEARNING_EXTRACT=1 claude -p \
-  --max-turns 2 \
-  --dangerously-skip-permissions \
-  "$PROMPT" 2>/dev/null || true)
+# ── Build output lines ────────────────────────────────────────────────────
+LINES=()
 
-[ -z "$RAW" ] && exit 0
+while IFS= read -r line; do
+  [[ -n "$line" ]] && LINES+=("- $line")
+done <<< "$WARNINGS"
 
-# ── Parse domain and learnings ────────────────────────────────────────────
-DOMAIN=$(echo "$RAW" | grep '^DOMAIN:' | head -1 | sed 's/^DOMAIN: *//' | tr -d '[:space:][:cntrl:]')
-LEARNING=$(echo "$RAW" | grep '^- ' | head -5)
+while IFS= read -r line; do
+  [[ -n "$line" ]] && LINES+=("- [ユーザー修正] $line")
+done <<< "$CORRECTIONS"
 
-# Validate domain
-VALID_DOMAINS="shopify shopify-app shopify-flow shopify-extensions shopify-hydrogen shopify-webhooks ecforce wordpress ec-cube matrixify ga4-gtm klaviyo line react-nextjs vue-nuxt github-actions cloudflare make-zapier cms stripe general"
-echo "$VALID_DOMAINS" | grep -qw "${DOMAIN:-}" || DOMAIN="$DOMAIN_HINT"
+# If still empty, write minimal task summary
+if [ "${#LINES[@]}" -eq 0 ]; then
+  [[ -n "$FIRST_REQUEST" ]] && LINES+=("- 作業: $FIRST_REQUEST")
+  [[ -n "$COMPLETION" ]]    && LINES+=("- 完了: $COMPLETION")
+fi
 
-DOMAIN_FILE="$LEARNINGS_DIR/${DOMAIN}.md"
+[ "${#LINES[@]}" -eq 0 ] && exit 0
 
 # ── Write to domain file ───────────────────────────────────────────────────
+DOMAIN_FILE="$LEARNINGS_DIR/${DOMAIN}.md"
 mkdir -p "$LEARNINGS_DIR"
 
 if [ ! -f "$DOMAIN_FILE" ]; then
-  echo "# $(echo "$DOMAIN" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1') Learnings" > "$DOMAIN_FILE"
+  TITLE=$(echo "$DOMAIN" | sed 's/-/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1')
+  echo "# ${TITLE} Learnings" > "$DOMAIN_FILE"
 fi
 
-if [ -n "$LEARNING" ]; then
-  {
-    echo ""
-    echo "## $DATE $TIME | $DIR"
-    echo "$LEARNING"
-  } >> "$DOMAIN_FILE"
-else
-  exit 0
-fi
+{
+  echo ""
+  echo "## $DATE $TIME | $DIR"
+  printf '%s\n' "${LINES[@]}"
+} >> "$DOMAIN_FILE"
 
 # ── Sync to dotfiles ───────────────────────────────────────────────────────
 DOTFILES="$HOME/dotfiles"
