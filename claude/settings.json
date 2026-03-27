@@ -342,9 +342,9 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/save-learnings.sh",
-            "async": true,
             "timeout": 90,
-            "statusMessage": "学びを抽出中..."
+            "statusMessage": "学びを抽出中...",
+            "async": true
           },
           {
             "type": "command",
@@ -381,6 +381,9 @@
     "type": "command",
     "command": "~/.claude/statusline.py"
   },
+  "effortLevel": "high",
+  "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true,
   "autoMode": {
     "allow": [
       "File read/write/delete operations within the home directory or project directories",
@@ -400,8 +403,6 @@
       "Timezone is JST; user operates autonomously and prefers uninterrupted execution"
     ]
   },
-  "effortLevel": "high",
-  "skipAutoPermissionPrompt": true,
   "mcpServers": {
     "playwright": {
       "command": "npx",
@@ -410,6 +411,5 @@
         "--headless"
       ]
     }
-  },
-  "skipDangerousModePermissionPrompt": true
+  }
 }
