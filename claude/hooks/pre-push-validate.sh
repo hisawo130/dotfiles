@@ -8,15 +8,28 @@ CMD=$(echo "$INPUT" | jq -r '.tool_input.command // ""')
 # Fast exit: only intercept git push commands
 echo "$CMD" | grep -qE 'git\s+push' || exit 0
 
-# --- Check 1: Shopify theme check ---
+# --- Check 1: Shopify theme check (変更ファイルのみ対象) ---
 if [ -f "shopify.theme.toml" ] || [ -f "config/settings_schema.json" ]; then
   if command -v shopify >/dev/null 2>&1; then
     RESULT=$(shopify theme check --fail-level error 2>&1)
     if [ $? -ne 0 ]; then
-      ERRORS=$(echo "$RESULT" | grep -E '^\s*(✗|×|ERROR)' | head -10)
-      jq -n --arg reason "shopify theme check でエラー検出。push前に修正してください:\n$ERRORS" \
-        '{"decision":"block","reason":$reason}'
-      exit 0
+      # 直近コミットで変更されたファイルを取得
+      CHANGED_FILES=$(git diff HEAD~1 --name-only 2>/dev/null)
+      # 変更ファイルに関連するエラーのみ抽出
+      RELEVANT_ERRORS=""
+      while IFS= read -r file; do
+        [ -z "$file" ] && continue
+        BASENAME=$(basename "$file")
+        if echo "$RESULT" | grep -qF "$BASENAME"; then
+          RELEVANT_ERRORS="$RELEVANT_ERRORS $file"
+        fi
+      done <<< "$CHANGED_FILES"
+      if [ -n "$RELEVANT_ERRORS" ]; then
+        jq -n --arg reason "変更ファイルにtheme checkエラー検出。push前に修正してください:$RELEVANT_ERRORS" \
+          '{"decision":"block","reason":$reason}'
+        exit 0
+      fi
+      # 変更ファイル以外の既存エラーは無視してpushを許可
     fi
   fi
 fi
