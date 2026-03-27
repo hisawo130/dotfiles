@@ -13,6 +13,16 @@ TIME=$(date +%H:%M)
 CWD=$(pwd)
 DIR=$(basename "$CWD")
 
+# ── Early exit: skip dirs that would produce CLAUDE.md / system noise ────
+# Home dir, dotfiles, and .claude itself all contain instruction text that
+# matches keyword patterns but have zero learning value.
+if [ "$CWD" = "$HOME" ] || \
+   [ "$CWD" = "$HOME/dotfiles" ] || \
+   [[ "$CWD" == "$HOME/.claude"* ]] || \
+   [[ "$CWD" == "$HOME/dotfiles/claude"* ]]; then
+  exit 0
+fi
+
 # ── Read hook input ───────────────────────────────────────────────────────
 HOOK_INPUT=$(cat /dev/stdin 2>/dev/null || true)
 SESSION_ID=$(echo "$HOOK_INPUT" | jq -r '.session_id // ""' 2>/dev/null || true)
@@ -47,6 +57,49 @@ USER_TEXT=$(jq -r '
 TOTAL_LEN=$(( ${#ASSISTANT_TEXT} + ${#USER_TEXT} ))
 [ "$TOTAL_LEN" -lt 200 ] && exit 0
 
+# ── Noise filter function ─────────────────────────────────────────────────
+# Removes lines that are structural/template content, not real learnings:
+#   - markdown table rows (|...|...|)
+#   - numbered list items from CLAUDE.md docs (1. 2. 3. with long content)
+#   - lines referencing the learnings/hooks system itself
+#   - lines with shell variable names (extracted from scripts)
+filter_noise() {
+  grep -v '|.*|.*|' | \
+  grep -v '^\s*[0-9]\+\. .*\(LEARNINGS\|TRANSCRIPT\|SESSION\|WebFetch\|grep -E\|awk \)' | \
+  grep -v 'LEARNINGS_DIR\|TRANSCRIPT\|SESSION_ID\|save-learnings\|claude/learnings' | \
+  grep -v '^\s*```' | \
+  grep -v 'Co-authored-by:\|Co-Authored-By:' | \
+  grep -v '「残念ながら' | \
+  grep -v '^\s*\$(' | \
+  awk 'length > 15 && length < 280'
+}
+
+# ── Type tag function ─────────────────────────────────────────────────────
+# Adds a type prefix based on content classification.
+tag_line() {
+  local line="$1"
+  if echo "$line" | grep -qE '(罠|落とし穴|バグ|失敗|NG|禁止|エラーの原因|回避すべき|してはいけない)'; then
+    echo "[gotcha] $line"
+  elif echo "$line" | grep -qE '(未解決|要調査|継続調査|TODO|open:)'; then
+    echo "[open] $line"
+  elif echo "$line" | grep -qE '(解決方法|正しい方法|うまくいく|成功した|このやり方|このアプローチ)'; then
+    echo "[pattern] $line"
+  elif echo "$line" | grep -qE '(コツ|ポイントは|覚え書き|ベストプラクティス)'; then
+    echo "[tip] $line"
+  else
+    echo "$line"
+  fi
+}
+
+# ── Dedup check ───────────────────────────────────────────────────────────
+# Returns 0 (true) if a line is already present in the recent domain file.
+is_duplicate() {
+  local line="$1"
+  local file="$2"
+  local key="${line:0:60}"
+  [ -f "$file" ] && tail -200 "$file" | grep -qF "$key"
+}
+
 # ── Detect domain from project structure ──────────────────────────────────
 DOMAIN="general"
 if [ -f "$CWD/shopify.theme.toml" ] || [ -f "$CWD/config/settings_schema.json" ]; then
@@ -72,8 +125,7 @@ elif [ -d "$CWD/app/Plugin" ] || [ -f "$CWD/app/config/eccube/config.yaml" ]; th
 fi
 
 # Keyword-based domain override (for sessions in non-project dirs)
-# Skip if CWD is home dir or dotfiles — CLAUDE.md text would cause false positives
-if [ "$DOMAIN" = "general" ] && [ "$CWD" != "$HOME" ] && [ "$CWD" != "$HOME/dotfiles" ]; then
+if [ "$DOMAIN" = "general" ]; then
   COMBINED_TEXT="$ASSISTANT_TEXT$USER_TEXT"
   if echo "$COMBINED_TEXT" | grep -qiE '(shopify|liquid.*section|dawn theme|{% schema %}|storefront api)'; then
     DOMAIN="shopify"
@@ -94,52 +146,97 @@ if [ "$DOMAIN" = "general" ] && [ "$CWD" != "$HOME" ] && [ "$CWD" != "$HOME/dotf
   fi
 fi
 
+DOMAIN_FILE="$LEARNINGS_DIR/${DOMAIN}.md"
+
 # ── Extract learning signals ───────────────────────────────────────────────
-# 1. Warning / important patterns in assistant text (lines with actionable info)
+
+# 1. Warning / gotcha patterns (罠・注意・NG)
 WARNINGS=$(echo "$ASSISTANT_TEXT" | \
-  grep -E '(注意|重要|必ず|NG|禁止|避ける|罠|落とし穴|原因は|根本原因|理由は|ポイントは|コツは|⚠️|🚨|🔴|エラーの原因|注意点|気をつける|注意が必要)' | \
-  awk 'length > 15 && length < 250' | \
+  grep -E '(注意|重要|必ず|NG|禁止|避ける|罠|落とし穴|根本原因|理由は|ポイントは|コツは|⚠️|🚨|🔴|エラーの原因|注意点|気をつける|注意が必要|してはいけない)' | \
+  filter_noise | \
   sed 's/^[[:space:]]*//' | \
   sed 's/\*\*//g' | \
   head -3)
 
-# 2. User corrections (user flagged something was wrong)
+# 2. "What worked" patterns (解決策・正しい方法)
+WHAT_WORKED=$(echo "$ASSISTANT_TEXT" | \
+  grep -E '(解決しました|解決方法は|正しいやり方は|このアプローチ|成功した|うまくいく|ベストプラクティス)' | \
+  filter_noise | \
+  sed 's/^[[:space:]]*//' | \
+  sed 's/\*\*//g' | \
+  head -2)
+
+# 3. User corrections (user flagged something was wrong)
 CORRECTIONS=$(echo "$USER_TEXT" | \
   grep -E '(違う|NG|じゃなく|でなく|やり直し|ダメ|だめ|間違|直して|修正して|そうじゃない|異なる)' | \
   awk 'length > 5 && length < 150' | \
   head -2)
 
-# 3. Session task summary: first meaningful user request
+# 4. Unresolved issues
+OPEN_ISSUES=$(echo "$ASSISTANT_TEXT" | \
+  grep -E '(未解決|要調査|継続調査|要確認|要検討|TODO:)' | \
+  filter_noise | \
+  sed 's/^[[:space:]]*//' | \
+  sed 's/\*\*//g' | \
+  head -2)
+
+# 5. Session task summary (fallback)
 FIRST_REQUEST=$(echo "$USER_TEXT" | \
   grep -v '^$' | grep -v '^\[' | \
   awk 'length > 8' | head -1 | cut -c1-120)
 
-# 4. Completion/result line from assistant
 COMPLETION=$(echo "$ASSISTANT_TEXT" | \
   grep -E '(変更:|コミット:|作成しました|更新しました|修正しました|追加しました|完了しました|対応しました)' | \
   tail -1 | cut -c1-150)
 
-# ── Build output lines ────────────────────────────────────────────────────
+# ── Build output lines (with dedup check) ─────────────────────────────────
 LINES=()
 
 while IFS= read -r line; do
-  [[ -n "$line" ]] && LINES+=("- $line")
+  if [[ -n "$line" ]]; then
+    tagged=$(tag_line "$line")
+    if ! is_duplicate "$tagged" "$DOMAIN_FILE"; then
+      LINES+=("- $tagged")
+    fi
+  fi
 done <<< "$WARNINGS"
 
 while IFS= read -r line; do
-  [[ -n "$line" ]] && LINES+=("- [ユーザー修正] $line")
+  if [[ -n "$line" ]]; then
+    tagged="[pattern] $line"
+    if ! is_duplicate "$tagged" "$DOMAIN_FILE"; then
+      LINES+=("- $tagged")
+    fi
+  fi
+done <<< "$WHAT_WORKED"
+
+while IFS= read -r line; do
+  if [[ -n "$line" ]]; then
+    tagged="[correction] $line"
+    if ! is_duplicate "$tagged" "$DOMAIN_FILE"; then
+      LINES+=("- $tagged")
+    fi
+  fi
 done <<< "$CORRECTIONS"
 
-# If still empty, write minimal task summary
+while IFS= read -r line; do
+  if [[ -n "$line" ]]; then
+    tagged="[open] $line"
+    if ! is_duplicate "$tagged" "$DOMAIN_FILE"; then
+      LINES+=("- $tagged")
+    fi
+  fi
+done <<< "$OPEN_ISSUES"
+
+# Fallback: minimal task summary if nothing substantive was extracted
 if [ "${#LINES[@]}" -eq 0 ]; then
   [[ -n "$FIRST_REQUEST" ]] && LINES+=("- 作業: $FIRST_REQUEST")
-  [[ -n "$COMPLETION" ]]    && LINES+=("- 完了: $COMPLETION")
+  [[ -n "$COMPLETION" ]] && LINES+=("- 完了: $COMPLETION")
 fi
 
 [ "${#LINES[@]}" -eq 0 ] && exit 0
 
 # ── Write to domain file ───────────────────────────────────────────────────
-DOMAIN_FILE="$LEARNINGS_DIR/${DOMAIN}.md"
 mkdir -p "$LEARNINGS_DIR"
 
 if [ ! -f "$DOMAIN_FILE" ]; then
