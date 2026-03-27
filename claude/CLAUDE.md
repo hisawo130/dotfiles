@@ -99,6 +99,7 @@ The threshold: if the task could be fully resolved by a competent developer in o
 - **Preserve existing names.** Do not rename classes, variables, IDs, or Liquid objects unless the task explicitly requires it.
 - **Respect platform idioms.** Shopify: Liquid + JSON schema, section/block architecture, asset pipeline. ecforce: Liquid templates (`.html.liquid`), file uploader for assets.
 - **No cosmetic refactoring.** Do not reorganize, reformat, or "improve" code outside the scope of the current task.
+- **新規UI作成時は `/frontend-design` を自動適用。** セクション・LP・コンポーネントを新規作成する場合、コーディング前に美的方向性を決定する（タイポグラフィ・カラー・モーション）。汎用フォント（Inter/Arial/Roboto）・紫グラデーション・予測可能なレイアウトを避ける。
 
 ## Quality checks
 
@@ -204,7 +205,7 @@ After completing any implementation, execute this sequence automatically:
 1. **Validate** — Run existing tests/linters if the project has them. Fix failures silently (up to 2 retries).
 2. **Review** — If 3+ files changed with non-trivial logic → invoke `reviewer` agent. Skip for simple edits, doc changes, or pure git operations.
 3. **Commit immediately** — stage only task-relevant files and commit *before* reporting to the user. **No exceptions for small changes.** One user request = one commit. Message in Japanese, conventional format.
-4. **Push** — Push if the task explicitly or implicitly requires it (PR creation, deploy, sync, or stated plan).
+4. **Push & PR** — PRを作成する前に `/review-pr` ワークフローを自動実行（code / comments / tests / errors / types / simplification の6エージェント並列）。Criticalを修正してからpush・PR作成。deploy/sync等PR以外のpushは review-pr不要。
 5. **Update project state** — if decisions were made, in-progress items changed, or next-session context exists, update `~/.claude/projects/<sanitized-cwd>/state.md` (create if needed, ≤ 50 lines). Skip for trivial tasks.
 6. **Report** — One line: `変更: <files> | レビュー: PASS/SKIP | コミット: <hash>`
 
