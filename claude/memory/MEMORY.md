@@ -31,6 +31,7 @@
 - Stop hookが毎セッション終了時にドメインを自動判定して追記。auto-context時に該当ドメインのみ末尾60行をロード
 
 **メモリ固有（dotfilesに含めない補助情報）:**
+- [reference_ecforce_consolidated.md](reference_ecforce_consolidated.md) — ecforce技術リファレンスポインタ → `~/.claude/references/ecforce-reference.md`
 - [reference_matrixify.md](reference_matrixify.md) — Shopify Matrixify機能・仕様・落とし穴
 - [shopify_theme_architecture.md](shopify_theme_architecture.md) — DawnバージョンHistory・Theme Blocks・Sectionスキーマ
 - [shopify_platform_updates.md](shopify_platform_updates.md) — Shopify廃止スケジュール・Winter '26新機能

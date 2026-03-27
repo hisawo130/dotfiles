@@ -72,7 +72,8 @@ elif [ -d "$CWD/app/Plugin" ] || [ -f "$CWD/app/config/eccube/config.yaml" ]; th
 fi
 
 # Keyword-based domain override (for sessions in non-project dirs)
-if [ "$DOMAIN" = "general" ]; then
+# Skip if CWD is home dir or dotfiles — CLAUDE.md text would cause false positives
+if [ "$DOMAIN" = "general" ] && [ "$CWD" != "$HOME" ] && [ "$CWD" != "$HOME/dotfiles" ]; then
   COMBINED_TEXT="$ASSISTANT_TEXT$USER_TEXT"
   if echo "$COMBINED_TEXT" | grep -qiE '(shopify|liquid.*section|dawn theme|{% schema %}|storefront api)'; then
     DOMAIN="shopify"
