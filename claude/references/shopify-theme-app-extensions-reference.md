@@ -15,6 +15,13 @@ Sources:
 
 ---
 
+## 📋 Recent Changelog
+
+### 2026-03-20: [Checkout and Customer Account UI Extensions Available by Default](https://shopify.dev/changelog/checkout-and-customer-account-ui-extensions-available-by-default-in-new-development-shops)
+チェックアウトおよびカスタマーアカウントUI extensionのデベロッパープレビューが終了し、新規開発ストアでデフォルト利用可能になった。既存の開発ストアでは引き続き手動有効化が必要な場合がある。
+
+---
+
 ## 1. Theme App Extensions
 
 ### 概要と用途

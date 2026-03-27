@@ -17,6 +17,22 @@ Sources:
 
 ---
 
+## 📋 Recent Changelog
+
+### 2026-03-25: [Shopify CLI App Release `--force` Flag Deprecation](https://shopify.dev/changelog/the-shopify-cli-app-release-force-flag-is-deprecated-and-will-be-removed)
+`shopify app deploy` と `shopify app release` の `--force` フラグが2026年5月に削除される。CI/CDでは `--allow-updates` と `--allow-deletes` フラグへ移行すること。
+
+### 2026-03-23: [Barcode Support for Inventory Shipments API](https://shopify.dev/changelog/adding-barcode-support-to-inventory-shipments-api)
+API 2026-04でInventory Shipments APIにバーコードサポートが追加。倉庫受入ワークフローを高速化する新しいmutationとフィールドが利用可能。
+
+### 2026-03-23: [Removal of `pre_tax_price` from Order REST Admin API](https://shopify.dev/changelog/removal-of-pretaxprice-from-the-order-rest-admin-api)
+Avalara AvaTax 1.0廃止に伴い、`pre_tax_price` フィールドがREST Admin APIから削除される。GraphQL APIへ移行すること。
+
+### 2026-03-23: [Updated Customer Data Erasure Request Handling](https://shopify.dev/changelog/updated-handling-of-customer-data-erasure-requests-with-recent-orders)
+顧客データ削除リクエストの処理が、最終注文から180日待機ではなく10日後に短縮された。データ消去ハンドラーの動作に影響する可能性があるため確認すること。
+
+---
+
 ## 1. Storefront API
 
 ### エンドポイント
