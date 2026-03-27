@@ -40,3 +40,6 @@
 - 3. 手動で記録する → セッション後に重要な学びを `~/.claude/learnings/<domain>.md` に直接追記する
 - | 常にゼロ（Credit balance too low） | 毎セッション必ず何か記録 |
 - 1. 警告・重要パターン（`注意`, `罠`, `NG`, `必ず`…）
+
+## 2026-03-27 20:48 | Pionunnal_ver01
+- 作業: /Users/P130/Desktop/Export_2026-03-27_203900.xlsx
