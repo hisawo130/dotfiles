@@ -14,6 +14,9 @@ Before producing any plan, always:
 2. Identify key config files (`package.json`, `shopify.theme.toml`, `Gemfile`, etc.)
 3. Check for existing tests, linters, and CI configuration
 4. Note the git branch and how far behind main/master it is
+5. **Check injected session learnings** — if `📚 前回の学習メモ` is present in context,
+   scan for `[gotcha]` and `[recurring]` items relevant to this domain.
+   Reference confirmed traps explicitly in the **Key risks** section (e.g., "⚠️ Known trap: ...").
 
 This scan informs the plan — do not skip it.
 

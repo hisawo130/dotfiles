@@ -29,7 +29,7 @@ echo "🌙 nightly-self-improve — $DATE $TIME JST"
 echo "═══════════════════════════════════════════"
 
 # ── ガード: 二重起動防止 ──────────────────────────────────────────────────────
-LOCK_FILE="/tmp/nightly-self-improve.lock"
+LOCK_FILE="$HOME/.claude/logs/.nightly-batch.lock"
 if [ -f "$LOCK_FILE" ]; then
   echo "[SKIP] 既に実行中またはロックファイルが存在します: $LOCK_FILE"
   exit 0

@@ -25,8 +25,19 @@ jobs:
       - name: Install Claude Code
         run: npm install -g @anthropic-ai/claude-code
 
+      - name: Check required secrets
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::ANTHROPIC_API_KEY が設定されていません。Repository Secrets を確認してください。"
+            exit 1
+          fi
+          echo "✅ ANTHROPIC_API_KEY confirmed"
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
       - name: Setup Claude environment
         run: |
+          set -euo pipefail
           mkdir -p ~/.claude/learnings ~/.claude/memory ~/.claude/logs
           # CI 用の設定ファイルをコピー
           cp claude/templates/settings.ci.json ~/.claude/settings.json
@@ -37,26 +48,32 @@ jobs:
           for f in claude/memory/*.md; do
             [ -f "$f" ] && ln -sf "$(pwd)/$f" ~/.claude/memory/"$(basename "$f")"
           done
+          echo "✅ Claude environment ready"
 
       - name: Run nightly self-improvement
         id: claude_run
         run: |
+          set -euo pipefail
           claude -p "$(cat claude/scripts/prompts/nightly-review.md)" \
             --dangerously-skip-permissions \
             --max-turns 30 \
             2>&1 | tee ~/.claude/logs/nightly-ci.log
+          echo "✅ Claude run completed"
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Commit improvements
         run: |
+          set -euo pipefail
           git config user.name  "Claude Nightly Bot"
           git config user.email "claude-bot@noreply.github.com"
+          # JST 日付をコミットメッセージに使用
+          JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
           # シンボリックリンク経由で更新されたファイルをステージ
           git add claude/learnings/ claude/memory/ 2>/dev/null || true
           git add claude/scripts/growth-log.md 2>/dev/null || true
           if ! git diff --cached --quiet; then
-            git commit -m "chore: 🌙 nightly self-improve ($(date -u +%Y-%m-%d))"
+            git commit -m "chore: 🌙 nightly self-improve (${JST_DATE} JST)"
             git push
             echo "✅ 改善内容をコミットしました"
           else

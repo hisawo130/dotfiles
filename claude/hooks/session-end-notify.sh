@@ -13,12 +13,12 @@ echo "$COMMITS"
 echo '[uncommitted]'
 echo "$UNCOMMITTED"
 
-# Dotfiles sync
+# Dotfiles sync (claude/ and scripts/ only — avoid accidentally staging project files)
 echo '[dotfiles]'
 _d="$HOME/dotfiles"
-_s=$(git -C "$_d" status --porcelain 2>/dev/null)
+git -C "$_d" add "claude/" "scripts/" ".github/" 2>/dev/null || true
+_s=$(git -C "$_d" diff --cached --name-only 2>/dev/null)
 if [ -n "$_s" ]; then
-  git -C "$_d" add -A
   git -C "$_d" commit -m 'chore: セッション終了時の自動同期' 2>/dev/null
 fi
 _u=$(git -C "$_d" log --oneline @{u}..HEAD 2>/dev/null)

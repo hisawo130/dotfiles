@@ -248,6 +248,16 @@ Before a session ends or when context is compacted, automatically check:
 
 Save only if the information is **non-obvious and will help future sessions**. Do not ask — just save and mention it in the session summary.
 
+### Injected learnings (from SessionStart hook)
+
+On session start, `📚 前回の学習メモ` may appear in context from `load-learnings.sh`.
+Apply them as follows — do not re-announce to the user:
+
+- `[recurring]` — confirmed trap seen 3+ times; treat as an invariant rule, not advice
+- `[gotcha]` — confirmed trap; check against current plan before implementing
+- `[correction]` — previous mistake; verify you are not repeating it
+- `[pattern]` — a known-good approach; prefer it over alternative implementations
+
 ## Default assumptions
 
 When not explicitly specified, assume:
@@ -290,6 +300,21 @@ When not explicitly specified, assume:
 - Hardcoded asset URL (not using `{{ file_root_path }}`) → replace automatically
 - Missing `+smartphone` variant when desktop template changed → flag for manual check
 - CSS `!important` added → note specificity risk in response
+
+## Nightly self-improvement
+
+Every day at AM3:00 JST, the GitHub Actions workflow `.github/workflows/nightly-self-improve.yml`
+runs `claude/scripts/prompts/nightly-review.md` headlessly (6 tasks):
+
+1. Memory consolidation — promote learnings to `memory/` rules
+2. Autonomous operation review — update CLAUDE.md for stale rules
+3. Light refactoring — fix obvious bugs in hooks/agents
+4. Growth log — append daily report to `claude/scripts/growth-log.md`
+5. Stale date patrol — fix expired deadlines in memory/learnings files
+6. Learning metrics — record per-domain entry counts in growth log
+
+To trigger manually: `/nightly-review`
+Logs: GitHub Actions → "nightly-log-*" artifacts (30-day retention)
 
 ## Headless / remote execution
 

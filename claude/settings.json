@@ -126,7 +126,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "_d=$HOME/.cache; mkdir -p \"$_d\"; _f=$_d/dotfiles_pull_check; [ ! -f \"$_f\" ] && { git -C \"$HOME/dotfiles\" pull --ff-only -q 2>/dev/null && touch \"$_f\"; } 2>/dev/null || true"
+            "command": "bash $HOME/.claude/hooks/pull-dotfiles.sh"
           }
         ]
       }
