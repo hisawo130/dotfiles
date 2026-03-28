@@ -21,5 +21,5 @@
 - [gotcha] メールアドレスのみの純正インポートは既存タグを上書きする
 - [gotcha] CSVに重複がなくてもエラー「顧客が既にストアに存在する」が出ることがある → 既存顧客の更新には別手順が必要
 
-## Recurring Patterns (updated 2026-03-27)
+## Recurring Patterns (updated 2026-03-28)
 - [shopify] ShopifyのCSVインポート・エクスポートには仕様上の落とし穴が多い（タグ上書き・重複エラー・Matrixify列名差異） — seen 4 times
