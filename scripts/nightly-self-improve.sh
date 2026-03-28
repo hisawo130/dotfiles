@@ -61,7 +61,8 @@ for file in "$LEARNINGS_DIR"/*.md; do
         continue  # すでに登録済み
       fi
       if grep -q "$RECURRING_HDR" "$file"; then
-        sed -i "/$RECURRING_HDR/a - [recurring] ${key} — seen ${count} times" "$file" 2>/dev/null
+        _tmp=$(mktemp)
+        sed "/$RECURRING_HDR/a - [recurring] ${key} — seen ${count} times" "$file" > "$_tmp" && mv "$_tmp" "$file"
       else
         printf '\n%s (updated %s)\n- [recurring] %s — seen %s times\n' \
           "$RECURRING_HDR" "$date_now" "$key" "$count" >> "$file"

@@ -37,7 +37,7 @@ if [ ! -f "$TRANSCRIPT" ]; then
   TRANSCRIPT=$(grep -rl "\"$SESSION_ID\"" "$HOME/.claude/projects" \
     --include="*.jsonl" -l 2>/dev/null | head -1 || true)
 fi
-[ -z "$TRANSCRIPT" ] || [ ! -f "$TRANSCRIPT" ] && exit 0
+{ [ -z "$TRANSCRIPT" ] || [ ! -f "$TRANSCRIPT" ]; } && exit 0
 
 # ── Extract text content ───────────────────────────────────────────────────
 ASSISTANT_TEXT=$(jq -r '
@@ -125,7 +125,8 @@ update_recurring() {
         continue
       fi
       if grep -q "$RECURRING_HDR" "$file"; then
-        sed -i "/$RECURRING_HDR/a - [recurring] ${key} — seen ${count} times" "$file" 2>/dev/null
+        _tmp=$(mktemp)
+        sed "/$RECURRING_HDR/a - [recurring] ${key} — seen ${count} times" "$file" > "$_tmp" && mv "$_tmp" "$file"
       else
         printf '\n%s (updated %s)\n- [recurring] %s — seen %s times\n' \
           "$RECURRING_HDR" "$date_now" "$key" "$count" >> "$file"
