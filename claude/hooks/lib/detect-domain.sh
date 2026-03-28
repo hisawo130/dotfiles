@@ -15,26 +15,29 @@ SECONDARY_DOMAINS=()
 _cwd="${DETECT_CWD:-$(pwd)}"
 _text="${DETECT_TEXT:-}"
 
+# Resolve to git root for subdirectory robustness
+_root=$(git -C "$_cwd" rev-parse --show-toplevel 2>/dev/null || echo "$_cwd")
+
 # ── File-structure-based detection ────────────────────────────────────────────
-if [ -f "$_cwd/shopify.theme.toml" ] || [ -f "$_cwd/config/settings_schema.json" ]; then
+if [ -f "$_root/shopify.theme.toml" ] || [ -f "$_root/config/settings_schema.json" ]; then
   PRIMARY_DOMAIN="shopify"
-elif [ -d "$_cwd/ec_force" ] || [ -d "$_cwd/layouts/ec_force" ]; then
+elif [ -d "$_root/ec_force" ] || [ -d "$_root/layouts/ec_force" ]; then
   PRIMARY_DOMAIN="ecforce"
-elif [ -f "$_cwd/wp-config.php" ] || [ -d "$_cwd/wp-content" ]; then
+elif [ -f "$_root/wp-config.php" ] || [ -d "$_root/wp-content" ]; then
   PRIMARY_DOMAIN="wordpress"
-elif [ -f "$_cwd/package.json" ] && grep -q '"@shopify/hydrogen' "$_cwd/package.json" 2>/dev/null; then
+elif [ -f "$_root/package.json" ] && grep -q '"@shopify/hydrogen' "$_root/package.json" 2>/dev/null; then
   PRIMARY_DOMAIN="shopify-hydrogen"
-elif [ -f "$_cwd/package.json" ] && grep -q '"@shopify/' "$_cwd/package.json" 2>/dev/null; then
+elif [ -f "$_root/package.json" ] && grep -q '"@shopify/' "$_root/package.json" 2>/dev/null; then
   PRIMARY_DOMAIN="shopify-app"
-elif [ -f "$_cwd/package.json" ] && grep -q '"next"' "$_cwd/package.json" 2>/dev/null; then
+elif [ -f "$_root/package.json" ] && grep -q '"next"' "$_root/package.json" 2>/dev/null; then
   PRIMARY_DOMAIN="react-nextjs"
-elif [ -f "$_cwd/package.json" ] && grep -q '"nuxt"' "$_cwd/package.json" 2>/dev/null; then
+elif [ -f "$_root/package.json" ] && grep -q '"nuxt"' "$_root/package.json" 2>/dev/null; then
   PRIMARY_DOMAIN="vue-nuxt"
-elif [ -f "$_cwd/wrangler.toml" ] || [ -f "$_cwd/wrangler.jsonc" ]; then
+elif [ -f "$_root/wrangler.toml" ] || [ -f "$_root/wrangler.jsonc" ]; then
   PRIMARY_DOMAIN="cloudflare"
-elif [ -d "$_cwd/.github/workflows" ]; then
+elif [ -d "$_root/.github/workflows" ]; then
   PRIMARY_DOMAIN="github-actions"
-elif [ -d "$_cwd/app/Plugin" ] || [ -f "$_cwd/app/config/eccube/config.yaml" ]; then
+elif [ -d "$_root/app/Plugin" ] || [ -f "$_root/app/config/eccube/config.yaml" ]; then
   PRIMARY_DOMAIN="ec-cube"
 fi
 

@@ -38,16 +38,12 @@ jobs:
       - name: Setup Claude environment
         run: |
           set -euo pipefail
-          mkdir -p ~/.claude/learnings ~/.claude/memory ~/.claude/logs
+          mkdir -p ~/.claude/logs
           # CI 用の設定ファイルをコピー
           cp claude/templates/settings.ci.json ~/.claude/settings.json
-          # 学習・メモリファイルをシンボリックリンク（CI でも同じパスで参照できるように）
-          for f in claude/learnings/*.md; do
-            [ -f "$f" ] && ln -sf "$(pwd)/$f" ~/.claude/learnings/"$(basename "$f")"
-          done
-          for f in claude/memory/*.md; do
-            [ -f "$f" ] && ln -sf "$(pwd)/$f" ~/.claude/memory/"$(basename "$f")"
-          done
+          # ディレクトリごとシンボリックリンク（新規ドメインファイルも自動でリポジトリに反映）
+          ln -sfn "$(pwd)/claude/learnings" ~/.claude/learnings
+          ln -sfn "$(pwd)/claude/memory" ~/.claude/memory
           echo "✅ Claude environment ready"
 
       - name: Run nightly self-improvement
@@ -70,7 +66,7 @@ jobs:
           # JST 日付をコミットメッセージに使用
           JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
           # シンボリックリンク経由で更新されたファイルをステージ
-          git add claude/learnings/ claude/memory/ 2>/dev/null || true
+          git add claude/learnings/ claude/memory/ claude/CLAUDE.md 2>/dev/null || true
           git add claude/scripts/growth-log.md 2>/dev/null || true
           if ! git diff --cached --quiet; then
             git commit -m "chore: 🌙 nightly self-improve (${JST_DATE} JST)"

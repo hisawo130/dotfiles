@@ -9,6 +9,7 @@
 #   - SessionStart → if no marker + recent state.md → recovery mode
 
 PROJ_DIR="$HOME/.claude/projects/$(echo "$PWD" | sed 's|/|-|g')"
+NL=$'\n'
 STATE_FILE="$PROJ_DIR/state.md"
 CLEAN_MARKER="$PROJ_DIR/.session-clean"
 
@@ -37,18 +38,18 @@ GIT_DIRTY=$(git -C "$PWD" status --short 2>/dev/null | head -8 | sed 's/^/  /' |
 GIT_STASH=$(git -C "$PWD" stash list 2>/dev/null | head -3 | sed 's/^/  /' || true)
 
 # Build recovery message
-MSG="🔄 **クラッシュリカバリー** — 前回セッションが正常終了していません\n"
-MSG="${MSG}(state.md 最終更新: ${LAST_UPDATE})\n\n"
+MSG="🔄 **クラッシュリカバリー** — 前回セッションが正常終了していません${NL}"
+MSG="${MSG}(state.md 最終更新: ${LAST_UPDATE})${NL}${NL}"
 
 if [ -n "$GIT_DIRTY" ]; then
-  MSG="${MSG}**未コミットの変更（中断ポイントの手がかり）:**\n${GIT_DIRTY}\n\n"
+  MSG="${MSG}**未コミットの変更（中断ポイントの手がかり）:**${NL}${GIT_DIRTY}${NL}${NL}"
 fi
 
 if [ -n "$GIT_STASH" ]; then
-  MSG="${MSG}**スタッシュあり:**\n${GIT_STASH}\n\n"
+  MSG="${MSG}**スタッシュあり:**${NL}${GIT_STASH}${NL}${NL}"
 fi
 
-MSG="${MSG}state.md の Focus / In Progress を確認して作業を再開してください。\n"
+MSG="${MSG}state.md の Focus / In Progress を確認して作業を再開してください。${NL}"
 MSG="${MSG}クリアするには: rm \"${STATE_FILE}\""
 
 jq -n --arg m "$MSG" '{"systemMessage": $m}'

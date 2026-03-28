@@ -169,6 +169,7 @@ if git -C "$DOTFILES" rev-parse --is-inside-work-tree &>/dev/null; then
   git -C "$DOTFILES" add \
     "claude/learnings/" \
     "claude/memory/" \
+    "claude/CLAUDE.md" \
     "claude/scripts/growth-log.md" 2>/dev/null || true
 
   if ! git -C "$DOTFILES" diff --cached --quiet 2>/dev/null; then

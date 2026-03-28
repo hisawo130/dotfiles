@@ -6,6 +6,7 @@
 
 LEARNINGS_DIR="$HOME/.claude/learnings"
 LIB_DIR="$(dirname "$0")/lib"
+NL=$'\n'
 
 # ── Domain detection via shared library ───────────────────────────────────────
 DETECT_CWD="$(pwd)"
@@ -55,7 +56,7 @@ for sec_domain in "${SECONDARY_DOMAINS[@]}"; do
   sec_file="$LEARNINGS_DIR/${sec_domain}.md"
   [ -f "$sec_file" ] || continue
   sec_lines=$(grep '\[recurring\]\|\[gotcha\]' "$sec_file" 2>/dev/null | tail -2)
-  [ -n "$sec_lines" ] && SECONDARY_LINES="${SECONDARY_LINES}（${sec_domain}）\n${sec_lines}\n"
+  [ -n "$sec_lines" ] && SECONDARY_LINES="${SECONDARY_LINES}（${sec_domain}）${NL}${sec_lines}${NL}"
 done
 
 [ -z "$DOMAIN_LINES" ] && [ -z "$GENERAL_LINES" ] && exit 0
@@ -66,18 +67,18 @@ MSG=""
 if [ -n "$DOMAIN_LINES" ]; then
   _date=$(last_updated "$DOMAIN_FILE")
   _header="📚 前回の学習メモ [${PRIMARY_DOMAIN}]${_date:+ (最終: ${_date})}:"
-  MSG="${_header}\n${DOMAIN_LINES}"
+  MSG="${_header}${NL}${DOMAIN_LINES}"
 fi
 
 if [ -n "$SECONDARY_LINES" ]; then
-  MSG="${MSG}\n${SECONDARY_LINES}"
+  MSG="${MSG}${NL}${SECONDARY_LINES}"
 fi
 
 if [ -n "$GENERAL_LINES" ]; then
   if [ -n "$MSG" ]; then
-    MSG="${MSG}\n（general より）\n${GENERAL_LINES}"
+    MSG="${MSG}${NL}（general より）${NL}${GENERAL_LINES}"
   else
-    MSG="📚 前回の学習メモ [general]:\n${GENERAL_LINES}"
+    MSG="📚 前回の学習メモ [general]:${NL}${GENERAL_LINES}"
   fi
 fi
 

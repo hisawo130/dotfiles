@@ -1,6 +1,8 @@
 #!/bin/bash
 # Session end hook: summarize changes and notify via ntfy
 
+NTFY_URL="${NTFY_TOPIC:-ntfy.sh/claude-2e88e2160d55}"
+
 echo '─── session end ───'
 
 # Collect session summary
@@ -39,8 +41,8 @@ if [ -n "$UNCOMMITTED" ]; then
 ${UNCOMMITTED}"
 fi
 
-curl -s \
+curl -s -m 5 \
   -H 'Title: Session End' \
   -H 'Tags: checkered_flag' \
   -d "$SUMMARY" \
-  ntfy.sh/claude-2e88e2160d55 2>/dev/null || true
+  "https://${NTFY_URL}" 2>/dev/null || true

@@ -59,7 +59,7 @@ if grep -q '{% schema %}' "$FILE" 2>/dev/null; then
 fi
 
 if [ -n "$WARNINGS" ]; then
-  echo -e "🔍 Liquid検証 ($FILE):$WARNINGS"
+  printf '🔍 Liquid検証 (%s):%s\n' "$FILE" "$WARNINGS"
 fi
 
 exit 0
