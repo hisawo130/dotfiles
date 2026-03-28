@@ -163,6 +163,22 @@
           },
           {
             "type": "command",
+            "command": "bash $HOME/.claude/hooks/recovery-detect.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/stale-branch-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/shopify-session-start.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/ecforce-session-start.sh"
+          },
+          {
+            "type": "command",
             "command": "bash $HOME/.claude/hooks/load-learnings.sh"
           }
         ]
