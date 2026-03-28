@@ -5,6 +5,13 @@
 
 ---
 
+## 📋 Recent Changelog
+
+### 2026-03-25: [The Shopify CLI app release --force flag is deprecated and will be removed](https://shopify.dev/changelog/the-shopify-cli-app-release-force-flag-is-deprecated-and-will-be-removed)
+The `--force` flag on `shopify app deploy` and `shopify app release` commands will be removed in May 2026. Replace with `--allow-updates` and `--allow-deletes` flags for more granular CI/CD control.
+
+---
+
 ## 1. Storefront API
 
 ### エンドポイント

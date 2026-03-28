@@ -4,6 +4,13 @@
 
 ---
 
+## 📋 Recent Changelog
+
+### 2026-03-28: [Updated handling of customer data erasure requests with recent orders](https://shopify.dev/changelog/updated-handling-of-customer-data-erasure-requests-with-recent-orders)
+Erasure requests now process 10 days after submission instead of being held pending for 180 days from the customer's most recent order. Apps handling `customers/redact` compliance webhooks should update any logic that assumed the 180-day hold period.
+
+---
+
 ## 1. Webhooks
 
 ### サブスクリプション方式（3種）
