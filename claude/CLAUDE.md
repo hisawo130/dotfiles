@@ -47,6 +47,11 @@ On the first task in any project directory, silently perform:
    - ecforce theme → `ecforce-reference.md`
    - Follow the UPDATE BEFORE USE protocol if the file has that block
 
+2a. **Apply session learnings** — The SessionStart hook injects recent domain
+    learnings as `📚 前回の学習メモ`. Treat `[recurring]` and `[gotcha]` entries
+    as confirmed traps — apply them silently during implementation without
+    re-announcing to the user.
+
 3. **Announce context** in the first line of the first response:
    > 📍 [Project type] | [key version/framework] | [reference loaded or N/A]
 
