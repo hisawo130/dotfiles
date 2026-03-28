@@ -5,6 +5,9 @@
 
 ## TASK 1: 記憶の整理 (Memory Consolidation)
 
+> **推奨:** Agent ツールで `learning-consolidator` エージェントに委譲すると精度が上がる。
+> 利用できない場合は以下の手順を直接実行する。
+
 1. `claude/learnings/*.md` を全て読む
 2. `claude/memory/*.md` を全て読む
 3. 学習ログの中で、以下の条件に当てはまるものを探す:

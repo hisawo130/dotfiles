@@ -3,7 +3,7 @@
 # SessionStart hook: warn if reference files are 14+ days old.
 # Outputs a systemMessage JSON if stale refs are found; silent otherwise.
 
-REFS_DIR="$HOME/dotfiles/claude/references"
+REFS_DIR="${DOTFILES:-$HOME/dotfiles}/claude/references"
 [ -d "$REFS_DIR" ] || exit 0
 
 STALE=$(find "$REFS_DIR" -name '*.md' -mtime +14 2>/dev/null | while read -r f; do
