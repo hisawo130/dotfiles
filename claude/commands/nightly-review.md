@@ -1,10 +1,12 @@
 Run the nightly self-improvement batch manually (same as the 3 AM cron job).
 
-Executes all four improvement steps in order:
-1. Learning consolidation (bash) — recurring promotion, dedup, old-entry trim
-2. Memory consolidation + CLAUDE.md review (AI) — extract new memory rules, update stale instructions
-3. Light refactoring (AI) — fix minor issues in hooks/agents
-4. Growth log update — append today's improvement summary to `claude/scripts/growth-log.md`
+Executes all 6 improvement tasks in order:
+1. Memory consolidation — recurring promotion, dedup, old-entry trim, memory rule extraction
+2. Autonomous operation review — CLAUDE.md 最小限見直し
+3. Light refactoring — hooks/agents の明らかなバグのみ
+4. Growth log — append daily report to `claude/scripts/growth-log.md`
+5. Stale date patrol — expired deadlines → ✅ 期限済みに更新
+6. Learning metrics — per-domain entry count table → growth log に追記
 
 Usage: /nightly-review
 
