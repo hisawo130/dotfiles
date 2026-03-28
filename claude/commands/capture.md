@@ -29,10 +29,10 @@ Save the current insight or learning to the appropriate domain learnings file im
 
 4. **Append** to `~/.claude/learnings/<domain>.md`. Create file with header if it doesn't exist.
 
-5. **Commit and push**:
+5. **Commit and push** (each as a separate Bash call):
    ```bash
-   git -C ~/dotfiles add "claude/learnings/<domain>.md" && \
-   git -C ~/dotfiles commit -m "docs: [<domain>] 学び手動追加 (capture)" && \
+   git -C ~/dotfiles add "claude/learnings/<domain>.md"
+   git -C ~/dotfiles commit -m "docs: [<domain>] 学び手動追加 (capture)"
    git -C ~/dotfiles push
    ```
 
