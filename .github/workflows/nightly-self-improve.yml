@@ -23,6 +23,8 @@ jobs:
           node-version: '20'
 
       - name: Install Claude Code
+        # NOTE: pin to a specific version (e.g. @1.x.x) to avoid unexpected breaking changes.
+        # Leaving as "latest" for now; update after validating each new release.
         run: npm install -g @anthropic-ai/claude-code
 
       - name: Check required secrets
@@ -52,6 +54,10 @@ jobs:
         id: claude_run
         run: |
           set -euo pipefail
+          # SECURITY NOTE: --dangerously-skip-permissions bypasses ALL allow/deny rules
+          # in claude/templates/settings.ci.json (including the deny list for rm -rf, curl, etc.).
+          # Scope control relies on the prompt itself; review claude/scripts/prompts/nightly-review.md
+          # and growth-log.md output after each run to detect unexpected actions.
           claude -p "$(cat claude/scripts/prompts/nightly-review.md)" \
             --dangerously-skip-permissions \
             --max-turns 30 \
