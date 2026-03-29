@@ -10,9 +10,11 @@ CMD=$(echo "$INPUT" | jq -r '.tool_input.command // ""')
 echo "$CMD" | grep -qE 'git\s+push' || exit 0
 
 # --- Check 1: Shopify theme check ---
-if [ -f "shopify.theme.toml" ] || [ -f "config/settings_schema.json" ]; then
+# Use git repo root so this works even when invoked from a subdirectory
+_GIT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+if [ -f "$_GIT_ROOT/shopify.theme.toml" ] || [ -f "$_GIT_ROOT/config/settings_schema.json" ]; then
   if command -v shopify >/dev/null 2>&1; then
-    RESULT=$(shopify theme check --fail-level error 2>&1)
+    RESULT=$(cd "$_GIT_ROOT" && shopify theme check --fail-level error 2>&1)
     if [ $? -ne 0 ]; then
       ERRORS=$(echo "$RESULT" | grep -E '^\s*(✗|×|ERROR)' | head -10)
       jq -n --arg reason "shopify theme check でエラー検出。push前に修正してください:${NL}${ERRORS}" \
