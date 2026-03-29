@@ -55,7 +55,7 @@ for sec_domain in "${SECONDARY_DOMAINS[@]}"; do
   [ -z "$sec_domain" ] && continue
   sec_file="$LEARNINGS_DIR/${sec_domain}.md"
   [ -f "$sec_file" ] || continue
-  sec_lines=$(grep '\[recurring\]\|\[gotcha\]' "$sec_file" 2>/dev/null | tail -2)
+  sec_lines=$(grep -E '\[recurring\]|\[gotcha\]' "$sec_file" 2>/dev/null | tail -2)
   [ -n "$sec_lines" ] && SECONDARY_LINES="${SECONDARY_LINES}（${sec_domain}）${NL}${sec_lines}${NL}"
 done
 

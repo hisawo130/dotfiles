@@ -8,7 +8,7 @@
 #   - Crash/kill   → Stop hook never runs → no marker
 #   - SessionStart → if no marker + recent state.md → recovery mode
 
-PROJ_DIR="$HOME/.claude/projects/$(echo "$PWD" | sed 's|/|-|g')"
+PROJ_DIR="$HOME/.claude/projects/$(pwd | sed 's|/|-|g')"
 NL=$'\n'
 STATE_FILE="$PROJ_DIR/state.md"
 CLEAN_MARKER="$PROJ_DIR/.session-clean"
