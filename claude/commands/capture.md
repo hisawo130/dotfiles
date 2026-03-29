@@ -9,7 +9,7 @@ Save the current insight or learning to the appropriate domain learnings file im
 ## Execution steps
 
 1. **Parse arguments**:
-   - If first word matches a known domain (`shopify`, `ecforce`, `ga4-gtm`, `general`, `shopify-app`, `shopify-flow`, `matrixify`, `klaviyo`, `line`, `wordpress`, `github-actions`, `cloudflare`, `react-nextjs`, `vue-nuxt`, `stripe`), use it as domain; rest is insight text
+   - If first word matches a known domain (`shopify`, `shopify-app`, `shopify-flow`, `shopify-extensions`, `shopify-webhooks`, `shopify-hydrogen`, `ecforce`, `wordpress`, `ec-cube`, `matrixify`, `ga4-gtm`, `klaviyo`, `line`, `react-nextjs`, `vue-nuxt`, `github-actions`, `cloudflare`, `make-zapier`, `cms`, `stripe`, `general`), use it as domain; rest is insight text
    - If no domain arg, detect from current project structure (same logic as auto-context protocol)
    - If no insight text, extract the single most actionable learning from the current conversation
 
