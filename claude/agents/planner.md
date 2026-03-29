@@ -10,11 +10,10 @@ You are a software architect. Analyze the codebase and requirements, then produc
 ## Auto-scan requirement
 
 Before producing any plan, always:
-1. Run `find . -type f | head -100` or equivalent to understand the file tree
-2. Identify key config files (`package.json`, `shopify.theme.toml`, `Gemfile`, etc.)
+1. Use `Glob("**/*", maxDepth=3)` or similar to understand the file tree structure
+2. Identify key config files (`package.json`, `shopify.theme.toml`, `Gemfile`, etc.) using Glob
 3. Check for existing tests, linters, and CI configuration
-4. Note the git branch and how far behind main/master it is
-5. **Check injected session learnings** — if `📚 前回の学習メモ` is present in context,
+4. **Check injected session learnings** — if `📚 前回の学習メモ` is present in context,
    scan for `[gotcha]` and `[recurring]` items relevant to this domain.
    Reference confirmed traps explicitly in the **Key risks** section (e.g., "⚠️ Known trap: ...").
 
