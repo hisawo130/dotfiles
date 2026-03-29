@@ -42,8 +42,16 @@ elif [ -d "$_root/app/Plugin" ] || [ -f "$_root/app/config/eccube/config.yaml" ]
 fi
 
 # ── Keyword-based override (for general/non-project directories) ───────────────
+# NOTE: Specific Shopify sub-domains MUST come before the general "shopify" check,
+# otherwise "shopify flow" / "shopify webhook" would match the broad shopify pattern first.
 if [ "$PRIMARY_DOMAIN" = "general" ] && [ -n "$_text" ]; then
-  if echo "$_text" | grep -qiE '(shopify|liquid.*section|dawn theme|\{% schema %\}|storefront api)'; then
+  if echo "$_text" | grep -qiE '(shopify flow|flow action|flow trigger|フロー.*shopify|shopify.*フロー)'; then
+    PRIMARY_DOMAIN="shopify-flow"
+  elif echo "$_text" | grep -qiE '(shopify webhook|metafield.*shopify|shopify.*metaobject|metafields api)'; then
+    PRIMARY_DOMAIN="shopify-webhooks"
+  elif echo "$_text" | grep -qiE '(theme app extension|app embed|customer account ui|app block)'; then
+    PRIMARY_DOMAIN="shopify-extensions"
+  elif echo "$_text" | grep -qiE '(shopify|liquid.*section|dawn theme|\{% schema %\}|storefront api)'; then
     PRIMARY_DOMAIN="shopify"
   elif echo "$_text" | grep -qiE '(ecforce|ec_force|file_root_path|\.html\.liquid)'; then
     PRIMARY_DOMAIN="ecforce"
@@ -59,12 +67,6 @@ if [ "$PRIMARY_DOMAIN" = "general" ] && [ -n "$_text" ]; then
     PRIMARY_DOMAIN="cloudflare"
   elif echo "$_text" | grep -qiE '(make\.com|integromat|zapier|シナリオ|モジュール)'; then
     PRIMARY_DOMAIN="make-zapier"
-  elif echo "$_text" | grep -qiE '(shopify flow|flow action|flow trigger|フロー.*shopify|shopify.*フロー)'; then
-    PRIMARY_DOMAIN="shopify-flow"
-  elif echo "$_text" | grep -qiE '(theme app extension|app embed|customer account ui|app block)'; then
-    PRIMARY_DOMAIN="shopify-extensions"
-  elif echo "$_text" | grep -qiE '(shopify webhook|metafield.*shopify|shopify.*metaobject|metafields api)'; then
-    PRIMARY_DOMAIN="shopify-webhooks"
   elif echo "$_text" | grep -qiE '(line bot|line api|liff|messaging api|line.*チャネル|lineチャネル)'; then
     PRIMARY_DOMAIN="line"
   elif echo "$_text" | grep -qiE '(contentful|strapi|sanity|microcms|headless cms|microCMS)'; then
