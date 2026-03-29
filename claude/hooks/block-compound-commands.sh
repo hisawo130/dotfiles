@@ -15,6 +15,12 @@ if echo "$CMD" | grep -qE '^\s*(for|if|while|until|case)\s'; then
   exit 0
 fi
 
+# Allow: heredoc commands — content inside <<EOF...EOF can contain operators legitimately
+# (e.g., git commit -m "$(cat <<'EOF'\nchore: fix && add\nEOF\n)")
+if echo "$CMD" | grep -qF '<<'; then
+  exit 0
+fi
+
 # Strip quoted strings to avoid false positives
 STRIPPED=$(echo "$CMD" | sed \
   -e "s/'[^']*'//g" \

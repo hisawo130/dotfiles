@@ -126,7 +126,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "_d=$HOME/.cache; mkdir -p \"$_d\"; _f=$_d/dotfiles_pull_check; [ ! -f \"$_f\" ] && { git -C \"$HOME/dotfiles\" pull --ff-only -q 2>/dev/null && touch \"$_f\"; } 2>/dev/null || true"
+            "command": "bash $HOME/.claude/hooks/pull-dotfiles.sh"
           }
         ]
       }
@@ -137,7 +137,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_name // \"unknown\"' | { read -r t; curl -s -H 'Title: 承認待ち' -H 'Priority: high' -H 'Tags: rotating_light' -d \"$t の実行に承認が必要です\" ntfy.sh/claude-2e88e2160d55; } 2>/dev/null || true"
+            "command": "bash $HOME/.claude/hooks/permission-notify.sh"
           }
         ]
       }
@@ -148,7 +148,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "osascript -e 'display notification \"Claude Codeが入力待ちです\" with title \"Claude Code\" sound name \"Ping\"' 2>/dev/null; curl -s -H 'Title: Claude Code' -H 'Tags: bell' -d '入力待ちです' ntfy.sh/claude-2e88e2160d55 2>/dev/null || true"
+            "command": "bash $HOME/.claude/hooks/notification-notify.sh"
           }
         ]
       }
@@ -159,7 +159,27 @@
         "hooks": [
           {
             "type": "command",
-            "command": "_stale=$(find \"$HOME/dotfiles/claude/references\" -name '*.md' -mtime +14 2>/dev/null | while read -r f; do echo \"$(basename \"$f\"): $(stat -f '%Sm' -t '%Y-%m-%d' \"$f\")\"; done); [ -n \"$_stale\" ] && jq -n --arg s \"$_stale\" '{\"systemMessage\":(\"⚠️ 以下のリファレンスが14日以上未更新:\\n\" + $s)}' || true"
+            "command": "bash $HOME/.claude/hooks/check-stale-refs.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/recovery-detect.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/stale-branch-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/shopify-session-start.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/ecforce-session-start.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/load-learnings.sh"
           }
         ]
       }
@@ -212,6 +232,10 @@
       {
         "matcher": "",
         "hooks": [
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/save-learnings.sh"
+          },
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/session-end-notify.sh"

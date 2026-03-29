@@ -118,6 +118,14 @@ Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
 - **Tool/command error:** Retry once differently. If still failing, report and stop.
 - **Never suppress errors** or wrap failures in workarounds.
 
+## Learning flag on repeated failure
+
+If the same error occurs twice in the same session, append to the final response:
+
+> **Learning candidate:** [gotcha] &lt;domain&gt; — &lt;root cause in one line (Japanese)&gt;
+
+This surfaces the issue for automatic capture by the Stop hook's `save-learnings.sh`.
+
 ## Skill candidate flag
 
 If a reusable pattern is identified, append to response:

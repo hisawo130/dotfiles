@@ -11,9 +11,11 @@ Steps:
    - New API versions, new features, deprecated items, changed limits
    - Do NOT remove existing content unless it's explicitly superseded
 6. If no changes found for a file → mark as "✅ Up to date"
-7. After all files processed, commit and push if any were updated:
+7. After all files processed, commit and push if any were updated (each as a separate Bash call):
    ```
-   cd ~/dotfiles && git add claude/references/ && git commit -m "docs: リファレンス一括更新 $(date +%Y-%m-%d)" && git push
+   git -C ~/dotfiles add claude/references/
+   git -C ~/dotfiles commit -m "docs: リファレンス一括更新 $(date +%Y-%m-%d)"
+   git -C ~/dotfiles push
    ```
 8. Output summary table:
 

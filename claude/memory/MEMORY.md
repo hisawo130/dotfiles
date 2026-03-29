@@ -29,6 +29,25 @@
 **セッション学びログ（ドメイン別・自動蓄積）:**
 - ドメイン: `shopify` / `shopify-app` / `shopify-flow` / `shopify-extensions` / `shopify-hydrogen` / `shopify-webhooks` / `ecforce` / `wordpress` / `ec-cube` / `matrixify` / `ga4-gtm` / `klaviyo` / `line` / `react-nextjs` / `vue-nuxt` / `github-actions` / `cloudflare` / `make-zapier` / `cms` / `stripe` / `general`
 - Stop hookが毎セッション終了時にドメインを自動判定して追記。auto-context時に該当ドメインのみ末尾60行をロード
+- セカンダリドメイン対応: 1セッションで複数ドメインに同時書き込み（例: shopify + matrixify）
+- `[recurring]` 自動昇格: `[gotcha]` が3回出現すると Recurring Patterns セクションに自動昇格
+
+**成長ログ:**
+- [growth-log.md](../scripts/growth-log.md) — 夜間バッチの実行記録・ドメイン別メトリクス（AM3:00 JST 自動追記）
+
+**カスタムコマンド（`/` で起動）:**
+- `/capture [domain] <insight>` — 学習メモを手動で即時保存（Stop hookを待たず）
+- `/learning-report` — 全21ドメインの学習サマリーレポートを生成（エントリ数・gotcha/recurring集計）
+- `/memory-update` — セッション中の学習を即時保存（夜間バッチ待ち不要）
+- `/nightly-review` — 夜間自己改善バッチを手動トリガー
+- `/sync-dotfiles` — `claude/` 配下の変更をコミット・プッシュ
+
+**エージェント（`~/.claude/agents/`）:**
+- `researcher` — ファイル読み込み・Web調査・パターン検索（Haiku: 高速）
+- `planner` — アーキテクチャ設計・複数ファイル計画（Sonnet）
+- `executor` — 実装・編集・テスト・デバッグ・git操作（Sonnet）
+- `reviewer` — 実装後レビュー: PASS/FAIL判定のみ（Sonnet）
+- `learning-consolidator` — セッション学習をメモリファイルへ統合（夜間バッチTASK 1）
 
 **メモリ固有（dotfilesに含めない補助情報）:**
 - [reference_ecforce_consolidated.md](reference_ecforce_consolidated.md) — ecforce技術リファレンスポインタ → `~/.claude/references/ecforce-reference.md`

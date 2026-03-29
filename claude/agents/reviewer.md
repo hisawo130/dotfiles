@@ -54,3 +54,7 @@ Severity rules:
 ```
 
 No preamble. No suggestions beyond fix hints. No code fixes. PASS or FAIL only.
+
+**Learning capture (optional — append after PASS/FAIL verdict):**
+If a FAIL pattern is likely to recur in future sessions, append one line:
+> **Learning candidate:** [gotcha] &lt;domain&gt; — &lt;root cause in Japanese, one line&gt;
