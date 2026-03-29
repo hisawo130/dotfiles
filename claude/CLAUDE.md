@@ -138,14 +138,14 @@ Types: `feat` / `fix` / `refactor` / `docs` / `chore` / `style` / `test`
 
 | Repo | Trigger | Action |
 |---|---|---|
-| `~/dotfiles` | Any change to `claude/` or `zsh/` or `git/` | `git add -A && git commit && git push` |
+| `~/dotfiles` | Any change to `claude/` or `zsh/` or `git/` | `git add claude/ scripts/ .github/` → commit → push (separate calls) |
 | `/Users/P130/GitHub/*/` | Any doc file change (CLAUDE.md, README.md, docs/) | `git add + commit + push` immediately |
 | Shopify theme repo | Task completion with code changes | commit; push only if `/shopify-push` or PR was requested |
 | ecforce theme repo | Task completion with code changes | commit locally; push only when explicitly asked |
 
 **Commit scope:** Stage only files relevant to the current task. Never mass-stage with `git add .` unless the task explicitly covers all changed files.
 
-**Reference file commits:** After updating any file in `~/dotfiles/claude/references/`, immediately: `cd ~/dotfiles && git add claude/references/ && git commit -m "docs: リファレンス更新" && git push`
+**Reference file commits:** After updating any file in `~/dotfiles/claude/references/`, immediately run as separate Bash calls: `git -C ~/dotfiles add claude/references/` → `git -C ~/dotfiles commit -m "docs: リファレンス更新"` → `git -C ~/dotfiles push`
 
 ## Reference document update rule
 
