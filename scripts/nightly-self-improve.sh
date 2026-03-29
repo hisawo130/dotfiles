@@ -143,22 +143,25 @@ echo "── STEP 2: AI 自己レビュー ──"
 
 CLAUDE_RUN="$DOTFILES/scripts/claude-run.sh"
 
-if ! command -v claude &>/dev/null && [ ! -x "$CLAUDE_RUN" ]; then
-  echo "  [SKIP] claude コマンドが見つかりません"
+# claude コマンドを解決: 直接呼び出し優先、次に claude-run.sh ラッパー
+if command -v claude &>/dev/null; then
+  _claude_invoke() { claude -p "$1" --dangerously-skip-permissions --max-turns 30; }
+elif [ -x "$CLAUDE_RUN" ]; then
+  _claude_invoke() { bash "$CLAUDE_RUN" --dir "$DOTFILES" --turns 30 "$1"; }
 else
-  # 2a: 記憶の整理 + CLAUDE.md 見直し + 成長ログ生成
-  NIGHTLY_PROMPT="$PROMPTS_DIR/nightly-review.md"
-  if [ -f "$NIGHTLY_PROMPT" ]; then
-    echo "  記憶整理・自己レビュー実行中..."
-    bash "$CLAUDE_RUN" \
-      --dir "$DOTFILES" \
-      --turns 30 \
-      "$(cat "$NIGHTLY_PROMPT")" \
-      && echo "  完了" \
-      || echo "  [WARNING] AI レビューがエラーで終了"
-  else
-    echo "  [SKIP] プロンプトファイルが見つかりません: $NIGHTLY_PROMPT"
-  fi
+  echo "  [SKIP] claude コマンドが見つかりません"
+  _claude_invoke() { return 1; }
+fi
+
+# 2a: 記憶の整理 + CLAUDE.md 見直し + 成長ログ生成
+NIGHTLY_PROMPT="$PROMPTS_DIR/nightly-review.md"
+if [ -f "$NIGHTLY_PROMPT" ]; then
+  echo "  記憶整理・自己レビュー実行中..."
+  _claude_invoke "$(cat "$NIGHTLY_PROMPT")" \
+    && echo "  完了" \
+    || echo "  [WARNING] AI レビューがエラーで終了"
+else
+  echo "  [SKIP] プロンプトファイルが見つかりません: $NIGHTLY_PROMPT"
 fi
 
 # ── STEP 3: dotfiles に全変更をコミット ──────────────────────────────────────

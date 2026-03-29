@@ -41,7 +41,9 @@ jobs:
           mkdir -p ~/.claude/logs
           # CI 用の設定ファイルをコピー
           cp claude/templates/settings.ci.json ~/.claude/settings.json
-          # ディレクトリごとシンボリックリンク（新規ドメインファイルも自動でリポジトリに反映）
+          # ディレクトリごとシンボリックリンク
+          # 既存ディレクトリを先に削除（ln -sfn は既存ディレクトリがあると内部に入れ子になる）
+          rm -rf ~/.claude/learnings ~/.claude/memory
           ln -sfn "$(pwd)/claude/learnings" ~/.claude/learnings
           ln -sfn "$(pwd)/claude/memory" ~/.claude/memory
           echo "✅ Claude environment ready"
