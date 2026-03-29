@@ -248,6 +248,31 @@ Before a session ends or when context is compacted, automatically check:
 
 Save only if the information is **non-obvious and will help future sessions**. Do not ask — just save and mention it in the session summary.
 
+### SessionStart hooks (自動実行順)
+
+セッション開始時に以下のフックが順番に実行され、systemMessage として注入される:
+
+| 順序 | フック | 動作 |
+|---|---|---|
+| 1 | `check-stale-refs.sh` | 14日以上未更新のリファレンスファイルを警告 |
+| 2 | `recovery-detect.sh` | 前回クラッシュ検出 — state.md + clean marker で判定 |
+| 3 | `stale-branch-check.sh` | origin/main から 10+ commits 遅れていたら警告 |
+| 4 | `shopify-session-start.sh` | Shopifyリポジトリのみ: git pull + Shopify CLI 認証確認 |
+| 5 | `ecforce-session-start.sh` | ecforceリポジトリのみ: git pull + 本番テーマ編集リマインダー |
+| 6 | `load-learnings.sh` | ドメイン別学習メモを systemMessage に注入 |
+
+### カスタムコマンド
+
+`/` で始まるコマンドは `~/.claude/commands/` から実行される:
+
+| コマンド | 用途 |
+|---|---|
+| `/capture [domain] <insight>` | 学習メモを手動で即時保存（Stop hook を待たず） |
+| `/learning-report` | 全21ドメインの学習サマリーをレポート表示 |
+| `/memory-update` | 現セッションの学習を `claude/memory/` に即時統合 |
+| `/nightly-review` | 夜間自己改善バッチ（6タスク）を手動実行 |
+| `/sync-dotfiles` | `claude/` 配下の変更をコミット・プッシュ |
+
 ### Injected learnings (from SessionStart hook)
 
 On session start, `📚 前回の学習メモ` may appear in context from `load-learnings.sh`.
@@ -306,7 +331,7 @@ When not explicitly specified, assume:
 Every day at AM3:00 JST, the GitHub Actions workflow `.github/workflows/nightly-self-improve.yml`
 runs `claude/scripts/prompts/nightly-review.md` headlessly (6 tasks):
 
-1. Memory consolidation — promote learnings to `memory/` rules
+1. Memory consolidation — `learning-consolidator` エージェントで learnings → memory/ rules に昇格
 2. Autonomous operation review — update CLAUDE.md for stale rules
 3. Light refactoring — fix obvious bugs in hooks/agents
 4. Growth log — append daily report to `claude/scripts/growth-log.md`

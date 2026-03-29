@@ -8,7 +8,7 @@
 - 夜間自己改善バッチ稼働開始（GitHub Actions + ローカル cron）
 - 学習ファイル: 21 ドメイン（shopify, ecforce, general ほか）
 - メモリファイル: 14 件（user_profile, feedback_*, reference_*, shopify_*）
-- 有効フック: SessionStart (2) / Stop (2) / PreToolUse (2) / PostToolUse (2)
+- 有効フック: SessionStart (6) / Stop (2) / PreToolUse (2) / PostToolUse (3)
 
 ### メトリクス（初期）
 | ドメイン | 合計 | gotcha | recurring | 最終更新 |
