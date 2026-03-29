@@ -51,7 +51,10 @@ ASSISTANT_TEXT=$(jq -r '
 USER_TEXT=$(jq -r '
   select(.type == "user") |
   (.message.content) |
-  if type == "string" and (length > 5) then . else "" end
+  if type == "string" and (length > 5) then .
+  elif type == "array" then
+    map(select(.type == "text") | .text // "") | join("\n")
+  else "" end
 ' "$TRANSCRIPT" 2>/dev/null)
 
 # Skip trivial sessions
@@ -79,15 +82,15 @@ filter_noise() {
 # Unified tagging for all learning types — including corrections.
 tag_line() {
   local line="$1"
-  if echo "$line" | grep -qE '(罠|落とし穴|バグ|失敗|NG|禁止|エラーの原因|回避すべき|してはいけない)'; then
+  if echo "$line" | grep -qiE '(罠|落とし穴|バグ|失敗|NG|禁止|エラーの原因|回避すべき|してはいけない|avoid|never use|broken|mistake|crash|don.t use|watch out|wrong way)'; then
     echo "[gotcha] $line"
-  elif echo "$line" | grep -qE '(違う|じゃなく|でなく|やり直し|ダメ|だめ|間違|直して|修正して|そうじゃない|異なる)'; then
+  elif echo "$line" | grep -qiE '(違う|じゃなく|ではなく|でなく|やり直し|ダメ|だめ|間違|直して|修正して|そうじゃない|異なる|actually[, ]|instead[, ]|should be|not.*correct|incorrect)'; then
     echo "[correction] $line"
-  elif echo "$line" | grep -qE '(未解決|要調査|継続調査|TODO|open:)'; then
+  elif echo "$line" | grep -qiE '(未解決|要調査|継続調査|TODO|FIXME|WIP|open:|pending|blocked)'; then
     echo "[open] $line"
-  elif echo "$line" | grep -qE '(解決方法|正しい方法|うまくいく|成功した|このやり方|このアプローチ)'; then
+  elif echo "$line" | grep -qiE '(解決方法|正しい方法|うまくいく|成功した|このやり方|このアプローチ|works by|solution is|the key is|turns out|resolved by)'; then
     echo "[pattern] $line"
-  elif echo "$line" | grep -qE '(コツ|ポイントは|覚え書き|ベストプラクティス)'; then
+  elif echo "$line" | grep -qiE '(コツ|ポイントは|覚え書き|ベストプラクティス|note that|remember[: ]|heads.?up|best practice|pro.?tip)'; then
     echo "[tip] $line"
   else
     echo "$line"
