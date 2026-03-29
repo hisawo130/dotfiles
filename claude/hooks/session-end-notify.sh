@@ -46,3 +46,9 @@ curl -s -m 5 \
   -H 'Tags: checkered_flag' \
   -d "$SUMMARY" \
   "https://${NTFY_URL}" 2>/dev/null || true
+
+# Write clean session marker for recovery-detect.sh
+# Without this, recovery-detect.sh would show a false crash warning next session
+_proj_dir="$HOME/.claude/projects/$(echo "$(pwd)" | sed 's|/|-|g')"
+mkdir -p "$_proj_dir"
+touch "$_proj_dir/.session-clean"
