@@ -36,9 +36,11 @@
 - [growth-log.md](../scripts/growth-log.md) — 夜間バッチの実行記録・ドメイン別メトリクス（AM3:00 JST 自動追記）
 
 **カスタムコマンド（`/` で起動）:**
+- `/capture [domain] <insight>` — 学習メモを手動で即時保存（Stop hookを待たず）
 - `/learning-report` — 全21ドメインの学習サマリーレポートを生成（エントリ数・gotcha/recurring集計）
 - `/memory-update` — セッション中の学習を即時保存（夜間バッチ待ち不要）
 - `/nightly-review` — 夜間自己改善バッチを手動トリガー
+- `/sync-dotfiles` — `claude/` 配下の変更をコミット・プッシュ
 
 **エージェント（`~/.claude/agents/`）:**
 - `researcher` — ファイル読み込み・Web調査・パターン検索（Haiku: 高速）
