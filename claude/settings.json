@@ -1,10 +1,4 @@
 {
-  "statusLine": {
-    "type": "command",
-    "command": "python3 $HOME/dotfiles/claude/statusline.py"
-  },
-  "effortLevel": "high",
-  "skipAutoPermissionPrompt": true,
   "permissions": {
     "allow": [
       "Bash(awk:*)",
@@ -77,7 +71,6 @@
       "Bash(xargs:*)",
       "Bash(yarn:*)",
       "Bash([:*)",
-      "Bash($(:*)",
       "Bash(zip:*)",
       "Bash(if:*)",
       "Bash(case:*)",
@@ -90,7 +83,6 @@
       "Bash(kill:*)",
       "Bash(wait:*)",
       "Bash(trap:*)",
-      "Bash((:*)",
       "Bash({:*)",
       "mcp__claude_ai_Gmail__gmail_create_draft",
       "mcp__claude_ai_Gmail__gmail_get_profile",
@@ -107,9 +99,112 @@
       "mcp__claude_ai_Google_Calendar__gcal_list_calendars",
       "mcp__claude_ai_Google_Calendar__gcal_list_events",
       "mcp__claude_ai_Google_Calendar__gcal_respond_to_event",
-      "mcp__claude_ai_Google_Calendar__gcal_update_event"
+      "mcp__claude_ai_Google_Calendar__gcal_update_event",
+      "WebFetch",
+      "WebSearch",
+      "Bash(dig:*)",
+      "Bash(nslookup:*)",
+      "Bash(host:*)",
+      "Bash(ping:*)",
+      "Bash(traceroute:*)",
+      "Bash(whois:*)",
+      "Bash(nmap:*)",
+      "Bash(ps:*)",
+      "Bash(lsof:*)",
+      "Bash(df:*)",
+      "Bash(du:*)",
+      "Bash(uptime:*)",
+      "Bash(id:*)",
+      "Bash(groups:*)",
+      "Bash(netstat:*)",
+      "Bash(ifconfig:*)",
+      "Bash(ipconfig:*)",
+      "Bash(sysctl:*)",
+      "Bash(sw_vers:*)",
+      "Bash(system_profiler:*)",
+      "Bash(defaults:*)",
+      "Bash(launchctl:*)",
+      "Bash(diskutil:*)",
+      "Bash(scutil:*)",
+      "Bash(networksetup:*)",
+      "Bash(vm_stat:*)",
+      "Bash(iostat:*)",
+      "Bash(top:*)",
+      "Bash(htop:*)",
+      "Bash(xxd:*)",
+      "Bash(od:*)",
+      "Bash(hexdump:*)",
+      "Bash(strings:*)",
+      "Bash(nm:*)",
+      "Bash(otool:*)",
+      "Bash(codesign:*)",
+      "Bash(less:*)",
+      "Bash(more:*)",
+      "Bash(column:*)",
+      "Bash(paste:*)",
+      "Bash(comm:*)",
+      "Bash(seq:*)",
+      "Bash(bc:*)",
+      "Bash(expr:*)",
+      "Bash(timeout:*)",
+      "Bash(nohup:*)",
+      "Bash(xattr:*)",
+      "Bash(plutil:*)",
+      "Bash(mdfind:*)",
+      "Bash(mdls:*)",
+      "Bash(bat:*)",
+      "Bash(rg:*)",
+      "Bash(fd:*)",
+      "Bash(fzf:*)",
+      "Bash(yq:*)",
+      "Bash(xmllint:*)",
+      "Bash(wget:*)",
+      "Bash(ssh:*)",
+      "Bash(go:*)",
+      "Bash(cargo:*)",
+      "Bash(swift:*)",
+      "Bash(java:*)",
+      "Bash(nc:*)",
+      "Bash(tput:*)",
+      "Bash(stty:*)",
+      "Bash(locale:*)",
+      "Bash(iconv:*)",
+      "Bash(nl:*)",
+      "Bash(fold:*)",
+      "Bash(expand:*)",
+      "Bash(pr:*)",
+      "Bash(fmt:*)",
+      "Read(//Users/P130/Library/CloudStorage/GoogleDrive-usui-h@cin-group.com/**)",
+      "Bash(rm:*)",
+      "Bash(chmod:*)",
+      "Bash(rsync:*)",
+      "Bash(tar:*)",
+      "Bash(bun:*)",
+      "Bash(deno:*)",
+      "Bash(claude:*)",
+      "Bash(code:*)",
+      "Bash(supabase:*)",
+      "Bash(vercel:*)",
+      "Bash(gcloud:*)",
+      "Bash(aws:*)",
+      "Bash(terraform:*)",
+      "Bash(docker:*)",
+      "Bash(podman:*)",
+      "Bash(composer:*)",
+      "Bash(php:*)",
+      "Bash(bundle exec:*)",
+      "Bash(rake:*)",
+      "Bash(rails:*)",
+      "Bash(set:*)",
+      "Bash(unset:*)",
+      "Bash(declare:*)",
+      "Bash(local:*)",
+      "Bash(return:*)",
+      "Bash(exit:*)",
+      "Bash(hash:*)",
+      "Bash(eval:*)",
+      "Read(//Users/P130/Desktop/2026春夏冷凍ピザ/2026crispypizza/**)"
     ],
-    "defaultMode": "auto",
     "deny": [
       "Bash(rm -rf /)",
       "Bash(rm -rf ~)",
@@ -121,7 +216,8 @@
       "Bash(sudo rm:*)",
       "Bash(sudo chmod:*)",
       "Bash(> /dev/sda:*)"
-    ]
+    ],
+    "defaultMode": "bypassPermissions"
   },
   "hooks": {
     "UserPromptSubmit": [
@@ -130,7 +226,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $HOME/.claude/hooks/pull-dotfiles.sh"
+            "command": "_d=$HOME/.cache; mkdir -p \"$_d\"; _f=$_d/dotfiles_pull_check; [ ! -f \"$_f\" ] && { git -C \"$HOME/dotfiles\" pull --ff-only -q 2>/dev/null && touch \"$_f\"; } 2>/dev/null || true"
+          },
+          {
+            "type": "command",
+            "command": "_dirty=$(git -C \"$PWD\" status --porcelain 2>/dev/null | grep -v '^?' | head -5); [ -n \"$_dirty\" ] && jq -n --arg d \"$_dirty\" '{\"systemMessage\": (\"💾 未コミットの変更があります — 前のタスクをコミットしてから作業してください:\\n\" + $d)}' || true"
           }
         ]
       }
@@ -141,7 +241,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $HOME/.claude/hooks/permission-notify.sh"
+            "command": "jq -r '.tool_name // \"unknown\"' | { read -r t; curl -s -H 'Title: 承認待ち' -H 'Priority: high' -H 'Tags: rotating_light' -d \"$t の実行に承認が必要です\" ntfy.sh/claude-2e88e2160d55; } 2>/dev/null || true"
           }
         ]
       }
@@ -152,7 +252,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $HOME/.claude/hooks/notification-notify.sh"
+            "command": "osascript -e 'display notification \"Claude Codeが入力待ちです\" with title \"Claude Code\" sound name \"Ping\"' 2>/dev/null; curl -s -H 'Title: Claude Code' -H 'Tags: bell' -d '入力待ちです' ntfy.sh/claude-2e88e2160d55 2>/dev/null || true"
           }
         ]
       }
@@ -163,15 +263,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $HOME/.claude/hooks/check-stale-refs.sh"
+            "command": "_stale=$(find \"$HOME/dotfiles/claude/references\" -name '*.md' -mtime +14 2>/dev/null | while read -r f; do echo \"$(basename \"$f\"): $(stat -f '%Sm' -t '%Y-%m-%d' \"$f\")\"; done); [ -n \"$_stale\" ] && jq -n --arg s \"$_stale\" '{\"systemMessage\":(\"⚠️ 以下のリファレンスが14日以上未更新:\\n\" + $s)}' || true"
+          },
+          {
+            "type": "command",
+            "command": "_sf=\"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/state.md\"; [ -f \"$_sf\" ] && [ -s \"$_sf\" ] && jq -n --rawfile s \"$_sf\" '{\"systemMessage\": (\"📋 Project state loaded:\\n\" + $s)}' || true"
           },
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/recovery-detect.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/hooks/stale-branch-check.sh"
           },
           {
             "type": "command",
@@ -183,7 +283,7 @@
           },
           {
             "type": "command",
-            "command": "bash $HOME/.claude/hooks/load-learnings.sh"
+            "command": "bash $HOME/.claude/hooks/stale-branch-check.sh"
           }
         ]
       }
@@ -238,14 +338,79 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash $HOME/.claude/hooks/save-learnings.sh"
+            "command": "bash $HOME/.claude/hooks/session-end-notify.sh"
           },
           {
             "type": "command",
-            "command": "bash $HOME/.claude/hooks/session-end-notify.sh"
+            "command": "bash $HOME/.claude/hooks/save-learnings.sh",
+            "timeout": 90,
+            "statusMessage": "学びを抽出中...",
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "mkdir -p \"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')\" && touch \"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/.session-clean\"",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "_dirty=$(git -C \"$PWD\" status --porcelain 2>/dev/null | grep -v '^?'); [ -n \"$_dirty\" ] && jq -n --arg d \"$_dirty\" '{\"systemMessage\": (\"⚠️ コンパクト前に未コミットの変更があります。コンパクト後に履歴が失われる前にコミットしてください:\\n\" + $d)}' || true"
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "_sf=\"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/state.md\"; [ -f \"$_sf\" ] && [ -s \"$_sf\" ] && jq -n --rawfile s \"$_sf\" '{\"systemMessage\": (\"📋 コンパクト後 — プロジェクト状態を再注入:\\n\" + $s)}' || true"
           }
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.py"
+  },
+  "effortLevel": "high",
+  "skipAutoPermissionPrompt": true,
+  "skipDangerousModePermissionPrompt": true,
+  "autoMode": {
+    "allow": [
+      "File read/write/delete operations within the home directory or project directories",
+      "Git operations including add, commit, push, pull, branch, merge, rebase",
+      "Package management with npm, yarn, pnpm, bun, pip, brew, gem, composer",
+      "Running build, test, lint, and format commands",
+      "Creating, renaming, or deleting files and directories (non-recursive rm)",
+      "Shopify CLI and theme operations",
+      "Shell script execution for automation tasks",
+      "Reading and writing dotfiles under ~/.claude or ~/dotfiles",
+      "GitHub CLI (gh) operations for PRs, issues, and repo management",
+      "Web fetching and searching for research tasks"
+    ],
+    "environment": [
+      "User is a web/frontend developer working with Shopify and ecforce platforms",
+      "All git operations are reversible; non-destructive actions should proceed without confirmation",
+      "Timezone is JST; user operates autonomously and prefers uninterrupted execution"
+    ]
+  },
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--headless"
+      ]
+    }
   }
 }
