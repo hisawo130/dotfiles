@@ -17,3 +17,10 @@
 
 ## 2026-03-27 | Pionunnal_ver01
 - [gotcha] Shopifyメール除外理由（バウンス履歴・ボット判定）はShopify内部フラグのため、エクスポートCSVには含まれない — 管理画面でのみ確認可能
+
+## 2026-03-19 | dotfiles整備
+- [gotcha] Shopifyテーマ（Webpack 4）: ビルドコマンド・Node Sass legacy・locales一括更新に注意
+
+## 2026-03-27 | Shopify顧客CSVインポート
+- [gotcha] メールアドレスのみの純正インポートは既存タグを上書きする
+- [gotcha] CSVに重複がなくてもエラー「顧客が既にストアに存在する」が出ることがある → 既存顧客の更新には別手順が必要
