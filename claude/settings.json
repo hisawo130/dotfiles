@@ -1,4 +1,8 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "python3 $HOME/dotfiles/claude/statusline.py"
+  },
   "effortLevel": "high",
   "skipAutoPermissionPrompt": true,
   "permissions": {
