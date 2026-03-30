@@ -12,3 +12,7 @@
 
 ## Recurring Patterns (updated 2026-03-28)
 - [shopify] ShopifyのCSVインポート・エクスポートには仕様上の落とし穴が多い（タグ上書き・重複エラー・Matrixify列名差異） — seen 4 times
+
+## 2026-03-30 17:34 | pietro-onlineshop_ver01
+- 作業: <ide_opened_file>The user opened the file /Users/P130/Desktop/2026春夏冷凍ピザ/2026crispypizza/lp-2026crispypizza.html in the 
+- 完了: 変更: [sections/page-lp-2026crispypizza.liquid](sections/page-lp-2026crispypizza.liquid), [templates/page.lp-2026crispypizza.json](templates/page.lp-202
