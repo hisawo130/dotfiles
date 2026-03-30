@@ -7,6 +7,9 @@
 
 ## 📋 Recent Changelog
 
+### 2026-03-30: [Role-based access control and org management for partners](https://shopify.dev/changelog/role-based-access-control-and-org-management-for-partners)
+Partner organizations now support role-based access control with seven system roles covering org administration, store access, and app development. Dev stores, client transfer stores, and collaborator stores are unified in one dashboard; existing permissions are automatically migrated with no action required.
+
 ### 2026-03-25: [The Shopify CLI app release --force flag is deprecated and will be removed](https://shopify.dev/changelog/the-shopify-cli-app-release-force-flag-is-deprecated-and-will-be-removed)
 The `--force` flag on `shopify app deploy` and `shopify app release` commands will be removed in May 2026. Replace with `--allow-updates` and `--allow-deletes` flags for more granular CI/CD control.
 
