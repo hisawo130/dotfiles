@@ -1,6 +1,8 @@
 #!/bin/bash
 # Session end hook: summarize changes and notify via ntfy
 
+NTFY_URL="${NTFY_TOPIC:-ntfy.sh/claude-2e88e2160d55}"
+
 echo '─── session end ───'
 
 # Collect session summary
@@ -13,12 +15,12 @@ echo "$COMMITS"
 echo '[uncommitted]'
 echo "$UNCOMMITTED"
 
-# Dotfiles sync
+# Dotfiles sync (claude/ and scripts/ only — avoid accidentally staging project files)
 echo '[dotfiles]'
 _d="$HOME/dotfiles"
-_s=$(git -C "$_d" status --porcelain 2>/dev/null)
+git -C "$_d" add "claude/" "scripts/" ".github/" 2>/dev/null || true
+_s=$(git -C "$_d" diff --cached --name-only 2>/dev/null)
 if [ -n "$_s" ]; then
-  git -C "$_d" add -A
   git -C "$_d" commit -m 'chore: セッション終了時の自動同期' 2>/dev/null
 fi
 _u=$(git -C "$_d" log --oneline @{u}..HEAD 2>/dev/null)
@@ -39,8 +41,14 @@ if [ -n "$UNCOMMITTED" ]; then
 ${UNCOMMITTED}"
 fi
 
-curl -s \
+curl -s -m 5 \
   -H 'Title: Session End' \
   -H 'Tags: checkered_flag' \
   -d "$SUMMARY" \
-  ntfy.sh/claude-2e88e2160d55 2>/dev/null || true
+  "https://${NTFY_URL}" 2>/dev/null || true
+
+# Write clean session marker for recovery-detect.sh
+# Without this, recovery-detect.sh would show a false crash warning next session
+_proj_dir="$HOME/.claude/projects/$(echo "$(pwd)" | sed 's|/|-|g')"
+mkdir -p "$_proj_dir"
+touch "$_proj_dir/.session-clean"

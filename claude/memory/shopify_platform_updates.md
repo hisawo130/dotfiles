@@ -14,13 +14,13 @@ Sources:
 
 ## 廃止スケジュール（要注意）
 
-| 対象 | 期限 | 移行先 |
-|---|---|---|
-| checkout.liquid（Plusストア: サンキュー/注文ステータスページ） | **2025年8月28日** | Checkout UI Extensions |
-| checkout.liquid（非Plusストア: 同上） | **2026年8月26日** | Checkout UI Extensions |
-| Shopify Scripts | **2026年6月30日** | Shopify Functions |
-| JSONメタフィールド値の128KB上限 | **2026年4月** | — |
-| チェックアウトIDのトークンベース参照化 | **2026年4月** | — |
+| 対象 | 期限 | 移行先 | ステータス |
+|---|---|---|---|
+| checkout.liquid（Plusストア: サンキュー/注文ステータスページ） | 2025年8月28日 | Checkout UI Extensions | ✅ 期限済み（移行完了想定） |
+| checkout.liquid（非Plusストア: 同上） | **2026年8月26日** | Checkout UI Extensions | ⚠️ 要対応 |
+| Shopify Scripts | **2026年6月30日** | Shopify Functions | ⚠️ 要対応（最優先） |
+| JSONメタフィールド値の128KB上限 | **2026年4月** | — | ⚠️ 直近 |
+| チェックアウトIDのトークンベース参照化 | **2026年4月** | — | ⚠️ 直近 |
 
 ## Checkout Extensibility（checkout.liquid廃止後の代替）
 
@@ -70,9 +70,11 @@ Sources:
 {% endif %}
 ```
 
-## 優先アクション
+## 優先アクション（2026-03-28 更新）
 
-1. checkout.liquid移行（Plusストア: **2025年8月28日期限**）— 最優先
-2. Theme Blocks / `content_for` の習得 — 新規テーマ開発の前提
-3. Shopify Scripts → Functions 移行計画（**2026年6月30日期限**）
-4. メタオブジェクトの積極活用（CMSライクなコンテンツ管理、カスタム開発削減）
+1. ~~checkout.liquid移行（Plusストア: 2025年8月28日期限）~~ — ✅ 期限済み
+2. **Shopify Scripts → Functions 移行計画（2026年6月30日期限）— 最優先**
+3. JSONメタフィールド 128KB 上限・チェックアウトID参照化（2026年4月）— 直近要確認
+4. checkout.liquid移行（非Plusストア: **2026年8月26日期限**）
+5. Theme Blocks / `content_for` の習得 — 新規テーマ開発の前提
+6. メタオブジェクトの積極活用（CMSライクなコンテンツ管理、カスタム開発削減）

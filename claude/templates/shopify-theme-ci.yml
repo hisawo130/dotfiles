@@ -43,7 +43,7 @@ jobs:
       - name: Check unmatched Liquid tags
         run: |
           EXIT=0
-          for file in $(find . -name "*.liquid" -type f); do
+          while IFS= read -r -d '' file; do
             for tag in if for unless case capture comment form paginate; do
               opens=$(grep -cE '\{%-?\s*'"$tag"'[\s%]' "$file" 2>/dev/null || echo 0)
               closes=$(grep -cE '\{%-?\s*end'"$tag"'' "$file" 2>/dev/null || echo 0)
@@ -52,7 +52,7 @@ jobs:
                 EXIT=1
               fi
             done
-          done
+          done < <(find . -name "*.liquid" -type f -print0)
           exit $EXIT
 
       - name: Check for deprecated {% include %}
@@ -73,7 +73,7 @@ jobs:
       - name: Validate schema JSON in sections
         run: |
           EXIT=0
-          for file in $(find sections -name "*.liquid" -type f 2>/dev/null); do
+          while IFS= read -r -d '' file; do
             SCHEMA=$(sed -n '/{% schema %}/,/{% endschema %}/p' "$file" | sed '1d;$d')
             if [ -n "$SCHEMA" ]; then
               echo "$SCHEMA" | jq . >/dev/null 2>&1
@@ -88,5 +88,5 @@ jobs:
                 fi
               fi
             fi
-          done
+          done < <(find sections -name "*.liquid" -type f -print0 2>/dev/null)
           exit $EXIT

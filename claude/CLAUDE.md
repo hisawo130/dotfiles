@@ -47,6 +47,11 @@ On the first task in any project directory, silently perform:
    - ecforce theme → `ecforce-reference.md`
    - Follow the UPDATE BEFORE USE protocol if the file has that block
 
+2a. **Apply session learnings** — The SessionStart hook injects recent domain
+    learnings as `📚 前回の学習メモ`. Treat `[recurring]` and `[gotcha]` entries
+    as confirmed traps — apply them silently during implementation without
+    re-announcing to the user.
+
 3. **Announce context** in the first line of the first response:
    > 📍 [Project type] | [key version/framework] | [reference loaded or N/A]
 
@@ -133,14 +138,14 @@ Types: `feat` / `fix` / `refactor` / `docs` / `chore` / `style` / `test`
 
 | Repo | Trigger | Action |
 |---|---|---|
-| `~/dotfiles` | Any change to `claude/` or `zsh/` or `git/` | `git add -A && git commit && git push` |
+| `~/dotfiles` | Any change to `claude/` or `zsh/` or `git/` | `git add claude/ scripts/ .github/` → commit → push (separate calls) |
 | `/Users/P130/GitHub/*/` | Any doc file change (CLAUDE.md, README.md, docs/) | `git add + commit + push` immediately |
 | Shopify theme repo | Task completion with code changes | commit; push only if `/shopify-push` or PR was requested |
 | ecforce theme repo | Task completion with code changes | commit locally; push only when explicitly asked |
 
 **Commit scope:** Stage only files relevant to the current task. Never mass-stage with `git add .` unless the task explicitly covers all changed files.
 
-**Reference file commits:** After updating any file in `~/dotfiles/claude/references/`, immediately: `cd ~/dotfiles && git add claude/references/ && git commit -m "docs: リファレンス更新" && git push`
+**Reference file commits:** After updating any file in `~/dotfiles/claude/references/`, immediately run as separate Bash calls: `git -C ~/dotfiles add claude/references/` → `git -C ~/dotfiles commit -m "docs: リファレンス更新"` → `git -C ~/dotfiles push`
 
 ## Reference document update rule
 
@@ -243,6 +248,41 @@ Before a session ends or when context is compacted, automatically check:
 
 Save only if the information is **non-obvious and will help future sessions**. Do not ask — just save and mention it in the session summary.
 
+### SessionStart hooks (自動実行順)
+
+セッション開始時に以下のフックが順番に実行され、systemMessage として注入される:
+
+| 順序 | フック | 動作 |
+|---|---|---|
+| 1 | `check-stale-refs.sh` | 14日以上未更新のリファレンスファイルを警告 |
+| 2 | `recovery-detect.sh` | 前回クラッシュ検出 — state.md + clean marker で判定 |
+| 3 | `stale-branch-check.sh` | origin/main から 10+ commits 遅れていたら警告 |
+| 4 | `shopify-session-start.sh` | Shopifyリポジトリのみ: git pull + Shopify CLI 認証確認 |
+| 5 | `ecforce-session-start.sh` | ecforceリポジトリのみ: git pull + 本番テーマ編集リマインダー |
+| 6 | `load-learnings.sh` | ドメイン別学習メモを systemMessage に注入 |
+
+### カスタムコマンド
+
+`/` で始まるコマンドは `~/.claude/commands/` から実行される:
+
+| コマンド | 用途 |
+|---|---|
+| `/capture [domain] <insight>` | 学習メモを手動で即時保存（Stop hook を待たず） |
+| `/learning-report` | 全21ドメインの学習サマリーをレポート表示 |
+| `/memory-update` | 現セッションの学習を `claude/memory/` に即時統合 |
+| `/nightly-review` | 夜間自己改善バッチ（6タスク）を手動実行 |
+| `/sync-dotfiles` | `claude/` 配下の変更をコミット・プッシュ |
+
+### Injected learnings (from SessionStart hook)
+
+On session start, `📚 前回の学習メモ` may appear in context from `load-learnings.sh`.
+Apply them as follows — do not re-announce to the user:
+
+- `[recurring]` — confirmed trap seen 3+ times; treat as an invariant rule, not advice
+- `[gotcha]` — confirmed trap; check against current plan before implementing
+- `[correction]` — previous mistake; verify you are not repeating it
+- `[pattern]` — a known-good approach; prefer it over alternative implementations
+
 ## Default assumptions
 
 When not explicitly specified, assume:
@@ -285,6 +325,21 @@ When not explicitly specified, assume:
 - Hardcoded asset URL (not using `{{ file_root_path }}`) → replace automatically
 - Missing `+smartphone` variant when desktop template changed → flag for manual check
 - CSS `!important` added → note specificity risk in response
+
+## Nightly self-improvement
+
+Every day at AM3:00 JST, the GitHub Actions workflow `.github/workflows/nightly-self-improve.yml`
+runs `claude/scripts/prompts/nightly-review.md` headlessly (6 tasks):
+
+1. Memory consolidation — `learning-consolidator` エージェントで learnings → memory/ rules に昇格
+2. Autonomous operation review — update CLAUDE.md for stale rules
+3. Light refactoring — fix obvious bugs in hooks/agents
+4. Growth log — append daily report to `claude/scripts/growth-log.md`
+5. Stale date patrol — fix expired deadlines in memory/learnings files
+6. Learning metrics — record per-domain entry counts in growth log
+
+To trigger manually: `/nightly-review`
+Logs: GitHub Actions → "nightly-log-*" artifacts (30-day retention)
 
 ## Headless / remote execution
 
