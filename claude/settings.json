@@ -127,6 +127,10 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/pull-dotfiles.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/effort-calibrate.sh"
           }
         ]
       }
