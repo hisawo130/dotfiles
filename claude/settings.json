@@ -1,4 +1,6 @@
 {
+  "effortLevel": "normal",
+  "skipAutoPermissionPrompt": true,
   "permissions": {
     "allow": [
       "Bash(awk:*)",
