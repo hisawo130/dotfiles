@@ -70,6 +70,9 @@ Skip for non-project tasks (shell help, dotfiles management, general questions).
 - **Preserve existing names.** Do not rename classes, variables, IDs, or Liquid objects unless the task explicitly requires it.
 - **Respect platform idioms.** Shopify: Liquid + JSON schema, section/block architecture, asset pipeline. ecforce: Liquid templates (`.html.liquid`), file uploader for assets.
 - **No cosmetic refactoring.** Do not reorganize, reformat, or "improve" code outside the scope of the current task.
+- **ファイル削除は trash パターンで行う。** `rm` は禁止。代わりに `~/.trash/` へ移動する:
+  `mkdir -p ~/.trash && mv <file> ~/.trash/$(date +%Y%m%d-%H%M%S)-<basename>`
+  ゴミ箱の中身を空にするには `/empty-trash` を使う。
 - **No compound commands.** Never chain independent commands with `&&`, `||`, or `;` in a single Bash call. Each command must be a separate tool call. Allowed exceptions: `|` (pipes), `for`/`if`/`while`/`until`/`case` compound statements, and `||`/`&&` inside conditional tests. This ensures every command passes through PreToolUse hooks individually and deny rules cannot be bypassed.
 
 ## Pre-change checklist
