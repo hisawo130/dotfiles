@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Pattern 2: Sparkline gauge - vertical block characters"""
-import json, sys
+import json, sys, datetime
 
 data = json.load(sys.stdin)
 
@@ -46,6 +46,26 @@ if ctx is not None:
 five = data.get('rate_limits', {}).get('five_hour', {}).get('used_percentage')
 if five is not None:
     parts.append(fmt('5h', five))
+
+# Show 5h rate limit reset time in JST if resets_at is present and usage > 0
+five_resets_at = data.get('rate_limits', {}).get('five_hour', {}).get('resets_at')
+if five is not None and five > 0 and five_resets_at is not None:
+    JST = datetime.timezone(datetime.timedelta(hours=9))
+    now_utc = datetime.datetime.now(datetime.timezone.utc)
+    reset_dt = datetime.datetime.fromtimestamp(five_resets_at, tz=JST)
+    reset_time_str = reset_dt.strftime('%H:%M')
+    diff = reset_dt - now_utc.astimezone(JST)
+    total_seconds = int(diff.total_seconds())
+    if total_seconds > 0:
+        hours, remainder = divmod(total_seconds, 3600)
+        minutes = remainder // 60
+        if hours > 0 and minutes > 0:
+            remaining_str = f'あと {hours}h{minutes}m'
+        elif hours > 0:
+            remaining_str = f'あと {hours}h'
+        else:
+            remaining_str = f'あと {minutes}m'
+        parts.append(f'{DIM}解放{R} {reset_time_str} {DIM}({remaining_str}){R}')
 
 week = data.get('rate_limits', {}).get('seven_day', {}).get('used_percentage')
 if week is not None:
