@@ -1,4 +1,5 @@
 # Shopify カスタムアプリ リファレンス
+<!-- API alert (2026-03-31): stable: 2026-01 → 2026-04 -->
 
 > 最終更新: 2026-03-20（公式ドキュメント精査済み）
 > 対象: Storefront API / Checkout Extensibility / Shopify Functions / GraphQL Admin API
@@ -6,6 +7,9 @@
 ---
 
 ## 📋 Recent Changelog
+
+### 2026-03-31: [New rejection reason codes in Payments Apps API](https://shopify.dev/changelog/new-rejection-reason-codes-in-payments-apps-graphql-api)
+The Payments Apps API now provides more granular decline reason codes for rejected payment sessions. New codes added to `PaymentSessionStateRejectedReason` enum alongside a new source field for better error handling.
 
 ### 2026-03-30: [Role-based access control and org management for partners](https://shopify.dev/changelog/role-based-access-control-and-org-management-for-partners)
 Partner organizations now support role-based access control with seven system roles covering org administration, store access, and app development. Dev stores, client transfer stores, and collaborator stores are unified in one dashboard; existing permissions are automatically migrated with no action required.
