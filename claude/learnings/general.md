@@ -53,3 +53,6 @@
 ## 2026-03-31 16:06 | pietro-onlineshop_ver01
 - 作業: matrixifyの依頼です
 - 完了: 修正しました。`Tags Command: DELETE` に更新済みです。同じファイル（`matrixify-customer-tags-bdp20260331-REMOVE.csv`）を再インポートしてください。
+
+## 2026-03-31 17:04 | Pinup-Closet_ver01
+- 注意点: Rivyoが `DOMContentLoaded` より後にバッジを注入する場合は `MutationObserver` への変更が必要になる可能性があります（実装後に確認）。
