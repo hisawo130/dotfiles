@@ -228,11 +228,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "_d=$HOME/.cache; mkdir -p \"$_d\"; _f=$_d/dotfiles_pull_check; [ ! -f \"$_f\" ] && { git -C \"$HOME/dotfiles\" pull --ff-only -q 2>/dev/null && touch \"$_f\"; } 2>/dev/null || true"
+            "command": "bash $HOME/.claude/hooks/pull-dotfiles.sh"
           },
           {
             "type": "command",
-            "command": "_dirty=$(git -C \"$PWD\" status --porcelain 2>/dev/null | grep -v '^?' | head -5); [ -n \"$_dirty\" ] && jq -n --arg d \"$_dirty\" '{\"systemMessage\": (\"💾 未コミットの変更があります — 前のタスクをコミットしてから作業してください:\\n\" + $d)}' || true"
+            "command": "bash $HOME/.claude/hooks/effort-calibrate.sh"
           }
         ]
       }

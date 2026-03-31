@@ -177,17 +177,19 @@ Route tasks to sub-agents by complexity:
 
 | Task type | Agent | Model | Notes |
 |---|---|---|---|
-| File reads, web research, pattern search | `researcher` | Haiku | fast; batch multiple questions into one call |
-| Architecture, design, multi-file planning | `planner` | Sonnet | required when 5+ files change or design decision needed |
-| Implementation, editing, testing, debugging | `executor` | Sonnet | always use for code changes |
-| Post-impl review (2+ files or git ops) | `reviewer` | Sonnet | auto-invoked; PASS/FAIL only |
+| File reads, web research, pattern search | `researcher` | **haiku** | `model: "haiku"` を明示。複数の独立質問は並列実行 |
+| Architecture, design, multi-file planning | `planner` | **sonnet** | 5ファイル以上 or 設計判断が必要な場合のみ |
+| Implementation, editing, testing, debugging | `executor` | **sonnet** | コード変更は常にこれ |
+| Post-impl review (2+ files or git ops) | `reviewer` | **sonnet** | 自動起動; PASS/FAIL のみ返す |
 
 **Parallel execution:** When multiple independent research questions exist, launch multiple `researcher` agents simultaneously rather than sequentially.
 
-**Skip conditions (do not spin up an agent):**
-- Single-file edit with obvious implementation → main agent edits directly
+**Skip conditions (サブエージェント不要):**
+- 単一ファイルの読み取り・確認 → メインエージェントが直接 Read/Grep
+- 単純な質問・状態確認 → 直接回答
+- 明らかな 1〜2 ツール操作 → メインエージェントが直接実行
+- effort-calibrate が 🟢 [lite] を返した場合 → サブエージェント禁止
 - Web fetch of a known URL → main agent fetches directly
-- Quick shell command to verify state → main agent runs directly
 
 **Full pipeline:** `planner` → `executor` → `reviewer` (use only needed stages)
 
