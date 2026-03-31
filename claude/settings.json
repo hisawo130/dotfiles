@@ -1,6 +1,4 @@
 {
-  "effortLevel": "normal",
-  "skipAutoPermissionPrompt": true,
   "permissions": {
     "allow": [
       "Bash(awk:*)",
@@ -205,7 +203,8 @@
       "Bash(exit:*)",
       "Bash(hash:*)",
       "Bash(eval:*)",
-      "Read(//Users/P130/Desktop/2026春夏冷凍ピザ/2026crispypizza/**)"
+      "Read(//Users/P130/Desktop/2026春夏冷凍ピザ/2026crispypizza/**)",
+      "Read(//_frontend/src/sass/**)"
     ],
     "deny": [
       "Bash(rm -rf /)",
@@ -388,9 +387,9 @@
     "type": "command",
     "command": "~/.claude/statusline.py"
   },
-  "effortLevel": "normal",
-  "skipAutoPermissionPrompt": true,
+  "effortLevel": "low",
   "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true,
   "autoMode": {
     "allow": [
       "File read/write/delete operations within the home directory or project directories",
