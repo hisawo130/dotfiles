@@ -27,3 +27,6 @@
 ## 2026-03-30 18:07 | mimc.co.jp-mailmagazine
 - - 500円OFFクーポンボックス（枠囲み、有効期限・注意事項付き）
 - [correction] レイアウトや背景色がPDFと違うようです
+
+## 2026-03-31 10:29 | Pinup-Closet_ver01
+- 作業: Shopify theme repo at /Users/P130/GitHub/Pinup-Closet_ver01 で「マイサイズ診断」に関連するすべてのファイルを特定してください。
