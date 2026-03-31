@@ -56,3 +56,7 @@
 
 ## 2026-03-31 17:04 | Pinup-Closet_ver01
 - 注意点: Rivyoが `DOMContentLoaded` より後にバッジを注入する場合は `MutationObserver` への変更が必要になる可能性があります（実装後に確認）。
+
+## 2026-03-31 17:33 | Pinup-Closet_ver01
+- 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/Pinup-Closet_ver01/sections/main-product.liquid in the IDE.
+- 完了: 実装完了しました。
