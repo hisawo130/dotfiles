@@ -269,7 +269,7 @@
           },
           {
             "type": "command",
-            "command": "_sf=\"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/state.md\"; [ -f \"$_sf\" ] && [ -s \"$_sf\" ] && jq -n --rawfile s \"$_sf\" '{\"systemMessage\": (\"📋 Project state loaded:\\n\" + $s)}' || true"
+            "command": "_sf=\"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/state.md\"; [ -f \"$_sf\" ] && [ -s \"$_sf\" ] && [ \"$(wc -c < \"$_sf\" | tr -d ' ')\" -le 2048 ] && jq -n --rawfile s \"$_sf\" '{\"systemMessage\": (\"📋 Project state loaded:\\n\" + $s)}' || true"
           },
           {
             "type": "command",
@@ -378,7 +378,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "_sf=\"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/state.md\"; [ -f \"$_sf\" ] && [ -s \"$_sf\" ] && jq -n --rawfile s \"$_sf\" '{\"systemMessage\": (\"📋 コンパクト後 — プロジェクト状態を再注入:\\n\" + $s)}' || true"
+            "command": "_sf=\"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/state.md\"; [ -f \"$_sf\" ] && [ -s \"$_sf\" ] && [ \"$(wc -c < \"$_sf\" | tr -d ' ')\" -le 2048 ] && jq -n --rawfile s \"$_sf\" '{\"systemMessage\": (\"📋 コンパクト後 — プロジェクト状態を再注入:\\n\" + $s)}' || true"
           }
         ]
       }
@@ -388,7 +388,7 @@
     "type": "command",
     "command": "~/.claude/statusline.py"
   },
-  "effortLevel": "high",
+  "effortLevel": "normal",
   "skipAutoPermissionPrompt": true,
   "skipDangerousModePermissionPrompt": true,
   "autoMode": {

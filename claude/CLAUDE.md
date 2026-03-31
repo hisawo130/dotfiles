@@ -89,7 +89,7 @@ Before completing any implementation, verify internally. Do not ask the user to 
 
 Additional accuracy measures enforced automatically after implementation:
 
-1. **Re-read after write** — After editing a `.liquid` file, re-read the changed region to verify correctness. Never assume a write produced the intended result.
+1. **Re-read after write** — Only re-read after editing `.liquid` files that involve `{% schema %}` changes or new section creation. Skip for minor content edits.
 2. **Diff sanity** — Before commit, run `git diff --staged` and verify:
    - No unintended whitespace-only changes
    - No files outside the task scope
@@ -178,9 +178,9 @@ Route tasks to sub-agents by complexity:
 | Task type | Agent | Model | Notes |
 |---|---|---|---|
 | File reads, web research, pattern search | `researcher` | **haiku** | `model: "haiku"` を明示。複数の独立質問は並列実行 |
-| Architecture, design, multi-file planning | `planner` | **sonnet** | 5ファイル以上 or 設計判断が必要な場合のみ |
+| Architecture, design, multi-file planning | `planner` | **sonnet** | 10ファイル以上 or 設計判断が必要な場合のみ |
 | Implementation, editing, testing, debugging | `executor` | **sonnet** | コード変更は常にこれ |
-| Post-impl review (2+ files or git ops) | `reviewer` | **sonnet** | 自動起動; PASS/FAIL のみ返す |
+| Post-impl review (5+ files or git ops) | `reviewer` | **sonnet** | 自動起動; PASS/FAIL のみ返す |
 
 **Parallel execution:** When multiple independent research questions exist, launch multiple `researcher` agents simultaneously rather than sequentially.
 
@@ -222,7 +222,7 @@ Never suppress errors or add workarounds that hide failures. Report the exact er
 After completing any implementation, execute this sequence automatically:
 
 1. **Validate** — Run existing tests/linters if the project has them. Fix failures silently (up to 2 retries).
-2. **Review** — If 2+ files changed or git operations included → invoke `reviewer` agent. Do not ask. If FAIL → fix items and retry once.
+2. **Review** — If 5+ files changed or git operations included → invoke `reviewer` agent. Do not ask. If FAIL → fix items and retry once.
 3. **Commit** — Use conventional commit format from Git & commit rules above. Message in Japanese.
 4. **Push** — Push if the task explicitly or implicitly requires it (PR creation, deploy, sync, or stated plan).
 5. **Report** — End with a brief summary:
