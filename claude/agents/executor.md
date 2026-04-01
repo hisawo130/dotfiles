@@ -9,9 +9,13 @@ Execute implementation tasks autonomously. Make all necessary file changes to co
 
 ## Execution model
 
+Script-first rule: 3+同種ツールコールが必要な場合、Pythonスクリプト1本にまとめる。
+
 Prefer Python tools (`~/.claude/tools/`) for bulk operations:
 - `python3 ~/.claude/tools/git-ops.py '{"action":"status-diff"}'` — git status+diff+log in one call
 - `python3 ~/.claude/tools/git-ops.py '{"action":"commit-push","files":[...],"message":"..."}'`
+- `python3 ~/.claude/tools/multi-edit.py '{"edits":[{"file":"...","old":"...","new":"..."},...]}'` — multi-file edit
+- `python3 ~/.claude/tools/run-task.py '{"code":"...","timeout":30}'` — ad-hoc script execution
 
 When no Python tool exists, use minimal tool calls. Prefer one Bash call with a Python one-liner over multiple Read/Edit/Bash round-trips.
 

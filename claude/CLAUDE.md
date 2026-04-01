@@ -31,11 +31,18 @@ Proceed without asking unless:
 Claude's role: interpret intent, make decisions, specify what to do, review results.
 Bulk work: delegate to `python3 ~/.claude/tools/<script>.py` via single Bash call.
 
+**Script-first rule:** 3+同種ツールコール（複数Read, 複数Edit等）が必要な場合、Pythonスクリプト1本にまとめる。
+- 複数ファイル編集 → `multi-edit.py`
+- アドホック複合処理 → `run-task.py`（コードをJSON渡し）
+- 単純な一回限り → `python3 -c '...'`
+
 Available Python tools (`~/.claude/tools/`):
 - `git-ops.py` — git status+diff+add+commit+push in one call
 - `validate.py` — Liquid構文・schema JSON・completeness・pre-push checks
 - `context-loader.py` — project detection + reference loading + learnings injection
 - `bulk-read.py` — 複数ファイル一括読み取り・検索・サマリー
+- `multi-edit.py` — 複数ファイル一括find-and-replace（バックアップ付き）
+- `run-task.py` — アドホックPythonスクリプト実行（timeout + stderr capture）
 
 When no Python tool exists, use minimal tool calls. Prefer 1 Bash call with a Python one-liner over multiple Read/Edit/Bash round-trips.
 
