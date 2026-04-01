@@ -8,6 +8,24 @@
 
 ## 📋 Recent Changelog
 
+### 2026-04-01: [Removing outdated Polaris reference docs](https://shopify.dev/changelog/removing-outdated-polaris-reference-docs)
+Polaris reference documentation now follows GraphQL API versioning policies, with only the last four stable versions documented starting with the 2026-04 release.
+
+### 2026-04-01: [`delegateAccessTokenCreate` mutation now returns `expiresIn`](https://shopify.dev/changelog/delegateaccesstokencreate-mutation-now-returns-expiresin)
+The `delegateAccessTokenCreate` mutation now returns an `expiresIn` field indicating token expiration in seconds, available in GraphQL Admin API 2026-04 and later.
+
+### 2026-04-01: [Line item component information now available for draft orders on Customer Account API](https://shopify.dev/changelog/line-item-components-draft-orders-customer-account-api)
+Customer Account API 2026-04 adds a `components` field on `DraftOrderLineItem` and a new `flattenComponents` argument to control component representation in response structures.
+
+### 2026-04-01: [Cart and checkout validation adds billing address and PO number error targets](https://shopify.dev/changelog/cart-and-checkout-validation-adds-billing-address-and-po-number-error-targets)
+As of API 2026-04, Cart and Checkout Validation Functions can now validate billing addresses and purchase order numbers with new checkout field error targets.
+
+### 2026-04-01: [Payment method identifier now required for customerPaymentMethodRemoteCreate](https://shopify.dev/changelog/payment-method-identifier-now-required-for-customerpaymentmethodremotecreate)
+Starting with API 2026-07, payment method identifier fields become required for `customerPaymentMethodRemoteCreate` with Stripe, Authorize.net, or Braintree inputs. Update integrations before the 2026-07 release.
+
+### 2026-04-01: [Report Fulfillment Order progress with new fulfillmentOrderReportProgress GraphQL mutation](https://shopify.dev/changelog/report-fulfillment-order-progress-with-new-fulfillmentorderreportprogress-graphql-mutation)
+The new `fulfillmentOrderReportProgress` mutation enables 3PLs and fulfillment apps to report work-in-progress on orders with optional status notes, supported in Admin API 2026-04.
+
 ### 2026-03-31: [New rejection reason codes in Payments Apps API](https://shopify.dev/changelog/new-rejection-reason-codes-in-payments-apps-graphql-api)
 The Payments Apps API now provides more granular decline reason codes for rejected payment sessions. New codes added to `PaymentSessionStateRejectedReason` enum alongside a new source field for better error handling.
 

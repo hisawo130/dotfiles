@@ -5,6 +5,16 @@
 
 ---
 
+## 📋 Recent Changelog
+
+### 2026-04-01: [Create subscriptions contracts without payment methods](https://shopify.dev/changelog/create-subscriptions-contracts-without-payment-methods)
+The `paymentMethodId` field is now optional in `subscriptionContractAtomicCreate` and `subscriptionContractCreate` mutations, enabling migration of subscription contracts that lack valid payment methods.
+
+### 2026-04-01: [Create unpaid orders from subscription billing attempts](https://shopify.dev/changelog/create-unpaid-orders-from-subscription-billing-attempts)
+A new `paymentProcessingPolicy` field on `subscriptionBillingAttemptCreate` allows creation of unpaid orders when valid payment methods are unavailable, giving subscribers more flexibility.
+
+---
+
 ## 1. Hydrogen（Shopify公式 Headless フレームワーク）
 
 ### 概要

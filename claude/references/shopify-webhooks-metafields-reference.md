@@ -6,6 +6,12 @@
 
 ## 📋 Recent Changelog
 
+### 2026-04-01: [App-owned metaobjects can be used without access scopes](https://shopify.dev/changelog/metaobject-scopes-not-required-for-app-metaobjects)
+App-owned metaobjects identified by `$app:example` types can now be used without requiring access scopes when using Admin API 2026-04 or later. This simplifies app development and reduces the scopes merchants must approve.
+
+### 2026-04-01: [Adding access field to StandardMetaobjectDefinitionTemplate](https://shopify.dev/changelog/adding-access-field-to-standardmetaobjectdefinitiontemplate)
+A new `access` field on `StandardMetaobjectDefinitionTemplate` lets developers verify template access configurations for Storefront API integration planning in Admin API 2026-04.
+
 ### 2026-03-28: [Updated handling of customer data erasure requests with recent orders](https://shopify.dev/changelog/updated-handling-of-customer-data-erasure-requests-with-recent-orders)
 Erasure requests now process 10 days after submission instead of being held pending for 180 days from the customer's most recent order. Apps handling `customers/redact` compliance webhooks should update any logic that assumed the 180-day hold period.
 
