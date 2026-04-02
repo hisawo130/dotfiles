@@ -199,3 +199,6 @@
 
 ## 2026-04-02 20:34 | pietro-onlineshop_ver01
 - 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
+
+## 2026-04-02 21:01 | pietro-onlineshop_ver01
+- 作業: /Users/P130/Desktop/26年3月誕生日ポイント.csv
