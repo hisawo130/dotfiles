@@ -307,10 +307,6 @@
             "type": "command",
             "command": "bash $HOME/.claude/hooks/block-compound-commands.sh"
           },
-          {
-            "type": "command",
-            "command": "bash $HOME/.claude/hooks/pre-push-validate.sh"
-          }
         ]
       }
     ],
