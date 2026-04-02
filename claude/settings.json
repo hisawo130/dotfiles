@@ -204,7 +204,8 @@
       "Bash(hash:*)",
       "Bash(eval:*)",
       "Read(//Users/P130/Desktop/2026春夏冷凍ピザ/2026crispypizza/**)",
-      "Read(//_frontend/src/sass/**)"
+      "Read(//_frontend/src/sass/**)",
+      "Read(//Users/P130/dotfiles/claude/learnings/**)"
     ],
     "deny": [
       "Bash(rm -rf /)",
@@ -218,7 +219,10 @@
       "Bash(sudo chmod:*)",
       "Bash(> /dev/sda:*)"
     ],
-    "defaultMode": "bypassPermissions"
+    "defaultMode": "bypassPermissions",
+    "additionalDirectories": [
+      "/Users/P130/dotfiles/claude/learnings"
+    ]
   },
   "hooks": {
     "UserPromptSubmit": [
@@ -387,6 +391,17 @@
     "type": "command",
     "command": "~/.claude/statusline.py"
   },
+  "enabledPlugins": {
+    "superpowers@superpowers-dev": true
+  },
+  "extraKnownMarketplaces": {
+    "superpowers-dev": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers"
+      }
+    }
+  },
   "effortLevel": "low",
   "skipDangerousModePermissionPrompt": true,
   "skipAutoPermissionPrompt": true,
@@ -417,16 +432,5 @@
         "--headless"
       ]
     }
-  },
-  "extraKnownMarketplaces": {
-    "superpowers-dev": {
-      "source": {
-        "source": "github",
-        "repo": "obra/superpowers"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "superpowers@superpowers-dev": true
   }
 }
