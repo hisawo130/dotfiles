@@ -130,3 +130,6 @@
 
 ## 2026-04-02 18:42 | pietro-onlineshop_ver01
 - 作業: クーポンコードURLです
+
+## 2026-04-02 18:45 | pietro-onlineshop_ver01
+- [pattern] 2. fetchが成功したかどうか確認していない
