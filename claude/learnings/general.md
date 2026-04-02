@@ -50,3 +50,6 @@
 
 ## 2026-04-02 13:48 | Pinup-Closet_ver01
 - [correction] 以下修正してください
+
+## 2026-04-02 13:50 | Pinup-Closet_ver01
+- [gotcha] (compoundコマンド禁止のフック)
