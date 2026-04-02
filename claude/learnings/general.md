@@ -34,3 +34,6 @@
 ## Recurring Patterns (updated 2026-04-01)
 - [shopify] ShopifyのCSVインポート・エクスポートには仕様上の落とし穴が多い（タグ上書き・重複エラー・Matrixify列名差異） — seen 6 times
 - [matrixify] MatrixifyはShopify純正CSVと列名形式が異なる（型サフィックス付き・Fulfillment Line必須） — seen 3 times
+
+## 2026-04-02 13:10 | P130
+- 作業: claude exitのときに、学習を記録する機能動いてますか？
