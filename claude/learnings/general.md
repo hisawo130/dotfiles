@@ -71,3 +71,7 @@
 ## 2026-04-02 17:06 | Pinup-Closet_ver01
 - 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/Pinup-Closet_ver01/sections/cart-notification-product.liqui
 - 完了: [sections/main-product.liquid](sections/main-product.liquid#L259-L262) の `title` ブロック描画直前に追加しました。ブロック順序が `vendor → title` なので、実際の表示も vendor の直後にラベルが入り
+
+## 2026-04-02 17:13 | Pinup-Closet_ver01
+- 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/Pinup-Closet_ver01/sections/cart-notification-product.liqui
+- 完了: 全4ファイルに `| first` を追加しました。
