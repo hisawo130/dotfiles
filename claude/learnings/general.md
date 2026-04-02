@@ -145,3 +145,7 @@
 ## 2026-04-02 18:59 | pietro-onlineshop_ver01
 - 作業: クーポンコードURLです
 - 完了: 修正しました。fetchが成功（`res.ok`）した時だけ「適用済み」を記録するようにしました。失敗した場合は次のページ読み込み時に再試行されます。
+
+## 2026-04-02 19:26 | pietro-onlineshop_ver01
+- [correction] コードレビューを確認して修正してください
+- [gotcha] ❌ WRONG: Implement 1,2,3,6 now, ask about 4,5 later
