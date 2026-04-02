@@ -205,7 +205,9 @@
       "Bash(eval:*)",
       "Read(//Users/P130/Desktop/2026春夏冷凍ピザ/2026crispypizza/**)",
       "Read(//_frontend/src/sass/**)",
-      "Read(//Users/P130/dotfiles/claude/learnings/**)"
+      "Read(//Users/P130/dotfiles/claude/learnings/**)",
+      "Skill(spec)",
+      "Skill(spec:*)"
     ],
     "deny": [
       "Bash(rm -rf /)",
