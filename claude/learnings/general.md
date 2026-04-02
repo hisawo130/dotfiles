@@ -64,3 +64,6 @@
 ## 2026-04-02 17:02 | Pinup-Closet_ver01
 - 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/Pinup-Closet_ver01/sections/cart-notification-product.liqui
 - 完了: 完了しました。
+
+## 2026-04-02 17:04 | Pinup-Closet_ver01
+- 注意点： localStorageに既に保存されている閲覧履歴には `productline` が含まれていないため、再訪問時に初めてラベルが保存されます。古い履歴はラベルなしで表示されます。
