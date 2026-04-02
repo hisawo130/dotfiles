@@ -47,3 +47,6 @@
 
 ## 2026-04-02 13:45 | mimc.co.jp-mailmagazine
 - [gotcha]    - `[gotcha]` — 罠・NG・禁止・バグ・エラーの原因
+
+## 2026-04-02 13:48 | Pinup-Closet_ver01
+- [correction] 以下修正してください
