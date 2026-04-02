@@ -9,7 +9,6 @@
   ```
   Command, ID, Name, Line: Type, Fulfillment: Status, Fulfillment: Tracking Company,
   Fulfillment: Location, Fulfillment: Tracking Number, Fulfillment: Tracking URL, Fulfillment: Send Receipt
-  ```
   - `Line: Type` = `Fulfillment Line`
   - `Fulfillment: Status` = `success`
   - `Fulfillment: Send Receipt` = `TRUE`（省略または FALSE だと通知送信されない）
