@@ -149,3 +149,7 @@
 ## 2026-04-02 19:26 | pietro-onlineshop_ver01
 - [correction] コードレビューを確認して修正してください
 - [gotcha] ❌ WRONG: Implement 1,2,3,6 now, ask about 4,5 later
+
+## 2026-04-02 19:28 | pietro-onlineshop_ver01
+- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
+- 完了: 2点修正しました：
