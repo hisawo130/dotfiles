@@ -306,7 +306,7 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/block-compound-commands.sh"
-          },
+          }
         ]
       }
     ],
