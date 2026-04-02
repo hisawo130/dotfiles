@@ -34,3 +34,7 @@
 ## 2026-03-27 | Shopify顧客CSVインポート
 - [gotcha] メールアドレスのみの純正インポートは既存タグを上書きする
 - [gotcha] CSVに重複がなくてもエラー「顧客が既にストアに存在する」が出ることがある → 既存顧客の更新には別手順が必要
+
+## 2026-04-02 | Pinup-Closet_ver01
+- [gotcha] `list.single_line_text_field` 型のメタフィールドは `object.metafields.ns.key` がオブジェクト、`.value` が配列を返す。`| escape` だけでは `["値"]` と表示される
+- [pattern] リスト型メタフィールドの正しい出力: 条件チェックは `.value != blank`、出力は `.value | first | escape`
