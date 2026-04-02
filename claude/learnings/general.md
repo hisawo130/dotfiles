@@ -67,3 +67,7 @@
 
 ## 2026-04-02 17:04 | Pinup-Closet_ver01
 - 注意点： localStorageに既に保存されている閲覧履歴には `productline` が含まれていないため、再訪問時に初めてラベルが保存されます。古い履歴はラベルなしで表示されます。
+
+## 2026-04-02 17:06 | Pinup-Closet_ver01
+- 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/Pinup-Closet_ver01/sections/cart-notification-product.liqui
+- 完了: [sections/main-product.liquid](sections/main-product.liquid#L259-L262) の `title` ブロック描画直前に追加しました。ブロック順序が `vendor → title` なので、実際の表示も vendor の直後にラベルが入り
