@@ -202,3 +202,6 @@
 
 ## 2026-04-02 21:01 | pietro-onlineshop_ver01
 - 作業: /Users/P130/Desktop/26年3月誕生日ポイント.csv
+
+## 2026-04-02 21:05 | pietro-onlineshop_ver01
+- 作業: /Users/P130/Desktop/26年3月誕生日ポイント.csv
