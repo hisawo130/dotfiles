@@ -208,3 +208,6 @@
 
 ## 2026-04-02 21:50 | pietro-onlineshop_ver01
 - 作業: /Users/P130/Desktop/26年3月誕生日ポイント.csv
+
+## 2026-04-03 15:54 | pietro-onlineshop_ver01
+- 作業: # チケット一覧モーダル 不具合修正
