@@ -22,28 +22,16 @@
 
 - [correction] `<div class="item_ttl">` は背景色ラベルになっている — デザインファイル(DF)に合わせること
 
-## 2026-04-03 21:26 | dotfiles
-- - `/capture` スキルを使って重要な学びを手動で保存する運用の徹底
-- [pattern] - リモートに先行コミットがあったため non-fast-forward エラー
-- [pattern] - `pull --rebase` でコンフリクト → abort
+## 2026-04-03 | dotfiles
 
-## 2026-04-03 21:30 | dotfiles
+- [tip] `/capture` スキルを使って重要な学びを手動で保存する運用の徹底
+- [pattern] `pull --rebase` でコンフリクト → abort
+- [gotcha] WARNINGS — 注意・NG・罠系
+- [tip] ルールベースなので「文脈的に重要」な学びは取れない
+- [open] OPEN_ISSUES — 未解決・要調査
 
-## 2026-04-03 21:35 | dotfiles
+## Recurring Patterns (updated 2026-04-03)
 
-## 2026-04-03 21:36 | dotfiles
-
-## 2026-04-03 21:38 | dotfiles
-- [gotcha] - `WARNINGS` — 注意・NG・罠系
-- - ルールベースなので「文脈的に重要」な学びは取れない
-- [open] - `OPEN_ISSUES` — 未解決・要調査
-
-## 2026-04-03 21:41 | dotfiles
-
-## 2026-04-03 22:03 | dotfiles
-
-## 2026-04-03 22:07 | dotfiles
-
-## 2026-04-03 22:18 | dotfiles
-
-## 2026-04-03 22:18 | dotfiles
+- [frontend] 非同期初期化待ちポーリングパターン: fetch.res.ok確認・window昇格シングルトン・MutationObserverへの切替 — seen 3 times
+- [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力形式 — seen 3 times
+- [shopify] インポートデータの列名・フォーマット厳格性: MatrixifyとShopify純正CSV列名差異・Line:Type必須 — seen 4 times
