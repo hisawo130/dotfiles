@@ -172,6 +172,54 @@ Track: `t5_stale` (comma-separated filenames), `t5_aging`
 
 ---
 
+## TASK 6: Anthropic Repos Monitor (週次 — 日曜のみ)
+
+Run only if today is Sunday: `[ "$(date +%u)" = "7" ] || skip to FINAL`
+
+Check Anthropic's Claude Code repositories for new features and best practices, then apply relevant improvements to the `claude/` directory.
+
+### Research sources (WebFetch each)
+
+1. `https://code.claude.com/docs/llms.txt` — full docs index
+2. `https://github.com/anthropics/claude-code/releases` — recent releases
+3. `https://code.claude.com/docs/ja/best-practices` — best practices
+4. `https://code.claude.com/docs/ja/hooks-guide` — hooks guide
+
+### What to look for
+
+- New hook event types not in `claude/settings.json`
+- CLAUDE.md best practice changes (what to add/remove)
+- New CLI flags, permission modes, or built-in features
+- Deprecated patterns currently in use
+- New workflow patterns applicable to Shopify/ecforce frontend work
+
+### Review current setup
+
+Read: `claude/CLAUDE.md`, `claude/settings.json`, all files in `claude/hooks/`, `claude/tools/`, `claude/skills/`
+
+### Apply improvements
+
+For each applicable finding:
+- Edit only files inside `claude/`
+- Keep changes minimal and targeted — no cosmetic refactoring
+- Follow existing style (English code comments, Japanese commit messages)
+- When uncertain, skip and note as "Considered but skipped: ..." in commit message
+
+### Commit
+
+```bash
+git add claude/
+git diff --cached --quiet || git commit -m "chore: Anthropicリポジトリ監視ブラッシュアップ $(date +%Y-%m-%d)
+
+[list each change and its source URL]
+
+Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"
+```
+
+Track: `t6_changes` (number of files changed, or "skipped" if not Sunday, or "no_changes")
+
+---
+
 ## FINAL: Push + Discord
 
 ```bash
@@ -187,6 +235,7 @@ dotfiles daily (DATE 03:00 JST)
 [3] Dawn — VERSION (new:YES/NO)
 [4] API — ALERT_OR_no_change
 [5] Stale refs — STALE_LIST_OR_all_OK
+[6] Anthropic monitor — CHANGES_OR_skipped_OR_no_changes
 https://github.com/hisawo130/dotfiles/commits/main
 ```
 
