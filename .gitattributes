@@ -1,0 +1,2 @@
+# Append-only learning logs: auto-resolve conflicts by keeping both sides
+claude/learnings/*.md merge=union
