@@ -352,6 +352,13 @@
           },
           {
             "type": "command",
+            "command": "bash $HOME/.claude/hooks/ai-capture.sh",
+            "timeout": 120,
+            "statusMessage": "AIで学びを抽出中...",
+            "async": true
+          },
+          {
+            "type": "command",
             "command": "mkdir -p \"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')\" && touch \"$HOME/.claude/projects/$(echo \"$PWD\" | sed 's|/|-|g')/.session-clean\"",
             "async": true
           }
