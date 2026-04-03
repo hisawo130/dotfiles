@@ -28,3 +28,5 @@
 - [pattern] - `pull --rebase` でコンフリクト → abort
 
 ## 2026-04-03 21:30 | dotfiles
+
+## 2026-04-03 21:35 | dotfiles
