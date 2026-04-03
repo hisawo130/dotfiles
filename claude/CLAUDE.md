@@ -104,12 +104,19 @@ On first task in a project directory, detect project type from file structure an
 ## Session discipline
 
 - Summarize uncommitted changes at session start.
-- Auto-save learnings before session end (feedback/user/project/reference).
-- SessionStart hooks run automatically: stale-refs → recovery → branch-staleness → platform-setup → learnings injection.
+- SessionStart/Stop hooks run automatically (pull, learnings inject/save, notify).
+
+## Compaction
+
+When compacting, always preserve:
+- List of files modified in this session
+- Current branch and any uncommitted changes summary
+- Active task description and acceptance criteria
+- Any test/build commands discovered during the session
 
 ## Injected learnings
 
-`[recurring]` = invariant rule. `[gotcha]` = check before implementing. `[correction]` = don't repeat. `[pattern]` = prefer this approach.
+`[recurring]` = invariant rule. `[gotcha]` = check before implementing. `[correction]` = don't repeat. `[pattern]` = prefer this approach. `[ai]` = AI-extracted (high confidence).
 
 ## Nightly self-improvement
 
