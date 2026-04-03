@@ -96,17 +96,32 @@ tag_line() {
 }
 
 # ── Dedup check ───────────────────────────────────────────────────────────
+# Use 80-char key (up from 60) to reduce false "not duplicate" matches.
 # [gotcha] and [recurring] scan the full file; other tags use tail -200.
 is_duplicate() {
   local line="$1"
   local file="$2"
-  local key="${line:0:60}"
+  local key="${line:0:80}"
   [ ! -f "$file" ] && return 1
   if echo "$line" | grep -qE '\[(gotcha|recurring)\]'; then
     grep -qF "$key" "$file"
   else
     tail -200 "$file" | grep -qF "$key"
   fi
+}
+
+# ── Post-write dedup ──────────────────────────────────────────────────────
+# Remove exact duplicate lines from the file after appending.
+# Preserves section headers (## lines) and empty lines.
+dedup_file() {
+  local file="$1"
+  [ ! -f "$file" ] && return
+  local tmp; tmp=$(mktemp)
+  awk '
+    /^## / { print; next }
+    /^$/ { print; next }
+    !seen[$0]++ { print }
+  ' "$file" > "$tmp" && mv "$tmp" "$file"
 }
 
 # ── Recurring pattern tracker ─────────────────────────────────────────────
@@ -157,7 +172,7 @@ WARNINGS=$(echo "$ASSISTANT_TEXT" | \
 
 # 2. "What worked" patterns (解決策・正しい方法)
 WHAT_WORKED=$(echo "$ASSISTANT_TEXT" | \
-  grep -E '(解決しました|解決方法は|正しいやり方は|このアプローチ|成功した|うまくいく|ベストプラクティス)' | \
+  grep -E '(解決しました|解決方法は|正しいやり方は|このアプローチ|成功した|うまくいく|ベストプラクティス|修正しました|対応しました|完了しました)' | \
   filter_noise | \
   sed 's/^[[:space:]]*//' | \
   sed 's/\*\*//g' | \
@@ -177,13 +192,26 @@ OPEN_ISSUES=$(echo "$ASSISTANT_TEXT" | \
   sed 's/\*\*//g' | \
   head -2)
 
-# 5. Session task summary (fallback)
+# 5. Technical / git / config patterns
+TECHNICAL=$(echo "$ASSISTANT_TEXT" | \
+  grep -E '(merge=union|pull --rebase|git attributes|コンフリクト.*自動|non-fast-forward|\.gitattributes|hook.*登録|フック.*設定|settings\.json.*変更|スクリプト.*修正)' | \
+  filter_noise | \
+  sed 's/^[[:space:]]*//' | \
+  sed 's/\*\*//g' | \
+  head -2)
+
+# 6. Session task summary (fallback)
+# Quality gate: skip generic openers that have no learning value.
+GENERIC_OPENER_RE='(^よろしく|^お願いします|^ありがとう|エラーが出|^確認して|^見て|^教えて|^こんな|^はい|^はーい|^うん|^わかった|^ok|^OK)'
 FIRST_REQUEST=$(echo "$USER_TEXT" | \
   grep -v '^$' | grep -v '^\[' | \
-  awk 'length > 8' | head -1 | cut -c1-120)
+  awk 'length > 15' | \
+  grep -viE "$GENERIC_OPENER_RE" | \
+  head -1 | cut -c1-120)
 
 COMPLETION=$(echo "$ASSISTANT_TEXT" | \
-  grep -E '(変更:|コミット:|作成しました|更新しました|修正しました|追加しました|完了しました|対応しました)' | \
+  grep -E '(コミット:|作成しました|更新しました|修正しました|追加しました|完了しました|対応しました|push.*完了|マージ)' | \
+  grep -v '作業: \|完了: ' | \
   tail -1 | cut -c1-150)
 
 # ── Build output lines (with dedup check against primary domain file) ─────
@@ -225,10 +253,22 @@ while IFS= read -r line; do
   fi
 done <<< "$OPEN_ISSUES"
 
-# Fallback: minimal task summary if nothing substantive was extracted
+while IFS= read -r line; do
+  if [[ -n "$line" ]]; then
+    tagged="[pattern] $line"
+    if ! is_duplicate "$tagged" "$DOMAIN_FILE"; then
+      LINES+=("- $tagged")
+    fi
+  fi
+done <<< "$TECHNICAL"
+
+# Fallback: minimal task summary only when BOTH request and completion are meaningful.
+# Saves nothing if only one side is available (avoids generic "作業:" noise).
 if [ "${#LINES[@]}" -eq 0 ]; then
-  [[ -n "$FIRST_REQUEST" ]] && LINES+=("- 作業: $FIRST_REQUEST")
-  [[ -n "$COMPLETION" ]] && LINES+=("- 完了: $COMPLETION")
+  if [[ -n "$FIRST_REQUEST" && -n "$COMPLETION" ]]; then
+    LINES+=("- 作業: $FIRST_REQUEST")
+    LINES+=("- 完了: $COMPLETION")
+  fi
 fi
 
 [ "${#LINES[@]}" -eq 0 ] && exit 0
@@ -250,6 +290,9 @@ for domain in "${ALL_DOMAINS[@]}"; do
     echo "## $DATE $TIME | $DIR"
     printf '%s\n' "${LINES[@]}"
   } >> "$local_file"
+
+  # Post-write dedup: remove exact duplicate lines introduced by concurrent sessions
+  dedup_file "$local_file"
 
   update_recurring "$local_file"
 done

@@ -60,133 +60,83 @@
 - 完了: 2点修正しました：
 
 ## 2026-04-02 19:38 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
-- 完了: 2点修正しました：
 
 ## 2026-04-02 19:42 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
-- 完了: 2点修正しました：
 
 ## 2026-04-02 20:04 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
-- 完了: 2点修正しました：
 
 ## 2026-04-02 20:14 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
-- 完了: 2点修正しました：
 
 ## 2026-04-02 20:18 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
-- 完了: 2点修正しました：
 
 ## 2026-04-02 20:18 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
-- 完了: 2点修正しました：
 
 ## 2026-04-02 20:19 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
-- 完了: 2点修正しました：
 
 ## 2026-04-02 20:22 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
 
 ## 2026-04-02 20:23 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
 
 ## 2026-04-02 20:31 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
 
 ## 2026-04-02 20:32 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
 
 ## 2026-04-02 20:33 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
 
 ## 2026-04-02 20:34 | pietro-onlineshop_ver01
-- 作業: https://github.com/CIN-GROUP-EC/pietro-onlineshop_ver01/pull/29
 
 ## 2026-04-02 21:01 | pietro-onlineshop_ver01
 - 作業: /Users/P130/Desktop/26年3月誕生日ポイント.csv
 
 ## 2026-04-02 21:05 | pietro-onlineshop_ver01
-- 作業: /Users/P130/Desktop/26年3月誕生日ポイント.csv
 
 ## 2026-04-02 21:50 | pietro-onlineshop_ver01
-- 作業: /Users/P130/Desktop/26年3月誕生日ポイント.csv
 
 ## 2026-04-03 15:54 | pietro-onlineshop_ver01
 - 作業: # チケット一覧モーダル 不具合修正
 
 ## 2026-04-03 16:03 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
 
 ## 2026-04-03 17:47 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
 
 ## 2026-04-03 17:54 | pietro-onlineshop_ver01
 - `.dd-button.click()` を廃止して `window.discountDeckInstance.showCoupons()` を直接呼び出した理由は、ポーリングで初期化を待つ実装に合わせるためです。
 
 ## 2026-04-03 17:55 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
 
 ## 2026-04-03 17:57 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
 
 ## 2026-04-03 17:57 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
 
 ## 2026-04-03 17:58 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
 - 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#30
 
 ## 2026-04-03 18:05 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
-- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#30
 
 ## 2026-04-03 18:06 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
-- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#30
 
 ## 2026-04-03 18:07 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
-- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#30
 
 ## 2026-04-03 18:07 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
-- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#30
 
 ## 2026-04-03 18:08 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
-- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#30
 
 ## 2026-04-03 18:16 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
 - 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#31
 
 ## 2026-04-03 18:21 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
-- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#31
 
 ## 2026-04-03 18:30 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
-- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#31
 
 ## 2026-04-03 18:50 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
-- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#31
 
 ## 2026-04-03 21:11 | pietro-onlineshop_ver01
-- 作業: # チケット一覧モーダル 不具合修正
-- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#31
 
 ## 2026-04-03 21:14 | dotfiles
 - 作業: こんなエラーが出ていました。
 
 ## 2026-04-03 21:16 | dotfiles
-- 作業: こんなエラーが出ていました。
 
 ## 2026-04-03 21:19 | dotfiles
-- 作業: こんなエラーが出ていました。
 
 ## 2026-04-03 21:20 | dotfiles
-- 作業: こんなエラーが出ていました。
