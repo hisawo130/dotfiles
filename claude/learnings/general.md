@@ -217,3 +217,6 @@
 
 ## 2026-04-03 17:47 | pietro-onlineshop_ver01
 - 作業: # チケット一覧モーダル 不具合修正
+
+## 2026-04-03 17:54 | pietro-onlineshop_ver01
+- `.dd-button.click()` を廃止して `window.discountDeckInstance.showCoupons()` を直接呼び出した理由は、ポーリングで初期化を待つ実装に合わせるためです。
