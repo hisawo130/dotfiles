@@ -265,3 +265,7 @@
 ## 2026-04-03 18:30 | pietro-onlineshop_ver01
 - 作業: # チケット一覧モーダル 不具合修正
 - 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#31
+
+## 2026-04-03 18:50 | pietro-onlineshop_ver01
+- 作業: # チケット一覧モーダル 不具合修正
+- 完了: PR作成しました: CIN-GROUP-EC/pietro-onlineshop_ver01#31
