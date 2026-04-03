@@ -26,3 +26,5 @@
 - - `/capture` スキルを使って重要な学びを手動で保存する運用の徹底
 - [pattern] - リモートに先行コミットがあったため non-fast-forward エラー
 - [pattern] - `pull --rebase` でコンフリクト → abort
+
+## 2026-04-03 21:30 | dotfiles
