@@ -38,3 +38,8 @@
 ## 2026-04-02 | Pinup-Closet_ver01
 - [gotcha] `list.single_line_text_field` 型のメタフィールドは `object.metafields.ns.key` がオブジェクト、`.value` が配列を返す。`| escape` だけでは `["値"]` と表示される
 - [pattern] リスト型メタフィールドの正しい出力: 条件チェックは `.value != blank`、出力は `.value | first | escape`
+
+## 2026-04-03 | pietro-onlineshop_ver01
+- [gotcha] Shopify外部アプリ（Discount Deck等）のCDNファイルは直接編集不可。テーマ側インラインスクリプトで対処する
+- [pattern] 非同期初期化待ちポーリング実装の3点セット: ①フラグチェックを先頭に置く ②フラグをwindowに昇格してシングルトン化 ③イベントに名前空間付与＋off→on で再登録してハンドラー蓄積を防止
+- [gotcha] `let` で宣言したポーリングフラグはテーマエディター再レンダリング時にクロージャが増殖しシングルトンにならない → `window.flagName` に昇格する
