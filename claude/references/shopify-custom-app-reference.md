@@ -8,6 +8,15 @@
 
 ## 📋 Recent Changelog
 
+### 2026-04-01: [Add Tags to Discounts](https://shopify.dev/changelog/add-tags-to-discounts)
+Admin API 2026-04 adds a `tags` field to all discount types, allowing merchants and apps to label, filter, and organize discounts via GraphQL mutations.
+
+### 2026-04-01: [Add Prerequisites to Product Discount Functions](https://shopify.dev/changelog/add-prerequisites-to-product-discount-functions)
+Discount Functions now support a `prerequisites` field on product discount candidates, enabling Buy X Get Y (BXGY) logic with `cartLinePrerequisite` specifying ID and required quantity.
+
+### 2026-04-01: [Multi-channel support for sales channel apps](https://shopify.dev/changelog/multi-channel-support-for-sales-channel-apps)
+Sales channel apps can now manage multiple channel connections within a single app using new APIs (`channelCreate`, `channelUpdate`, `channelDelete`, etc.); single-channel APIs are now deprecated.
+
 ### 2026-04-01: [Removing outdated Polaris reference docs](https://shopify.dev/changelog/removing-outdated-polaris-reference-docs)
 Polaris reference documentation now follows GraphQL API versioning policies, with only the last four stable versions documented starting with the 2026-04 release.
 
