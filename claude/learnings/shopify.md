@@ -17,7 +17,6 @@
 - [pattern] `swiper.pagination.bullets` を使うとDOM検索不要でpagenation bulletにアクセスできる
 - [correction] `img_url: 'master'` は非推奨。`image_url: width: 2000`（PC）/ `width: 800`（SP）を使う
 
-## 2026-03-26 | pietro-onlineshop_ver01
 - [gotcha] ⚠️ 「カスタムインストール」は絶対に選ばない
 - [pattern] ホバー色を揃えるには `base.css` の既存ルール (`.customer a:hover`) と同じ値を使う — `color: rgb(var(--color-link))` + `text-decoration-thickness: 0.2rem`
 
