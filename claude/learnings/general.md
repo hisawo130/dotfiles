@@ -73,3 +73,7 @@
 - [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 6 times
 - [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力 — seen 5 times
 - [matrixify] MatrixifyはShopify純正CSVと列名形式が異なる（型サフィックス付き・Fulfillment Line必須） — seen 3 times
+## 2026-04-03 22:18 | dotfiles
+
+## 2026-04-04 11:41 | dotfiles
+- [correction] ついでに全部見直しておいて
