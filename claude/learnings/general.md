@@ -30,18 +30,6 @@
 - [tip] ルールベースなので「文脈的に重要」な学びは取れない
 - [open] OPEN_ISSUES — 未解決・要調査
 
-## Recurring Patterns (updated 2026-04-03)
-
-- [frontend] 非同期初期化待ちポーリングパターン: fetch.res.ok確認・window昇格シングルトン・MutationObserverへの切替 — seen 3 times
-- [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力形式 — seen 3 times
-- [shopify] インポートデータの列名・フォーマット厳格性: MatrixifyとShopify純正CSV列名差異・Line:Type必須 — seen 4 times
-
-## 2026-03-25 | HTML (MIMC 商品ページ)
-- [correction] `<div class="item_ttl">` は背景色ラベルになっている — デザインファイル(DF)に合わせること
-
-## 2026-03-26 | dotfiles (save-learnings)
-- [pattern] save-learnings.sh の再帰防止: `CLAUDE_LEARNING_EXTRACT=1` 環境変数で自己呼び出しをガード
-
 ## 2026-04-02 19:26 | pietro-onlineshop_ver01
 - 完了: 変更: [sections/page-lp-2026crispypizza.liquid](sections/page-lp-2026crispypizza.liquid), [templates/page.lp-202
 
@@ -49,7 +37,6 @@
 
 - [pattern] 2. fetchが成功したかどうか確認していない
 
-- [pattern] 完了: 修正しました。fetchが成功（`res.ok`）した時だけ「適用済み」を記録するようにしました。失敗した場合は次のページ読み込み時に再試行されます。
 
 - [correction] コードレビューを確認して修正してください
 - [gotcha] ❌ WRONG: Implement 1,2,3,6 now, ask about 4,5 later
@@ -82,7 +69,7 @@
 
 - 完了: PR作成しました: https://github.com/CIN-GROUP-EC/Pinup-Closet_ver01/pull/31
 
-## Recurring Patterns (updated 2026-04-04)
+## Recurring Patterns (updated 2026-04-05)
 - [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 6 times
 - [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力 — seen 5 times
 - [matrixify] MatrixifyはShopify純正CSVと列名形式が異なる（型サフィックス付き・Fulfillment Line必須） — seen 3 times
