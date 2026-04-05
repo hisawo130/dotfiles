@@ -53,15 +53,19 @@ jobs:
       - name: Run nightly self-improvement
         id: claude_run
         run: |
-          set -euo pipefail
+          set -uo pipefail
           # SECURITY NOTE: --dangerously-skip-permissions bypasses ALL allow/deny rules
           # in claude/templates/settings.ci.json (including the deny list for rm -rf, curl, etc.).
           # Scope control relies on the prompt itself; review claude/scripts/prompts/nightly-review.md
           # and growth-log.md output after each run to detect unexpected actions.
           claude -p "$(cat claude/scripts/prompts/nightly-review.md)" \
             --dangerously-skip-permissions \
-            --max-turns 30 \
+            --max-turns 50 \
             2>&1 | tee ~/.claude/logs/nightly-ci.log
+          CLAUDE_STATUS=${PIPESTATUS[0]}
+          if [ "$CLAUDE_STATUS" -ne 0 ]; then
+            echo "::warning::Claude exited with status $CLAUDE_STATUS (--max-turns に到達したか、エラーが発生しました)"
+          fi
           echo "✅ Claude run completed"
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
