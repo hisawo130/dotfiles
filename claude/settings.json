@@ -253,6 +253,17 @@
         ]
       }
     ],
+    "PermissionDenied": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_name // \"unknown\"' | { read -r t; curl -s -H 'Title: 実行拒否' -H 'Priority: default' -H 'Tags: no_entry' -d \"$t の実行が自動モードにより拒否されました\" ntfy.sh/claude-2e88e2160d55; } 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
     "Notification": [
       {
         "matcher": "",
