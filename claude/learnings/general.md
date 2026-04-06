@@ -45,14 +45,11 @@
 - - 500円OFFクーポンボックス（枠囲み、有効期限・注意事項付き）
 - [correction] レイアウトや背景色がPDFと違うようです
 
-- [gotcha] PDFや画像内のテキストが読み取れない場合、推測で文章を作らず必ずユーザーに確認する。特にメール本文・商品説明文など正確さが重要なコンテンツは勝手に創作しない。
-
 - 完了: `260410.html` を作成しました。
 
 - [gotcha]    - `[gotcha]` — 罠・NG・禁止・バグ・エラーの原因
 
 ## 2026-04-02 18:10 | Pinup-Closet_ver01
-- [open] 注意点: Rivyoが `DOMContentLoaded` より後にバッジを注入する場合は `MutationObserver` への変更が必要になる可能性があります（実装後に確認）。
 - [correction] ボタンの位置は改善されましたがアイコンがでなくなりました
 
 - [correction] 以下修正してください
@@ -69,11 +66,11 @@
 
 - 完了: PR作成しました: https://github.com/CIN-GROUP-EC/Pinup-Closet_ver01/pull/31
 
-## Recurring Patterns (updated 2026-04-05)
+## Recurring Patterns (updated 2026-04-06)
 - [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 6 times
 - [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力 — seen 5 times
 - [matrixify] MatrixifyはShopify純正CSVと列名形式が異なる（型サフィックス付き・Fulfillment Line必須） — seen 3 times
-## 2026-04-03 22:18 | dotfiles
+- [js] 非同期初期化待ちポーリング実装: windowフラグによるシングルトン化・名前空間付きイベント登録・DOM依存呼び出し回避 — seen 3 times
 
 ## 2026-04-04 11:41 | dotfiles
 - [correction] ついでに全部見直しておいて
