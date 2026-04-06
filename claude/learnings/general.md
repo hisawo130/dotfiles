@@ -77,3 +77,8 @@
 
 ## 2026-04-04 11:41 | dotfiles
 - [correction] ついでに全部見直しておいて
+
+## 2026-04-06 19:42 | dotfiles [ai]
+- [gotcha] Chrome DevTools MCPはデフォルトで使用統計をGoogleに送信（`--no-usage-statistics`で無効化必須）
+- [pattern] Shopify/ecforceテーマ開発でビジュアル確認・JavaScriptデバッグをMCPで自動化できる
+- [tip] Chrome DevToolsトレース取得によるパフォーマンス分析がエージェント実行時に活用可能
