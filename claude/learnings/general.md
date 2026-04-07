@@ -26,56 +26,20 @@
 
 - [tip] `/capture` スキルを使って重要な学びを手動で保存する運用の徹底
 - [pattern] `pull --rebase` でコンフリクト → abort
-- [gotcha] WARNINGS — 注意・NG・罠系
 - [tip] ルールベースなので「文脈的に重要」な学びは取れない
-- [open] OPEN_ISSUES — 未解決・要調査
 
-## 2026-04-02 19:26 | pietro-onlineshop_ver01
-- 完了: 変更: [sections/page-lp-2026crispypizza.liquid](sections/page-lp-2026crispypizza.liquid), [templates/page.lp-202
-
-- 完了: 修正しました。`Tags Command: DELETE` に更新済みです。同じファイル（`matrixify-customer-tags-bdp20260331-REMOVE.csv`）を再インポートしてください。
-
-- [pattern] 2. fetchが成功したかどうか確認していない
-
-
-- [correction] コードレビューを確認して修正してください
-- [gotcha] ❌ WRONG: Implement 1,2,3,6 now, ask about 4,5 later
-
-## 2026-04-02 13:45 | mimc.co.jp-mailmagazine
-- - 500円OFFクーポンボックス（枠囲み、有効期限・注意事項付き）
-- [correction] レイアウトや背景色がPDFと違うようです
-
-- 完了: `260410.html` を作成しました。
-
-- [gotcha]    - `[gotcha]` — 罠・NG・禁止・バグ・エラーの原因
-
-## 2026-04-02 18:10 | Pinup-Closet_ver01
-- [correction] ボタンの位置は改善されましたがアイコンがでなくなりました
-
-- [correction] 以下修正してください
-
-- [gotcha] (compoundコマンド禁止のフック)
+## 2026-04-02 | Pinup-Closet_ver01
 
 - [tip] 注意点： localStorageに既に保存されている閲覧履歴には `productline` が含まれていないため、再訪問時に初めてラベルが保存されます。古い履歴はラベルなしで表示されます。
 
-- 完了: [sections/main-product.liquid](sections/main-product.liquid#L259-L262) の `title` ブロック描画直前に追加しました。ブロック順序が `vendor → title` なので、実際の表示も vendor の直後にラベルが入り
-
-- 完了: 全4ファイルに `| first` を追加しました。
-
-- 完了: `width: fit-content` を追加しました。スクリーンショットのように文字幅に合ったタグ表示になります。
-
-- 完了: PR作成しました: https://github.com/CIN-GROUP-EC/Pinup-Closet_ver01/pull/31
-
-## Recurring Patterns (updated 2026-04-06)
+## Recurring Patterns (updated 2026-04-07)
 - [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 6 times
 - [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力 — seen 5 times
 - [matrixify] MatrixifyはShopify純正CSVと列名形式が異なる（型サフィックス付き・Fulfillment Line必須） — seen 3 times
 - [js] 非同期初期化待ちポーリング実装: windowフラグによるシングルトン化・名前空間付きイベント登録・DOM依存呼び出し回避 — seen 3 times
 
-## 2026-04-04 11:41 | dotfiles
-- [correction] ついでに全部見直しておいて
+## 2026-04-06 | dotfiles [ai]
 
-## 2026-04-06 19:42 | dotfiles [ai]
 - [gotcha] Chrome DevTools MCPはデフォルトで使用統計をGoogleに送信（`--no-usage-statistics`で無効化必須）
 - [pattern] Shopify/ecforceテーマ開発でビジュアル確認・JavaScriptデバッグをMCPで自動化できる
 - [tip] Chrome DevToolsトレース取得によるパフォーマンス分析がエージェント実行時に活用可能
