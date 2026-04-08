@@ -1,7 +1,7 @@
 # Shopify カスタムアプリ リファレンス
 <!-- API alert (2026-04-05): stable: 2027-01 → 2026-04 -->
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > 対象: Storefront API / Checkout Extensibility / Shopify Functions / GraphQL Admin API
 
 ---
@@ -413,7 +413,7 @@ shopify app deploy  # 本番デプロイ（アプリと一緒にリリース）
 ```toml
 name = "my-discount-function"
 type = "discounts"
-api_version = "2025-10"
+api_version = "2026-04"
 
 [build]
 command = "cargo build --release --target wasm32-wasip1"

@@ -1,7 +1,20 @@
 # Shopify リファレンス
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > 対象バージョン: Dawn 15.4.1 / Online Store 2.0 / Winter '26 Edition
+
+---
+
+## 📋 Recent Changelog
+
+### 2026-04-01: API 2026-04 リリース
+Admin GraphQL API の安定版として 2026-04 がリリース。各ミューテーションの新機能（割引タグ、メタオブジェクトスコープ不要化等）はこのバージョンから有効。
+
+### 2026-03-25: [Shopify CLI `--force` フラグ廃止予告](https://shopify.dev/changelog/the-shopify-cli-app-release-force-flag-is-deprecated-and-will-be-removed)
+`shopify app deploy` / `shopify app release` の `--force` フラグが 2026年5月に削除予定。代替: `--allow-updates` / `--allow-deletes`。
+
+### 2026-03-23: [Order REST APIから `pre_tax_price` 削除](https://shopify.dev/changelog/removal-of-pre-tax-price-from-the-order-rest-admin-api)
+Order REST Admin API から `pre_tax_price` フィールドが削除。代替は GraphQL Admin API の `lineItems { taxLines }` を使用。
 
 ---
 

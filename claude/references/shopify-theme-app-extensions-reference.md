@@ -1,6 +1,6 @@
 # Shopify Theme App Extensions & Customer Account UI Extensions リファレンス
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-04-08（公式ドキュメント精査済み）
 
 ---
 

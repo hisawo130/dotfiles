@@ -1,6 +1,6 @@
 # Shopify Hydrogen / App Bridge / Selling Plans / B2B リファレンス
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > ⚠️ B2Bテーマ対応・App Bridge 4の一部API・Remixとの比較は公式URLが404のため未確認
 
 ---
