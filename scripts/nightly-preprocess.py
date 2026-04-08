@@ -137,6 +137,39 @@ def fix_stale_dates(files: list[Path]) -> list[str]:
             write_file(f, "".join(new_lines))
     return changes
 
+# ── TASK 1: gotcha/correction 重複候補の検出 ─────────────────────────────────
+
+def detect_gotcha_candidates() -> list[str]:
+    """Find [gotcha]/[correction] entries that appear 2+ times across all domains."""
+    from collections import Counter
+    all_entries = []
+    for f in sorted(LEARNINGS_DIR.glob("*.md")):
+        content = read_file(f)
+        domain = f.stem
+        for line in content.splitlines():
+            m = re.search(r'\[(gotcha|correction)\]\s+(.+)', line)
+            if m:
+                key = re.sub(r'\s+', ' ', m.group(2).strip())[:80]
+                all_entries.append((domain, m.group(1), key))
+
+    # Group by normalized key (first 40 chars)
+    from collections import defaultdict
+    grouped: dict[str, list] = defaultdict(list)
+    for domain, tag, key in all_entries:
+        short = key[:40]
+        grouped[short].append((domain, tag, key))
+
+    candidates = []
+    for short, items in grouped.items():
+        if len(items) >= 2:
+            domains = list({d for d, _, _ in items})
+            tag = items[0][1]
+            candidates.append(
+                f"[{tag} 重複 {len(items)}件] {', '.join(domains)}: \"{short}...\" → メモリルール化を検討"
+            )
+    return candidates
+
+
 # ── Build compact digest for Claude (Tasks 1-3) ───────────────────────────────
 
 def recent_tagged_entries(content: str, days: int = CUTOFF_DAYS) -> list[str]:
@@ -242,6 +275,7 @@ def main():
     digest = build_digest()
     digest["metrics"] = metrics
     digest["stale_changes"] = stale_changes
+    digest["gotcha_candidates"] = detect_gotcha_candidates()
 
     print(json.dumps(digest, ensure_ascii=False, indent=2))
 

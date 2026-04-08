@@ -15,82 +15,48 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 全履歴取得（学習ログの履歴参照のため）
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Claude Code
-        # NOTE: pin to a specific version (e.g. @1.x.x) to avoid unexpected breaking changes.
-        # Leaving as "latest" for now; update after validating each new release.
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Check required secrets
-        run: |
-          if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "::error::ANTHROPIC_API_KEY が設定されていません。Repository Secrets を確認してください。"
-            exit 1
-          fi
-          echo "✅ ANTHROPIC_API_KEY confirmed"
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          fetch-depth: 0
 
       - name: Setup Claude environment
         run: |
           set -euo pipefail
           mkdir -p ~/.claude/logs
-          # CI 用の設定ファイルをコピー
-          cp claude/templates/settings.ci.json ~/.claude/settings.json
-          # ディレクトリごとシンボリックリンク
-          # 既存ディレクトリを先に削除（ln -sfn は既存ディレクトリがあると内部に入れ子になる）
           rm -rf ~/.claude/learnings ~/.claude/memory
           ln -sfn "$(pwd)/claude/learnings" ~/.claude/learnings
-          ln -sfn "$(pwd)/claude/memory" ~/.claude/memory
+          ln -sfn "$(pwd)/claude/memory"    ~/.claude/memory
           echo "✅ Claude environment ready"
 
       - name: Run nightly self-improvement
-        id: claude_run
         run: |
           set -euo pipefail
 
-          # STEP 1: preprocess — Tasks 4-6 をPythonで完結、Claudeへ渡すJSONダイジェスト生成
-          python3 scripts/nightly-preprocess.py > ~/.claude/logs/nightly-digest.json \
+          # STEP 1: preprocess — stale dates / metrics / gotcha候補 / growth-log scaffold
+          python3 scripts/nightly-preprocess.py \
+            > ~/.claude/logs/nightly-digest.json \
             2> ~/.claude/logs/nightly-preprocess.log
-          echo "✅ preprocess completed"
           cat ~/.claude/logs/nightly-preprocess.log
+          echo "✅ preprocess completed"
 
-          # STEP 2: Claude — Tasks 1-3 のみ、JSONダイジェストを受け取りJSON応答を返す
-          # SECURITY NOTE: --dangerously-skip-permissions bypasses allow/deny rules.
-          # Scope control relies on the prompt (nightly-review.md). Review growth-log.md after each run.
-          # JSONダイジェストをプロンプトに埋め込む
-          python3 scripts/nightly-inject-prompt.py \
+          # STEP 2: shell validate — bash -n で全 .sh ファイルを検証
+          python3 scripts/nightly-validate-shell.py \
+            > ~/.claude/logs/nightly-shell.json \
+            2>> ~/.claude/logs/nightly-preprocess.log
+          cat ~/.claude/logs/nightly-preprocess.log | tail -5
+          echo "✅ shell validate completed"
+
+          # STEP 3: postprocess — growth-log の placeholder を埋める
+          python3 scripts/nightly-postprocess.py \
             ~/.claude/logs/nightly-digest.json \
-            claude/scripts/prompts/nightly-review.md \
-            > ~/.claude/logs/nightly-prompt.txt
-          claude -p "$(cat ~/.claude/logs/nightly-prompt.txt)" \
-            --dangerously-skip-permissions \
-            --max-turns 5 \
-            2>&1 | tee ~/.claude/logs/nightly-ci.log
-          echo "✅ Claude run completed"
-
-          # STEP 3: postprocess — ClaudeのJSON出力をファイルに適用
-          cat ~/.claude/logs/nightly-ci.log \
-            | python3 scripts/nightly-postprocess.py \
+            ~/.claude/logs/nightly-shell.json \
             2>> ~/.claude/logs/nightly-preprocess.log
           echo "✅ postprocess completed"
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Commit improvements
         run: |
           set -euo pipefail
           git config user.name  "Claude Nightly Bot"
           git config user.email "claude-bot@noreply.github.com"
-          # JST 日付をコミットメッセージに使用
           JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
-          # シンボリックリンク経由で更新されたファイルをステージ
           git add claude/learnings/ claude/memory/ claude/CLAUDE.md claude/scripts/growth-log.md 2>/dev/null || true
           if ! git diff --cached --quiet; then
             git commit -m "chore: 🌙 nightly self-improve (${JST_DATE} JST)"
@@ -105,5 +71,5 @@ jobs:
         if: always()
         with:
           name: nightly-log-${{ github.run_number }}
-          path: ~/.claude/logs/nightly-ci.log
+          path: ~/.claude/logs/nightly-preprocess.log
           retention-days: 30
