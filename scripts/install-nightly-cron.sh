@@ -24,9 +24,9 @@ get_cron_time() {
   local offset
   offset=$(detect_tz_offset)
   if [[ "$offset" == "+0900" ]] || [[ "$offset" == "JST" ]]; then
-    echo "0 3 * * *"   # システムが JST: そのまま AM3:00
+    echo "0 3 * * 1-5"   # システムが JST: 月〜金 AM3:00
   else
-    echo "0 18 * * *"  # システムが UTC: 18:00 UTC = 03:00 JST
+    echo "0 18 * * 1-5"  # システムが UTC: 18:00 UTC = 03:00 JST、月〜金のみ
   fi
 }
 
