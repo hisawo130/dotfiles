@@ -303,6 +303,10 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/stale-branch-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/dotfiles/claude/hooks/claude-md-review.sh"
           }
         ]
       }
@@ -343,6 +347,15 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/post-push-notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // \"\"' | { read -r f; [[ \"$f\" == *\"CLAUDE.md\"* ]] && date +%Y-%m-%d > \"$HOME/.claude/logs/claude-md-last-review\" || true; } 2>/dev/null || true"
           }
         ]
       }
