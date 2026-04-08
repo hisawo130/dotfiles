@@ -63,7 +63,12 @@ Reference files in `claude/references/`:
 
 Read last sync from `claude/references/.shopify-changelog-last-sync` (ISO datetime). If absent, default to 7 days ago.
 
-Fetch `https://shopify.dev/changelog/feed.xml`. Keep entries published after last sync, developer-relevant only (skip merchant/admin-facing announcements).
+Fetch the Shopify changelog feed. Try in order until one succeeds:
+1. `https://changelog.shopify.com/feed.xml`
+2. `https://changelog.shopify.com/atom.xml`
+3. `https://shopify.dev/changelog/feed.xml` (fallback)
+
+Keep entries published after last sync, developer-relevant only (skip merchant/admin-facing announcements with no API/CLI/Liquid/Functions/App impact).
 
 Classify by keywords:
 - Theme / Liquid / OS2.0 / Dawn / Sections → `shopify-reference.md`
@@ -80,6 +85,8 @@ Add to `## 📋 Recent Changelog` section near top of each target file (create i
 ```
 Max 20 entries per section (remove oldest if over 20). Write newest entry's pubDate to `.shopify-changelog-last-sync`.
 
+Build `t2_entries` as a newline-separated list of new entry titles in format `YYYY-MM-DD: Title` (newest first, max 10). If no new entries, set to empty string.
+
 ### Commit
 
 ```bash
@@ -87,7 +94,7 @@ git add claude/references/
 git diff --cached --quiet || git commit -m "docs: shopify changelog $(date +%Y-%m-%d)"
 ```
 
-Track: `t2_new`
+Track: `t2_new`, `t2_entries`
 
 ---
 
@@ -232,6 +239,8 @@ Send Discord notification using the webhook. Build the message from all tracked 
 dotfiles daily (DATE 03:00 JST)
 [1] Learnings — files:N removed:N tagged:N patterns:N
 [2] Changelog — new:N
+　• YYYY-MM-DD: Entry title 1   ← include each entry from t2_entries (omit this block if t2_new=0)
+　• YYYY-MM-DD: Entry title 2
 [3] Dawn — VERSION (new:YES/NO)
 [4] API — ALERT_OR_no_change
 [5] Stale refs — STALE_LIST_OR_all_OK
@@ -239,6 +248,9 @@ dotfiles daily (DATE 03:00 JST)
 https://github.com/hisawo130/dotfiles/commits/main
 ```
 
-Always send — even if all sections are clean (confirms run completed).
+Rules:
+- Always send — even if all sections are clean (confirms run completed)
+- Section [2]: include the bullet list of `t2_entries` only when `t2_new > 0`; omit bullets when `t2_new=0`
+- Keep total message under 2000 characters (Discord limit); truncate entries with "…他N件" if needed
 
 Webhook URL: `https://discord.com/api/webhooks/1486928286541021345/4po5j-0O5Qzdql7wBdNr0Ga0_Ian-t7P66IMj7DzHWKMuDRr9IH7OSYoHTu0S644C8E6`
