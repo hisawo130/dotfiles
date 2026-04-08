@@ -25,16 +25,16 @@
 ## 2026-04-08 夜間自己改善レポート
 
 ### 記憶整理
-<!-- CLAUDE_FILL: memory_summary -->
+- [gotcha 重複 2件] general: "pull 前に未コミット変更をチェック。ff-only でもコンフリクト時は警告..." → メモリルール化を検討
 
 ### 自動駆動の見直し
-<!-- CLAUDE_FILL: claude_md_changes -->
+スキップ（人間が手動更新）
 
 ### リファクタリング
-<!-- CLAUDE_FILL: refactoring -->
+- 問題なし（全 0 ファイル OK）
 
 ### 今日の観察
-<!-- CLAUDE_FILL: observations -->
+（AIなし実行 — 観察コメントなし）
 
 ### 期限切れパトロール
   shopify_platform_updates.md: 期限済み変換
