@@ -145,31 +145,49 @@ done
 
 [ "$step1_changed" -eq 0 ] && echo "  (変更なし)" || echo "  完了"
 
-# ── STEP 2: AI 自己レビュー (claude -p) ──────────────────────────────────────
+# ── STEP 2: 前処理 + AI 自己レビュー ─────────────────────────────────────────
 echo ""
-echo "── STEP 2: AI 自己レビュー ──"
+echo "── STEP 2: 前処理 (tasks 4-6 をスクリプトで処理) ──"
+
+PREPROCESS="$DOTFILES/scripts/nightly-preprocess.py"
+POSTPROCESS="$DOTFILES/scripts/nightly-postprocess.py"
+NIGHTLY_PROMPT="$PROMPTS_DIR/nightly-review.md"
+DIGEST_FILE="$LOG_DIR/nightly-digest.json"
+
+if [ ! -f "$PREPROCESS" ]; then
+  echo "  [SKIP] nightly-preprocess.py が見つかりません"
+else
+  # Tasks 5 & 6 は Python で完結; digest JSON を生成
+  python3 "$PREPROCESS" > "$DIGEST_FILE" \
+    && echo "  前処理完了 (stale dates + metrics + growth-log scaffold)" \
+    || { echo "  [WARNING] 前処理エラー"; }
+fi
+
+echo ""
+echo "── STEP 2b: AI 自己レビュー (Tasks 1-3) ──"
 
 CLAUDE_RUN="$DOTFILES/scripts/claude-run.sh"
 
-# claude コマンドを解決: 直接呼び出し優先、次に claude-run.sh ラッパー
 if command -v claude &>/dev/null; then
-  _claude_invoke() { claude -p "$1" --dangerously-skip-permissions --max-turns 30; }
+  _claude_invoke() { claude -p "$1" --dangerously-skip-permissions --max-turns 5; }
 elif [ -x "$CLAUDE_RUN" ]; then
-  _claude_invoke() { bash "$CLAUDE_RUN" --dir "$DOTFILES" --turns 30 "$1"; }
+  _claude_invoke() { bash "$CLAUDE_RUN" --dir "$DOTFILES" --turns 5 "$1"; }
 else
   echo "  [SKIP] claude コマンドが見つかりません"
   _claude_invoke() { return 1; }
 fi
 
-# 2a: 記憶の整理 + CLAUDE.md 見直し + 成長ログ生成
-NIGHTLY_PROMPT="$PROMPTS_DIR/nightly-review.md"
-if [ -f "$NIGHTLY_PROMPT" ]; then
-  echo "  記憶整理・自己レビュー実行中..."
-  _claude_invoke "$(cat "$NIGHTLY_PROMPT")" \
-    && echo "  完了" \
-    || echo "  [WARNING] AI レビューがエラーで終了"
+if [ -f "$NIGHTLY_PROMPT" ] && [ -f "$DIGEST_FILE" ]; then
+  # Inject digest into prompt (replace __DIGEST__ placeholder)
+  INJECTED_PROMPT=$(sed "s|__DIGEST__|$(cat "$DIGEST_FILE" | sed 's/[&/\]/\\&/g; s/$/\\n/' | tr -d '\n')|" "$NIGHTLY_PROMPT")
+
+  echo "  AI レビュー実行中 (max-turns=5, JSON出力のみ)..."
+  AI_RESPONSE=$(_claude_invoke "$INJECTED_PROMPT" 2>>"$LOG_DIR/nightly.log") \
+    && echo "$AI_RESPONSE" | python3 "$POSTPROCESS" \
+    && echo "  後処理完了" \
+    || echo "  [WARNING] AI レビューまたは後処理がエラーで終了"
 else
-  echo "  [SKIP] プロンプトファイルが見つかりません: $NIGHTLY_PROMPT"
+  echo "  [SKIP] プロンプトまたはダイジェストが見つかりません"
 fi
 
 # ── STEP 3: dotfiles に全変更をコミット ──────────────────────────────────────
