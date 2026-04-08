@@ -64,13 +64,11 @@ jobs:
           # STEP 2: Claude — Tasks 1-3 のみ、JSONダイジェストを受け取りJSON応答を返す
           # SECURITY NOTE: --dangerously-skip-permissions bypasses allow/deny rules.
           # Scope control relies on the prompt (nightly-review.md). Review growth-log.md after each run.
-          # JSONダイジェストをプロンプトに埋め込む（Pythonで安全に処理）
-          python3 - <<'PYEOF' > ~/.claude/logs/nightly-prompt.txt
-import json, pathlib
-digest = pathlib.Path("/root/.claude/logs/nightly-digest.json").read_text()
-template = pathlib.Path("claude/scripts/prompts/nightly-review.md").read_text()
-print(template.replace("__DIGEST__", digest))
-PYEOF
+          # JSONダイジェストをプロンプトに埋め込む
+          python3 scripts/nightly-inject-prompt.py \
+            ~/.claude/logs/nightly-digest.json \
+            claude/scripts/prompts/nightly-review.md \
+            > ~/.claude/logs/nightly-prompt.txt
           claude -p "$(cat ~/.claude/logs/nightly-prompt.txt)" \
             --dangerously-skip-permissions \
             --max-turns 5 \
