@@ -28,16 +28,20 @@ jobs:
         run: npm install -g @anthropic-ai/claude-code
 
       - name: Check required secrets
+        id: check_secrets
         run: |
           if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "::error::ANTHROPIC_API_KEY が設定されていません。Repository Secrets を確認してください。"
-            exit 1
+            echo "::warning::ANTHROPIC_API_KEY が設定されていません。Repository Secrets を確認してください。スキップします。"
+            echo "has_api_key=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "✅ ANTHROPIC_API_KEY confirmed"
+            echo "has_api_key=true" >> "$GITHUB_OUTPUT"
           fi
-          echo "✅ ANTHROPIC_API_KEY confirmed"
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Setup Claude environment
+        if: steps.check_secrets.outputs.has_api_key == 'true'
         run: |
           set -euo pipefail
           mkdir -p ~/.claude/logs
@@ -51,6 +55,7 @@ jobs:
           echo "✅ Claude environment ready"
 
       - name: Run nightly self-improvement
+        if: steps.check_secrets.outputs.has_api_key == 'true'
         id: claude_run
         run: |
           set -euo pipefail
@@ -67,6 +72,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       - name: Commit improvements
+        if: steps.check_secrets.outputs.has_api_key == 'true'
         run: |
           set -euo pipefail
           git config user.name  "Claude Nightly Bot"
