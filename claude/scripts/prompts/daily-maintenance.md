@@ -227,6 +227,41 @@ Track: `t6_changes` (number of files changed, or "skipped" if not Sunday, or "no
 
 ---
 
+## TASK 7: Key Shopify Repo Release Monitor
+
+Monitor GitHub Atom release feeds for key repos. For each repo, fetch the feed, extract the latest entry's `<title>` (release tag), and compare with the stored last-known version.
+
+### Repos to monitor
+
+| Repo | Feed URL | Storage file | Reference to update |
+|---|---|---|---|
+| Shopify CLI | `https://github.com/Shopify/cli/releases.atom` | `.cli-version-last-known` | `shopify-reference.md` (CLI section) |
+| Hydrogen | `https://github.com/Shopify/hydrogen/releases.atom` | `.hydrogen-version-last-known` | `shopify-hydrogen-appbridge-subscriptions-reference.md` |
+| Liquid | `https://github.com/Shopify/liquid/releases.atom` | `.liquid-version-last-known` | `shopify-reference.md` (Liquid section) |
+
+### Per-repo logic
+
+1. Fetch the Atom feed URL
+2. Extract the `<title>` of the first (latest) `<entry>` — this is the release tag (e.g. `@shopify/cli@3.93.1`)
+3. Read the storage file from `claude/references/`. If absent: write current tag, skip update, mark as "initialized"
+4. If tag differs from stored:
+   - Update the storage file with the new tag
+   - Add a note near the top of the target reference file: `<!-- {repo} latest: TAG (released DATE) -->`  
+     (replace any existing line matching `<!-- {repo} latest:`)
+   - Append to `t7_updates`: `{repo}: OLD → NEW`
+5. If tag unchanged: skip
+
+### Commit
+
+```bash
+git add claude/references/
+git diff --cached --quiet || git commit -m "docs: repo release monitor $(date +%Y-%m-%d)"
+```
+
+Track: `t7_updates` (newline-separated list of `repo: OLD → NEW`, or empty if no changes)
+
+---
+
 ## FINAL: Push + Discord
 
 ```bash
@@ -245,12 +280,14 @@ dotfiles daily (DATE 03:00 JST)
 [4] API — ALERT_OR_no_change
 [5] Stale refs — STALE_LIST_OR_all_OK
 [6] Anthropic monitor — CHANGES_OR_skipped_OR_no_changes
+[7] Repos — cli:OLD→NEW / hydrogen:OLD→NEW / no_changes
 https://github.com/hisawo130/dotfiles/commits/main
 ```
 
 Rules:
 - Always send — even if all sections are clean (confirms run completed)
 - Section [2]: include the bullet list of `t2_entries` only when `t2_new > 0`; omit bullets when `t2_new=0`
+- Section [7]: list each updated repo as `NAME:OLD→NEW`; use `no_changes` if nothing updated; use `initialized` for first-run repos
 - Keep total message under 2000 characters (Discord limit); truncate entries with "…他N件" if needed
 
 Webhook URL: `https://discord.com/api/webhooks/1486928286541021345/4po5j-0O5Qzdql7wBdNr0Ga0_Ian-t7P66IMj7DzHWKMuDRr9IH7OSYoHTu0S644C8E6`
