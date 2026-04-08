@@ -21,3 +21,28 @@
 未蓄積ドメイン: cloudflare, cms, ec-cube, ga4-gtm, github-actions, klaviyo,
                line, make-zapier, react-nextjs, shopify-app, shopify-extensions,
                shopify-flow, shopify-hydrogen, shopify-webhooks, stripe, vue-nuxt, wordpress
+
+## 2026-04-08 夜間自己改善レポート
+
+### 記憶整理
+<!-- CLAUDE_FILL: memory_summary -->
+
+### 自動駆動の見直し
+<!-- CLAUDE_FILL: claude_md_changes -->
+
+### リファクタリング
+<!-- CLAUDE_FILL: refactoring -->
+
+### 今日の観察
+<!-- CLAUDE_FILL: observations -->
+
+### 期限切れパトロール
+  shopify_platform_updates.md: 期限済み変換
+  shopify_platform_updates.md: 期限済み変換
+
+### メトリクス
+| ドメイン | 合計 | gotcha | recurring | 最終更新 |
+|---|---|---|---|---|
+| general | 8 | 3 | 0 | 2026-04-08 |
+
+---
