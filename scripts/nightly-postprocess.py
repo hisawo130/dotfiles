@@ -26,17 +26,17 @@ def read_json(path: str) -> dict:
         return {}
 
 
-def fill_growth_log(fills: dict[str, str]):
+def fill_growth_log(fills: dict[str, str]) -> str:
+    """Fill placeholders in growth-log. Returns updated content (or empty string on skip)."""
     if not GROWTH_LOG.exists():
-        print(f"  [SKIP] growth-log.md が存在しません", file=sys.stderr)
-        return
+        print("  [SKIP] growth-log.md が存在しません", file=sys.stderr)
+        return ""
     content = GROWTH_LOG.read_text(encoding="utf-8")
     for key, value in fills.items():
-        placeholder = f"<!-- CLAUDE_FILL: {key} -->"
-        if placeholder in content:
-            content = content.replace(placeholder, value or "なし")
+        content = content.replace(f"<!-- CLAUDE_FILL: {key} -->", value or "なし")
     GROWTH_LOG.write_text(content, encoding="utf-8")
     print("  [growth-log] 記入完了", file=sys.stderr)
+    return content
 
 
 def main():
@@ -75,18 +75,13 @@ def main():
     stale = digest.get("stale_changes", [])
     stale_summary = "\n".join(stale) if stale else "- 期限切れデータなし"
 
-    fill_growth_log({
-        "memory_summary":   memory_summary,
+    content = fill_growth_log({
+        "memory_summary":    memory_summary,
         "claude_md_changes": "スキップ（人間が手動更新）",
         "refactoring":       shell_summary,
         "observations":      "（AIなし実行 — 観察コメントなし）",
+        "stale":             stale_summary,
     })
-
-    # Update stale section too (already written by preprocess, but placeholder may remain)
-    content = GROWTH_LOG.read_text(encoding="utf-8")
-    stale_placeholder = "<!-- CLAUDE_FILL: stale -->"
-    if stale_placeholder in content:
-        GROWTH_LOG.write_text(content.replace(stale_placeholder, stale_summary), encoding="utf-8")
 
 
 if __name__ == "__main__":
