@@ -66,6 +66,32 @@ jobs:
             echo "ℹ️ 変更なし — コミットをスキップ"
           fi
 
+      - name: Notify Discord
+        if: always()
+        run: |
+          JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+          STATUS="${{ job.status }}"
+          if [ "$STATUS" = "success" ]; then
+            EMOJI="🌙"; COLOR=3066993
+          else
+            EMOJI="❌"; COLOR=15158332
+          fi
+          # growth-log の当日エントリから記憶整理・リファクタリング行を抽出
+          SUMMARY=$(grep -A 10 "## ${JST_DATE} 夜間" claude/scripts/growth-log.md 2>/dev/null \
+            | grep -E "^- " | head -5 | sed 's/^/• /' || echo "• (詳細なし)")
+          curl -s -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"${EMOJI} Nightly Self-Improve — ${JST_DATE}\",
+                \"color\": ${COLOR},
+                \"description\": \"${SUMMARY}\",
+                \"footer\": {\"text\": \"hisawo130/dotfiles • Run #${{ github.run_number }}\"}
+              }]
+            }" || true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
       - name: Upload logs
         uses: actions/upload-artifact@v4
         if: always()

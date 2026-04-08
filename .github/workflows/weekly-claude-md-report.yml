@@ -34,3 +34,30 @@ jobs:
           else
             echo "ℹ️ 変更なし"
           fi
+
+      - name: Notify Discord
+        if: always()
+        run: |
+          JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+          STATUS="${{ job.status }}"
+          if [ "$STATUS" = "success" ]; then
+            EMOJI="📊"; COLOR=3447003
+          else
+            EMOJI="❌"; COLOR=15158332
+          fi
+          # growth-log の週次エントリからdiff抜粋
+          SUMMARY=$(grep -A 15 "## ${JST_DATE} 週次" claude/scripts/growth-log.md 2>/dev/null \
+            | grep -v "^##" | grep -v "^\`\`\`" | grep -E "^\+|^-|^- " | head -6 \
+            | sed 's/^/• /' || echo "• (詳細なし)")
+          curl -s -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"${EMOJI} Weekly CLAUDE.md Report — ${JST_DATE}\",
+                \"color\": ${COLOR},
+                \"description\": \"${SUMMARY}\",
+                \"footer\": {\"text\": \"hisawo130/dotfiles • Run #${{ github.run_number }}\"}
+              }]
+            }" || true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
