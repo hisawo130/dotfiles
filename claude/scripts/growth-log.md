@@ -46,3 +46,31 @@
 | general | 8 | 3 | 0 | 2026-04-08 |
 
 ---
+
+## 2026-04-08 週次 CLAUDE.md レポート
+
+### 今週の変更サマリー
+- コミット数: 2 件
+```diff
++**Script-first rule:** 3+同種ツールコール（複数Read, 複数Edit等）が必要な場合、Pythonスクリプト1本にまとめる。
++- 複数ファイル編集 → `multi-edit.py`
++- アドホック複合処理 → `run-task.py`（コードをJSON渡し）
++- 単純な一回限り → `python3 -c '...'`
++
++- `multi-edit.py` — 複数ファイル一括find-and-replace（バックアップ付き）
++- `run-task.py` — アドホックPythonスクリプト実行（timeout + stderr capture）
+-- Auto-save learnings before session end (feedback/user/project/reference).
+-- SessionStart hooks run automatically: stale-refs → recovery → branch-staleness → platform-setup → learnings injection.
++- SessionStart/Stop hooks run automatically (pull, learnings inject/save, notify).
++
++## Compaction
++
++When compacting, always preserve:
++- List of files modified in this session
++- Current branch and any uncommitted changes summary
++- Active task description and acceptance criteria
++- Any test/build commands discovered during the session
+-`[recurring]` = invariant rule. `[gotcha]` = check before implementing. `[correction]` = don't repeat. `[pattern]` = prefer this approach.
++`[recurring]` = invariant rule. `[gotcha]` = check before implementing. `[correction]` = don't repeat. `[pattern]` = prefer this approach. `[ai]` = AI-extracted (high confidence).
+```
+---

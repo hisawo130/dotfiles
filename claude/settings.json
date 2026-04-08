@@ -306,6 +306,14 @@
           },
           {
             "type": "command",
+            "command": "bash $HOME/dotfiles/claude/hooks/session-resume-context.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/dotfiles/claude/hooks/check-open-learnings.sh"
+          },
+          {
+            "type": "command",
             "command": "bash $HOME/dotfiles/claude/hooks/claude-md-review.sh"
           }
         ]
