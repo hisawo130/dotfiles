@@ -71,24 +71,33 @@ jobs:
         run: |
           JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
           STATUS="${{ job.status }}"
-          if [ "$STATUS" = "success" ]; then
-            EMOJI="🌙"; COLOR=3066993
-          else
-            EMOJI="❌"; COLOR=15158332
-          fi
-          # growth-log の当日エントリから記憶整理・リファクタリング行を抽出
-          SUMMARY=$(grep -A 10 "## ${JST_DATE} 夜間" claude/scripts/growth-log.md 2>/dev/null \
-            | grep -E "^- " | head -5 | sed 's/^/• /' || echo "• (詳細なし)")
-          curl -s -X POST "$DISCORD_WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"embeds\": [{
-                \"title\": \"${EMOJI} Nightly Self-Improve — ${JST_DATE}\",
-                \"color\": ${COLOR},
-                \"description\": \"${SUMMARY}\",
-                \"footer\": {\"text\": \"hisawo130/dotfiles • Run #${{ github.run_number }}\"}
-              }]
-            }" || true
+          python3 - "$JST_DATE" "$STATUS" "$DISCORD_WEBHOOK_URL" <<'PYEOF'
+import sys, json, urllib.request
+jst_date, status, webhook_url = sys.argv[1], sys.argv[2], sys.argv[3]
+if not webhook_url:
+    sys.exit(0)
+emoji  = "🌙" if status == "success" else "❌"
+color  = 3066993 if status == "success" else 15158332
+try:
+    lines = open("claude/scripts/growth-log.md").read().splitlines()
+    in_section, bullets = False, []
+    for line in lines:
+        if f"## {jst_date} 夜間" in line:
+            in_section = True
+        elif in_section and line.startswith("## "):
+            break
+        elif in_section and line.startswith("- ") and len(bullets) < 5:
+            bullets.append("• " + line[2:])
+    summary = "\n".join(bullets) if bullets else "• (変更なし)"
+except Exception:
+    summary = "• (詳細取得失敗)"
+payload = json.dumps({"embeds": [{"title": f"{emoji} Nightly Self-Improve — {jst_date}", "color": color, "description": summary, "footer": {"text": "hisawo130/dotfiles • Run #${{ github.run_number }}"}}]}).encode()
+req = urllib.request.Request(webhook_url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
+try:
+    urllib.request.urlopen(req)
+except Exception as e:
+    print(f"Discord notify failed: {e}", file=sys.stderr)
+PYEOF
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
