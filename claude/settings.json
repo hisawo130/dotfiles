@@ -227,6 +227,7 @@
       "/Users/P130/dotfiles/claude/learnings"
     ]
   },
+  "model": "opusplan",
   "hooks": {
     "UserPromptSubmit": [
       {
@@ -436,7 +437,7 @@
       }
     }
   },
-  "effortLevel": "low",
+  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
   "skipAutoPermissionPrompt": true,
   "autoMode": {
