@@ -20,10 +20,6 @@
 - [gotcha] ⚠️ 「カスタムインストール」は絶対に選ばない
 - [pattern] ホバー色を揃えるには `base.css` の既存ルール (`.customer a:hover`) と同じ値を使う — `color: rgb(var(--color-link))` + `text-decoration-thickness: 0.2rem`
 
-## 2026-03-25 | Pinup-Closet_ver01
-- [gotcha] ⚠️ APIトークンは一度しか表示されない — 発行直後に必ずコピー
-- [correction] 英語サイズ表記: `#Waist 100cm compatible` → `#Waist size 100cm or more`
-
 ## 2026-03-27 | Pionunnal_ver01
 - [gotcha] Shopifyメール除外理由（バウンス履歴・ボット判定）はShopify内部フラグのため、エクスポートCSVには含まれない — 管理画面でのみ確認可能
 
@@ -35,6 +31,8 @@
 - [gotcha] CSVに重複がなくてもエラー「顧客が既にストアに存在する」が出ることがある → 既存顧客の更新には別手順が必要
 
 ## 2026-04-02 | Pinup-Closet_ver01
+- [gotcha] ⚠️ APIトークンは一度しか表示されない — 発行直後に必ずコピー
+- [correction] 英語サイズ表記: `#Waist 100cm compatible` → `#Waist size 100cm or more`
 - [gotcha] `list.single_line_text_field` 型のメタフィールドは `object.metafields.ns.key` がオブジェクト、`.value` が配列を返す。`| escape` だけでは `["値"]` と表示される
 - [pattern] リスト型メタフィールドの正しい出力: 条件チェックは `.value != blank`、出力は `.value | first | escape`
 
