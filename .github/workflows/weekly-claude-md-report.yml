@@ -39,33 +39,6 @@ jobs:
         if: always()
         run: |
           JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
-          STATUS="${{ job.status }}"
-          python3 - "$JST_DATE" "$STATUS" "$DISCORD_WEBHOOK_URL" <<'PYEOF'
-import sys, json, urllib.request
-jst_date, status, webhook_url = sys.argv[1], sys.argv[2], sys.argv[3]
-if not webhook_url:
-    sys.exit(0)
-emoji = "📊" if status == "success" else "❌"
-color = 3447003 if status == "success" else 15158332
-try:
-    lines = open("claude/scripts/growth-log.md").read().splitlines()
-    in_section, bullets = False, []
-    for line in lines:
-        if f"## {jst_date} 週次" in line:
-            in_section = True
-        elif in_section and line.startswith("## "):
-            break
-        elif in_section and line.startswith(("+ ", "- ", "+ ", "- ")) and not line.startswith("---") and len(bullets) < 6:
-            bullets.append("• " + line[2:])
-    summary = "\n".join(bullets) if bullets else "• (変更なし)"
-except Exception:
-    summary = "• (詳細取得失敗)"
-payload = json.dumps({"embeds": [{"title": f"{emoji} Weekly CLAUDE.md Report — {jst_date}", "color": color, "description": summary, "footer": {"text": "hisawo130/dotfiles • Run #${{ github.run_number }}"}}]}).encode()
-req = urllib.request.Request(webhook_url, data=payload, headers={"Content-Type": "application/json"}, method="POST")
-try:
-    urllib.request.urlopen(req)
-except Exception as e:
-    print(f"Discord notify failed: {e}", file=sys.stderr)
-PYEOF
+          python3 scripts/notify-discord.py weekly "$JST_DATE" "${{ job.status }}" "${{ github.run_number }}" "$DISCORD_WEBHOOK_URL"
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
