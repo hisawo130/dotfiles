@@ -1,5 +1,5 @@
 # Shopify Hydrogen / App Bridge / Selling Plans / B2B リファレンス
-<!-- Hydrogen latest: skeleton@2026.1.3 (released 2026-03-31) -->
+<!-- Hydrogen latest: skeleton@2026.1.4 (released 2026-04-09) -->
 
 > 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > ⚠️ B2Bテーマ対応・App Bridge 4の一部API・Remixとの比較は公式URLが404のため未確認
