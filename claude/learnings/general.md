@@ -292,3 +292,6 @@
 - [gotcha] Matrixifyカスタマーエクスポートで、EmailはColumns設定で明示的に追加が必須。デフォルトなしだとID紐付けができず後続の顧客CDマッピング失敗
 - [pattern] 複数ソース顧客メタフィール更新は優先度付け（ソースシステム優先→DMファイル補完）。Matrixify MERGEで空値は既存値保持されるため部分更新に活用
 - [tip] インポート前に必ずブリッジファイルのマッチング件数確認。ブリッジ未存在顧客はメタフィールド値が空になりMERGE対象外
+
+## 2026-04-10 16:54 | pietro-onlineshop_ver01
+- 完了: 完了しました。`Customers_hcf_flag_dm_all_import.csv` を再生成しました。
