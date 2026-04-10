@@ -185,3 +185,8 @@
 
 ## 2026-04-10 14:00 | Pinup-Closet_ver01
 - - [gotcha] Shopifyテーマで複数ページでモーダルを共有する際、page.content（管理画面）のHTMLと`layout/theme.liquid`のHTMLの乖離を必ず確認する。product contextがないページではモーダルHTMLが出力されない可能性がある。
+
+## 2026-04-10 13:59 | Pinup-Closet_ver01 [ai]
+- [gotcha] Shopifyテーマで複数ページでモーダルを共有する際、page.content（管理画面）のHTMLと`layout/theme.liquid`のHTMLの乖離を必ず確認する。product contextがないページではモーダルHTMLが出力されない可能性がある。
+- [pattern] テーマの既存実装パターン（例：Sirene用のJS実装）を参考に、同様の構造を別機能（Sylphide）に適用する方式が有効。一度動いているパターンを流用するほうが安全。
+- [gotcha] 商品ページの条件分岐内（`if product.id == ...`）でレンダリングされるコンポーネントは、該当ページのproduct contextがないLPページでは描画されない。複数ページで共有するモーダルの条件分岐を見直す際に注意。
