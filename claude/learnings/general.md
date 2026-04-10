@@ -194,3 +194,8 @@
 ## 2026-04-10 14:06 | pietro-onlineshop_ver01
 - [correction] ShopifyのリダイレクトはこのURL形式だとだめ？
 - [correction] &以降がだめ？
+
+## 2026-04-10 14:06 | pietro-onlineshop_ver01 [ai]
+- [gotcha] Shopifyのリダイレクト機能はクエリパラメータをマッチング条件に使えない。パス部分のみが対象で、`&cc=CA057` をつけると完全一致しない。
+- [pattern] 旧商品コードを新URLへ振り分ける際、パラメータバリエーションが多い場合は、`theme.liquid` のJSマッピング+`location.replace()` が複数リダイレクト登録より効率的。
+- [tip] Shopifyリダイレクトでクエリパラメータ対応が必要なら、リダイレクトアプリ導入（Traffic Control等）またはJS転送実装を検討する。
