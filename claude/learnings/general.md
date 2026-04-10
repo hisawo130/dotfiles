@@ -265,3 +265,6 @@
 ## 2026-04-10 16:45 | pietro-onlineshop_ver01 [ai]
 - [gotcha] MatrixifyのメタフィールドエクスポートはデフォルトでEmail不含。複数ファイル結合が必要な場合、エクスポート前に必要なカラムを確認し、Columns設定で明示的に指定する。
 - [pattern] 複数CSVの結合作業は事前に各ファイルの連携キー（ID、Email、Customer CDなど）を一覧化し、マッピング可能性を確認してから実装開始する。
+
+## 2026-04-10 16:46 | pietro-onlineshop_ver01
+- [pattern] 完了しました。`Customers_hcf_flag_dm_import.csv` を上書きしました（UTF-8 BOM付き）。
