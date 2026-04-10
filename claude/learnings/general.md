@@ -58,3 +58,8 @@
 - [gotcha] 管理画面ページコンテンツのHTMLから参照する要素（data-remodal-target等）は、テーマ側で無条件レンダリングされているか確認必須。Liquid条件分岐で出力制限されていると該当ページに存在しない
 - [pattern] product contextやページタイプに依存するモーダルは、複数ページから参照される可能性がある場合、条件を緩和するか汎用版を用意する
 - [tip] Remodal実装時は、data-remodal-id と data-remodal-target の対応をテンプレートとJS両面から検証する
+
+## 2026-04-10 12:21 | Pinup-Closet_ver01 [ai]
+- [gotcha] Shopifyテーマで条件付き出力されるコンポーネント（モーダル、スニペット等）は、参照元が複数ページタイプにまたがる場合、すべてのコンテキストで出力されるか条件を見直す必要がある
+- [pattern] モーダル不表示の調査は、ボタンの`data-remodal-target`値から逆引きして対応する`data-remodal-id`のHTML定義を探すことから始める
+- [correction] 新しいモーダルを追加する前に、対象商品が既存のモーダルをどう参照しているか確認し、一貫性を保つべき
