@@ -43,8 +43,29 @@ Available Python tools (`~/.claude/tools/`):
 - `bulk-read.py` — 複数ファイル一括読み取り・検索・サマリー
 - `multi-edit.py` — 複数ファイル一括find-and-replace（バックアップ付き）
 - `run-task.py` — アドホックPythonスクリプト実行（timeout + stderr capture）
+- `compress-output.py` — コマンド出力を圧縮（空行除去・重複排除・グルーピング・切り詰め）
 
 When no Python tool exists, use minimal tool calls. Prefer 1 Bash call with a Python one-liner over multiple Read/Edit/Bash round-trips.
+
+## Output compression (token budget)
+
+Large command output inflates context faster than code. Apply these rules:
+
+**Always limit at source:**
+- `git log` → always `--oneline -20` (or fewer)
+- `git diff` large → `git diff --stat` first, then expand only needed files
+- `ls` deep dirs → `ls -1 | head -50` or use `find -maxdepth 2`
+- `find` results → pipe `| head -100`
+- `npm test` / `jest` → capture failures only; skip passed-test lines
+
+**Pipe through compressor when output may exceed 50 lines:**
+```bash
+<command> | python3 ~/.claude/tools/compress-output.py
+# or run with --stats to see reduction
+python3 ~/.claude/tools/compress-output.py --cmd "<command>" --stats
+```
+
+**Never compress:** `curl`, `wget`, `aws`, `gcloud`, `terraform`, `ssh` — output integrity required.
 
 ## Pre-change checklist (internal — never ask user)
 
