@@ -69,3 +69,6 @@
 - 完了: 追加しました。ただし、これはJSのオーバーライドです。**`modal-sylphide` のHTMLモーダル本体がpage.content（Shopify管理画面のページ本文）に存在しているか**が前提になります。
 
 ## 2026-04-10 12:23 | Pinup-Closet_ver01
+
+## 2026-04-10 12:23 | Pinup-Closet_ver01
+- [correction] 具体的には条件を変更します。修正してよいですか？
