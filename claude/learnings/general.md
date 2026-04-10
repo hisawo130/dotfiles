@@ -259,3 +259,5 @@
 ## 2026-04-10 16:40 | pietro-onlineshop_ver01 [ai]
 - [pattern] Shopify顧客メタフィールド更新では、Email照合でMatrixifyが顧客を識別可能 — IDを生成する手間を削減できる
 - [gotcha] 複数の確認質問を重ねると、ユーザーが自分で判断・実装してしまう — 十分な情報があったら確認を打ち切って実装に進むべき
+
+## 2026-04-10 16:45 | pietro-onlineshop_ver01
