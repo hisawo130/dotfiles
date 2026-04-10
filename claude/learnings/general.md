@@ -209,3 +209,8 @@
 
 ## 2026-04-10 17:27 | Beauty-Select
 - [open] 1. Storefront API / Admin API をJS経由で叩く → 工数＋1日、CSP設定も要確認
+
+## 2026-04-10 17:27 | Beauty-Select [ai]
+- [gotcha] Shopify Liquidからランク・ポイント倍率などのAPIデータは直接参照不可（JS/API経由のみ）—Liquid側での実装決定時に早期把握すべき
+- [gotcha] 期間条件付きのランク判定はLiquidで実装不可（注文日時フィルタが非対応）—API呼び出しかカスタム属性での回避策が必須
+- [pattern] customer.tagsでセグメント判定し条件テーブルをハードコード化すると最小工数（0.5日）で実装可能
