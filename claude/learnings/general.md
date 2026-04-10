@@ -137,3 +137,8 @@
 - [tip] 複数の商品/モーダル種類がある場合、各モーダルの使用条件（product context 有無、ページタイプ等）と data-remodal-target の対応を一度整理してから修正すると、ボタン-モーダル不一致を防ぎやすい。
 
 ## 2026-04-10 12:59 | Pinup-Closet_ver01
+
+## 2026-04-10 12:59 | Pinup-Closet_ver01 [ai]
+- [gotcha] Shopifyテーマで商品ページ専用モーダル（`if product.id == ...`条件）をLP/ページから呼び出す場合、HTMLレンダリング条件を確認が必須。ボタンのターゲット指定だけでは不足。
+- [pattern] 複数ブランドのLP診断モーダル（Sirene/Sylphide）は`page.content`HTML定義 + テンプレート側のブランド別JSオーバーライドパターンで管理する（PR #26から）。
+- [gotcha] モーダル動作失敗は複合原因（HTML未出力 + JSハンドラ未定義）の場合がある。両方をセットで確認する。
