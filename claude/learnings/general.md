@@ -118,3 +118,5 @@
 - [gotcha] Shopifyテーマで page.content 内のボタンと theme.liquid のモーダル定義が分離していると、page.content からは見えない product context 条件分岐でモーダルが非表示になることがある。LPページでは product context がないため注意。
 - [pattern] モーダル実装は「HTML定義（Liquid）＋イベントハンドラ（JS）＋ボタンの data-remodal-target」の3点セット確認が必須。1つ欠けると動作しない。
 - [tip] page.content に書かれた data-remodal-target の値とテーマ側の data-remodal-id が一致しているか、ブラウザのデベロッパーツールで実HTML をレンダリング確認するのが確実。
+
+## 2026-04-10 12:56 | Pinup-Closet_ver01
