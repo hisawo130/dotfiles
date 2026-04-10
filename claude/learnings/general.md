@@ -226,3 +226,6 @@
 - [gotcha] Claude Code の permission rule で `Bash(*)` はワイルドカード扱いではなく「`*` で始まるコマンド」と解釈される。複合コマンドの catch-all は `"Bash"` のみが正解。
 - [pattern] 複合コマンド（`&&`, `||`, `|`, `;`）を自動許可するには `defaultMode: "bypassPermissions"` + `"Bash"` catch-all で実現。
 - [tip] `defaultMode: "bypassPermissions"` でも deny ルール内のパターンマッチ（例：`Bash(rm -rf *)`）は有効なため、複合コマンドが deny に該当するコマンド含むと弾かれる可能性。
+
+## 2026-04-10 14:26 | dotfiles
+- ただし 注意点が1つあります: `"Bash(rm -rf *)"` のルールは `rm -rf ./node_modules` のような正当な操作も弾く可能性があります。必要なら `rm -rf ./` 系のみ許可するよう調整できます。
