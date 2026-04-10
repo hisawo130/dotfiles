@@ -209,3 +209,7 @@
 - [gotcha] PreToolUseフックはブロック/許可のみでコマンド変更不可。自動圧縮はPythonスクリプト＋CLAUDE.md行動ルール化で実装。
 - [pattern] Pythonパイプフィルター`compress-output.py`を`~/.claude/tools/`に置き、行動ルール化すれば全セッション対応の自動圧縮が実現。
 - [tip] 圧縮スクリプトは外部通信なし・オプションフラグ対応で汎用性確保。`--cmd`で直接実行、パイプで簡易フィルター両用可。
+
+## 2026-04-10 14:23 | dotfiles
+- [correction] 自走できるなら複合コマンド許可したはずなのですが。設定見直してください。
+- [gotcha] **WRONG** (replaces existing permissions):
