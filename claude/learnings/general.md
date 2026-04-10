@@ -84,3 +84,8 @@
 - [tip] Shopifyテーマのモーダル実装確認はブラウザDevToolsで `data-remodal-id` 属性の有無を検査するのが最短。テーマファイルと管理画面を行き来するより効率的。
 
 ## 2026-04-10 12:26 | Pinup-Closet_ver01
+
+## 2026-04-10 12:26 | Pinup-Closet_ver01 [ai]
+- [gotcha] Shopify LP ページではproduct contextがないため、layout/theme.liquid の商品ID条件分岐（`if product.id == ...`）内で定義されたモーダルは表示されない。LP用モーダルは条件を変更するか別途定義が必要。
+- [pattern] Shopify LPページでモーダル機能を実装する場合、Sireneパターン（page.contentにHTMLを直書き + ページテンプレートでJSオーバーライド）を踏襲。modal-sireneのように `data-remodal-id` でページ本文に定義し、ページテンプレート側でイベントハンドラを追加。
+- [tip] モーダル問題が複数ある場合、ブラウザデベロッパーツールで実際にレンダリングされているHTMLを確認し、page.content内のモーダル定義状況を把握してから修正。テーマファイルだけでは管理画面コンテンツ確認不可。
