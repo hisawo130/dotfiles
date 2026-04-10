@@ -120,3 +120,6 @@
 - [tip] page.content に書かれた data-remodal-target の値とテーマ側の data-remodal-id が一致しているか、ブラウザのデベロッパーツールで実HTML をレンダリング確認するのが確実。
 
 ## 2026-04-10 12:56 | Pinup-Closet_ver01
+
+## 2026-04-10 12:57 | Pinup-Closet_ver01
+- - [gotcha] ページコンテンツで指定した`data-remodal-target`などのIDに対応するHTMLやJSハンドラがテーマ側に存在しないと動作しない。ページ側とテーマ側の整合性確認が重要。
