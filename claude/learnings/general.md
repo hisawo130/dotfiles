@@ -268,3 +268,8 @@
 
 ## 2026-04-10 16:46 | pietro-onlineshop_ver01
 - [pattern] 完了しました。`Customers_hcf_flag_dm_import.csv` を上書きしました（UTF-8 BOM付き）。
+
+## 2026-04-10 16:46 | pietro-onlineshop_ver01 [ai]
+- [gotcha] MatrixifyのメタフィールドエクスポートではEmailカラムが自動含含されず、CSV取得時に明示的に指定する必要がある
+- [pattern] 複数CSVを結合する場合、先にEmail→Shopify ID→customer_cdのブリッジファイルを作成してから他データと結合する
+- [tip] MatrixifyインポートはUTF-8 BOM必須。IDがない行でもEmailがあれば顧客照合できるため、ブリッジファイルの不完全マッチも許容可能
