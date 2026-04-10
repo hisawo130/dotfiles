@@ -72,3 +72,8 @@
 
 ## 2026-04-10 12:23 | Pinup-Closet_ver01
 - [correction] 具体的には条件を変更します。修正してよいですか？
+
+## 2026-04-10 12:23 | Pinup-Closet_ver01 [ai]
+- [gotcha] LPページはproduct contextを持たないため、`if product.id == ...` で条件分岐されたモーダルHTMLは出力されない。汎用モーダルはページ本文またはテンプレート上部に無条件で配置する必要がある
+- [pattern] Shopify管理画面のページコンテンツに定義されたモーダル（`data-remodal-id`）に対して、テーマのJS側でクリックハンドラをオーバーライドすることで機能追加できる（Sireneの例参照）
+- [tip] モーダルが動作しない場合、`data-remodal-target` 値がHTMLに存在するか確認する際、ページコンテンツ（Shopify管理画面）とテンプレート両方をチェックが必須
