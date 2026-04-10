@@ -284,3 +284,6 @@
 
 ## 2026-04-10 16:52 | pietro-onlineshop_ver01
 - 完了: 完了しました。`Customers_hcf_flag_dm_all_import.csv` を更新しました。
+
+## 2026-04-10 16:53 | pietro-onlineshop_ver01
+- - [tip] インポート前に必ずブリッジファイルのマッチング件数確認。ブリッジ未存在顧客はメタフィールド値が空になりMERGE対象外
