@@ -32,11 +32,15 @@
 
 - [tip] 注意点： localStorageに既に保存されている閲覧履歴には `productline` が含まれていないため、再訪問時に初めてラベルが保存されます。古い履歴はラベルなしで表示されます。
 
-## Recurring Patterns (updated 2026-04-09)
-- [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 6 times
+## Recurring Patterns (updated 2026-04-10)
+- [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 8 times
 - [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力 — seen 5 times
 - [matrixify] MatrixifyはShopify純正CSVと列名形式が異なる（型サフィックス付き・Fulfillment Line必須） — seen 3 times
 - [js] 非同期初期化待ちポーリング実装: windowフラグによるシングルトン化・名前空間付きイベント登録・DOM依存呼び出し回避 — seen 3 times
+- [shopify] page.content HTML不可視・LP product context条件分岐失敗: Liquidから見えず・product条件付きコンポーネントがLPで非表示 — seen 15 times
+- [matrixify] MatrixifyエクスポートEmail列は明示的に指定必須（Columns設定）: デフォルト不含でID紐付け失敗の原因 — seen 5 times
+- [claude-code] `Bash(*)`はワイルドカードではなく「*で始まるコマンド」: 複合コマンドのcatch-allは`"Bash"`のみ — seen 3 times
+
 
 ## 2026-04-06 | dotfiles [ai]
 
@@ -68,7 +72,6 @@
 - 作業: 以下ページのマイサイズを見つけるの挙動が変です。本当はチャート式になっているはずなので確認してください。
 - 完了: 追加しました。ただし、これはJSのオーバーライドです。**`modal-sylphide` のHTMLモーダル本体がpage.content（Shopify管理画面のページ本文）に存在しているか**が前提になります。
 
-## 2026-04-10 12:23 | Pinup-Closet_ver01
 
 ## 2026-04-10 12:23 | Pinup-Closet_ver01
 - [correction] 具体的には条件を変更します。修正してよいですか？
@@ -83,67 +86,48 @@
 - [pattern] Shopifyテーマで同一コンポーネント（モーダル等）が複数LPで使われる場合、JSオーバーライドで動作をページごとにカスタマイズするアプローチ（Sireneの事例）が保守性が高い。Liquid条件分岐より柔軟。
 - [tip] Shopifyテーマのモーダル実装確認はブラウザDevToolsで `data-remodal-id` 属性の有無を検査するのが最短。テーマファイルと管理画面を行き来するより効率的。
 
-## 2026-04-10 12:26 | Pinup-Closet_ver01
 
 ## 2026-04-10 12:26 | Pinup-Closet_ver01 [ai]
 - [gotcha] Shopify LP ページではproduct contextがないため、layout/theme.liquid の商品ID条件分岐（`if product.id == ...`）内で定義されたモーダルは表示されない。LP用モーダルは条件を変更するか別途定義が必要。
 - [pattern] Shopify LPページでモーダル機能を実装する場合、Sireneパターン（page.contentにHTMLを直書き + ページテンプレートでJSオーバーライド）を踏襲。modal-sireneのように `data-remodal-id` でページ本文に定義し、ページテンプレート側でイベントハンドラを追加。
 - [tip] モーダル問題が複数ある場合、ブラウザデベロッパーツールで実際にレンダリングされているHTMLを確認し、page.content内のモーダル定義状況を把握してから修正。テーマファイルだけでは管理画面コンテンツ確認不可。
 
-## 2026-04-10 12:50 | Pinup-Closet_ver01
-- 重要な発見です。興味深い矛盾点があります：
-- 重要な発見です。チャンクサイズが5000文字では複数モーダルをまたいで読んでしまっています。モーダルの出現順序を確認します。
-- [gotcha] 重要なバグを発見しました：
 
 ## 2026-04-10 12:50 | Pinup-Closet_ver01 [ai]
 - [gotcha] page.content（Shopify管理画面で編集するページ本文）に埋め込まれたHTMLはテーマテンプレート分析では見えない。モーダルIDとボタンターゲットのペアリング検証にはブラウザ検査が必須。
 - [gotcha] 条件付きレンダリング（`if product.id == ...`）でモーダルを出力すると、そのコンテキストにない場所（LP等）ではHTML本体が存在しない。ボタンのみ存在する矛盾状態になる。
 - [pattern] LP固有UI実装パターン：モーダルHTMLはpage.contentに定義、JSハンドラはpage.lp-corset*.liquidで層分離する。ブランド追加時、LiquidはLP条件のみ、JSハンドラを足すだけで拡張可能。
 
-## 2026-04-10 12:53 | Pinup-Closet_ver01
-- 完了: PRが必要な場合は、mainを1コミット戻してブランチから再PRする形になりますが、**既にmainにマージ済み**の状態なので、このままShopifyにpushする方が早いです。どうしますか？
-
-## 2026-04-10 12:53 | Pinup-Closet_ver01
-- - [gotcha] 商品ページ向けに`if product.id == ...`条件でモーダルHTMLをレンダリングすると、product contextを持たないLPページでは出力されない。複数ページタイプで使うモーダルは条件設計に注意。
 
 ## 2026-04-10 12:53 | Pinup-Closet_ver01 [ai]
 - [gotcha] Shopifyテーマでpage.contentに埋め込まれたHTMLモーダルはテーマファイルには見えない。ブラウザのデベロッパーツールで実際に`data-remodal-id`が存在するか確認が必須。
 - [gotcha] 商品ページ向けに`if product.id == ...`条件でモーダルHTMLをレンダリングすると、product contextを持たないLPページでは出力されない。複数ページタイプで使うモーダルは条件設計に注意。
 - [pattern] Shopifyテーマで複数ブランド向けモーダルを実装する場合、LiquidファイルのJSオーバーライド箇所で各ブランドID毎のハンドラを定義し、page.content側で共通のdata-remodal-idを指定する構造が統一的。
 
-## 2026-04-10 12:55 | Pinup-Closet_ver01
-- [correction] 修正してください。
 
 ## 2026-04-10 12:55 | Pinup-Closet_ver01 [ai]
 - [gotcha] Shopifyテーマで page.content 内のボタンと theme.liquid のモーダル定義が分離していると、page.content からは見えない product context 条件分岐でモーダルが非表示になることがある。LPページでは product context がないため注意。
 - [pattern] モーダル実装は「HTML定義（Liquid）＋イベントハンドラ（JS）＋ボタンの data-remodal-target」の3点セット確認が必須。1つ欠けると動作しない。
 - [tip] page.content に書かれた data-remodal-target の値とテーマ側の data-remodal-id が一致しているか、ブラウザのデベロッパーツールで実HTML をレンダリング確認するのが確実。
 
-## 2026-04-10 12:56 | Pinup-Closet_ver01
-
-## 2026-04-10 12:57 | Pinup-Closet_ver01
-- - [gotcha] ページコンテンツで指定した`data-remodal-target`などのIDに対応するHTMLやJSハンドラがテーマ側に存在しないと動作しない。ページ側とテーマ側の整合性確認が重要。
 
 ## 2026-04-10 12:56 | Pinup-Closet_ver01 [ai]
 - [gotcha] Shopifyテーマの`page.content`内のHTML要素はLiquidテンプレートから見えない。ページコンテンツ関連のデバッグ時はブラウザまたは管理画面での直接確認が必須。
 - [gotcha] ページコンテンツで指定した`data-remodal-target`などのIDに対応するHTMLやJSハンドラがテーマ側に存在しないと動作しない。ページ側とテーマ側の整合性確認が重要。
 - [pattern] LPページなど複数の場面で再利用するモーダル・コンポーネントは、`if product.id == ...`の個別条件で制限せず、より広いスコープで定義する。
 
-## 2026-04-10 12:57 | Pinup-Closet_ver01
 
 ## 2026-04-10 12:57 | Pinup-Closet_ver01 [ai]
 - [gotcha] Shopify theme で page.content（管理画面コンテンツ）に埋め込まれた HTML と Liquid テンプレート内のモーダル定義は、テーマファイルだけでは対応関係を検証できない。button の data-remodal-target が実装前に page.content の構造を確認必須。
 - [pattern] LP やページ固有のモーダル JS オーバーライド（イベントハンドラ追加）は、そのページテンプレート（page.lp-corset01.liquid など）に直接記述するとロジック と使用箇所が一緒に管理でき保守性が上がる。
 - [tip] 複数の商品/モーダル種類がある場合、各モーダルの使用条件（product context 有無、ページタイプ等）と data-remodal-target の対応を一度整理してから修正すると、ボタン-モーダル不一致を防ぎやすい。
 
-## 2026-04-10 12:59 | Pinup-Closet_ver01
 
 ## 2026-04-10 12:59 | Pinup-Closet_ver01 [ai]
 - [gotcha] Shopifyテーマで商品ページ専用モーダル（`if product.id == ...`条件）をLP/ページから呼び出す場合、HTMLレンダリング条件を確認が必須。ボタンのターゲット指定だけでは不足。
 - [pattern] 複数ブランドのLP診断モーダル（Sirene/Sylphide）は`page.content`HTML定義 + テンプレート側のブランド別JSオーバーライドパターンで管理する（PR #26から）。
 - [gotcha] モーダル動作失敗は複合原因（HTML未出力 + JSハンドラ未定義）の場合がある。両方をセットで確認する。
 
-## 2026-04-10 13:00 | Pinup-Closet_ver01
 
 ## 2026-04-10 13:00 | Pinup-Closet_ver01 [ai]
 - [gotcha] Shopify page.contentに埋め込まれたHTMLはテーマLiquidから見えない。モーダルやボタンの挙動を調査する際は、管理画面コンテンツとテーマファイル両方を確認必須
@@ -158,15 +142,12 @@
 - [pattern] 酒類配送が必要な場合、ECカートではなく「酒類倉庫業許可を持つ3PL業者」を先に決定してLPと分離。キャンペーン専業会社なら一括受託可能
 - [tip] ユニークコード10,000個の管理は、事前CSV生成 → DB格納 → 申込時照合・使用済みフラグ更新で実装。ランダム生成ロジックより運用が単純
 
-## 2026-04-10 13:30 | P130
 - [gotcha] 2. 酒類の年齢確認 → 法的要件（酒税法・未成年飲酒禁止法）の確認が必要
 
-## 2026-04-10 13:30 | P130 [ai]
 - [gotcha] 見た目はEC案件でも、決済機能が不要なら過剰装備化する。要件の本質を見極めることが重要
 - [pattern] 複合案件（LP＋コード管理＋物流）はスコープを分割し、デジタル部分と物流部分の対応範囲を早期に明確化する
 - [tip] 酒類キャンペーンは年齢確認法務・3PL酒類対応可否・役割分担を受注前に全て確認する必要がある
 
-## 2026-04-10 13:56 | Pinup-Closet_ver01
 
 ## 2026-04-10 13:56 | Pinup-Closet_ver01 [ai]
 - [gotcha] Shopifyページ（page.content）のHTML内容はテンプレートから見えない。ボタン実装とモーダル不一致の原因特定には、ブラウザのデベロッパーツール確認が必須。
@@ -181,10 +162,6 @@
 - [pattern] product contextが必須なUIは条件分岐で出力制限されることが多い。LPページなど異なるコンテキストで使う場合は、テンプレートの条件を拡張してHTMLが出力されることを確認する。
 - [gotcha] モーダルやボタン実装では、HTMLの`data-remodal-id`定義とJSのイベントハンドラ両方が揃っていないと動作しない。片方だけでは不完全。
 
-## 2026-04-10 13:59 | Pinup-Closet_ver01
-
-## 2026-04-10 14:00 | Pinup-Closet_ver01
-- - [gotcha] Shopifyテーマで複数ページでモーダルを共有する際、page.content（管理画面）のHTMLと`layout/theme.liquid`のHTMLの乖離を必ず確認する。product contextがないページではモーダルHTMLが出力されない可能性がある。
 
 ## 2026-04-10 13:59 | Pinup-Closet_ver01 [ai]
 - [gotcha] Shopifyテーマで複数ページでモーダルを共有する際、page.content（管理画面）のHTMLと`layout/theme.liquid`のHTMLの乖離を必ず確認する。product contextがないページではモーダルHTMLが出力されない可能性がある。
@@ -212,7 +189,6 @@
 
 ## 2026-04-10 14:23 | dotfiles
 - [correction] 自走できるなら複合コマンド許可したはずなのですが。設定見直してください。
-- [gotcha] **WRONG** (replaces existing permissions):
 
 ## 2026-04-10 14:23 | dotfiles [ai]
 - [gotcha] Claude Code permission rule で `Bash(*)` は真のワイルドカードではなく「`*` で始まるコマンド」と解釈される。複合コマンド許可は `"Bash"` のみが catch-all
@@ -228,7 +204,7 @@
 - [tip] `defaultMode: "bypassPermissions"` でも deny ルール内のパターンマッチ（例：`Bash(rm -rf *)`）は有効なため、複合コマンドが deny に該当するコマンド含むと弾かれる可能性。
 
 ## 2026-04-10 14:26 | dotfiles
-- ただし 注意点が1つあります: `"Bash(rm -rf *)"` のルールは `rm -rf ./node_modules` のような正当な操作も弾く可能性があります。必要なら `rm -rf ./` 系のみ許可するよう調整できます。
+- [tip] ただし 注意点が1つあります: `"Bash(rm -rf *)"` のルールは `rm -rf ./node_modules` のような正当な操作も弾く可能性があります。必要なら `rm -rf ./` 系のみ許可するよう調整できます。
 
 ## 2026-04-10 14:26 | dotfiles [ai]
 - [gotcha] `Bash(*)` は真のキャッチオールではなく「`*` で始まるコマンド」と解釈される。複合コマンド許可には `"Bash"` のみが正しい。
@@ -245,8 +221,6 @@
 - [gotcha] 要件が不明な場合、推測で複数の質問を重ねるより先に、サンプルファイルを実際に読み込んで現物から仕様を把握する。往復回数を減らせる
 - [tip] Matrixifyのメタフィールド値は型に応じた形式で指定（`single_line_text_field`なら`"希望する"`のような文字列）。テストインポートで値の形式が正しいことを早期に確認
 
-## 2026-04-10 16:39 | pietro-onlineshop_ver01
-- [pattern] 完了しました。
 
 ## 2026-04-10 16:39 | pietro-onlineshop_ver01 [ai]
 - [pattern] Shopify Matrixifyのメタフィールドインポートでは、顧客IDがなくてもEmailで顧客を特定できる。ID追加は後から必要に応じて対応
@@ -260,48 +234,28 @@
 - [pattern] Shopify顧客メタフィールド更新では、Email照合でMatrixifyが顧客を識別可能 — IDを生成する手間を削減できる
 - [gotcha] 複数の確認質問を重ねると、ユーザーが自分で判断・実装してしまう — 十分な情報があったら確認を打ち切って実装に進むべき
 
-## 2026-04-10 16:45 | pietro-onlineshop_ver01
 
 ## 2026-04-10 16:45 | pietro-onlineshop_ver01 [ai]
-- [gotcha] MatrixifyのメタフィールドエクスポートはデフォルトでEmail不含。複数ファイル結合が必要な場合、エクスポート前に必要なカラムを確認し、Columns設定で明示的に指定する。
 - [pattern] 複数CSVの結合作業は事前に各ファイルの連携キー（ID、Email、Customer CDなど）を一覧化し、マッピング可能性を確認してから実装開始する。
 
-## 2026-04-10 16:46 | pietro-onlineshop_ver01
-- [pattern] 完了しました。`Customers_hcf_flag_dm_import.csv` を上書きしました（UTF-8 BOM付き）。
 
 ## 2026-04-10 16:46 | pietro-onlineshop_ver01 [ai]
-- [gotcha] MatrixifyのメタフィールドエクスポートではEmailカラムが自動含含されず、CSV取得時に明示的に指定する必要がある
 - [pattern] 複数CSVを結合する場合、先にEmail→Shopify ID→customer_cdのブリッジファイルを作成してから他データと結合する
 - [tip] MatrixifyインポートはUTF-8 BOM必須。IDがない行でもEmailがあれば顧客照合できるため、ブリッジファイルの不完全マッチも許容可能
 
-## 2026-04-10 16:50 | pietro-onlineshop_ver01
-- 完了: 完了しました。
 
 ## 2026-04-10 16:50 | pietro-onlineshop_ver01 [ai]
-- [gotcha] MatrixifyでExportする際、EmailカラムはデフォルトではIDだけになることがある。複数ソースを結合する場合はEmail+IDを明示的に指定して再エクスポートが必須。
 - [pattern] メタフィールド一括インポートで複数ソースを結合する場合、ブリッジファイル（Email・ID・customer_cdの対応表）をタスク開始直後に準備する。後付けすると往復が増える。
 - [tip] MatrixifyのMERGEインポートはEmailまたはIDだけで顧客を特定できるため、ブリッジ未存在の行でも部分的にインポート可能。既存メタフィールド値は保持される。
 
-## 2026-04-10 16:52 | pietro-onlineshop_ver01
-- 完了: 完了しました。`Customers_hcf_flag_dm_all_import.csv` を更新しました。
-
-## 2026-04-10 16:53 | pietro-onlineshop_ver01
-- - [tip] インポート前に必ずブリッジファイルのマッチング件数確認。ブリッジ未存在顧客はメタフィールド値が空になりMERGE対象外
 
 ## 2026-04-10 16:52 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Matrixifyカスタマーエクスポートで、EmailはColumns設定で明示的に追加が必須。デフォルトなしだとID紐付けができず後続の顧客CDマッピング失敗
 - [pattern] 複数ソース顧客メタフィール更新は優先度付け（ソースシステム優先→DMファイル補完）。Matrixify MERGEで空値は既存値保持されるため部分更新に活用
 - [tip] インポート前に必ずブリッジファイルのマッチング件数確認。ブリッジ未存在顧客はメタフィールド値が空になりMERGE対象外
 
-## 2026-04-10 16:54 | pietro-onlineshop_ver01
-- 完了: 完了しました。`Customers_hcf_flag_dm_all_import.csv` を再生成しました。
-
-## 2026-04-10 16:55 | pietro-onlineshop_ver01
-- 作業: 学習ログ抽出システムです。以下のClaude Codeセッションから、将来同様の問題で悩んだ時に役立つ学びを抽出してください。
-- 完了: - [gotcha] Matrixifyエクスポートでは明示的にEmailカラムを指定しないと含まれない。初回は ID・customer_cd しかなく Email 結合が詰まった。複数ファイル統合時は結合キーの全出力を確認してからマージを実装すべき。
 
 ## 2026-04-10 16:54 | pietro-onlineshop_ver01 [ai]
-- [gotcha] Matrixifyエクスポートでは明示的にEmailカラムを指定しないと含まれない。初回は ID・customer_cd しかなく Email 結合が詰まった。複数ファイル統合時は結合キーの全出力を確認してからマージを実装すべき。
 - [pattern] 複数データソースの優先度チェーンをコードに明示する。「hcf_customersファイル優先 → DMファイルで補完」というルールをコード上で見える化すると、ユーザーの確認質問に正確に答えられ、修正も速くなる。
 - [gotcha] ソースシステムの全顧客 ≠ Shopify 顧客。メタフィールド追加時、ソース側にいる顧客がShopifyに存在しないと出力に含められず、データ差異が発生する。上流データとShopifyのマスタ照合を明示的にステップとして記録すべき。
 
