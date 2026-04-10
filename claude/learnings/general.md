@@ -276,3 +276,8 @@
 
 ## 2026-04-10 16:50 | pietro-onlineshop_ver01
 - 完了: 完了しました。
+
+## 2026-04-10 16:50 | pietro-onlineshop_ver01 [ai]
+- [gotcha] MatrixifyでExportする際、EmailカラムはデフォルトではIDだけになることがある。複数ソースを結合する場合はEmail+IDを明示的に指定して再エクスポートが必須。
+- [pattern] メタフィールド一括インポートで複数ソースを結合する場合、ブリッジファイル（Email・ID・customer_cdの対応表）をタスク開始直後に準備する。後付けすると往復が増える。
+- [tip] MatrixifyのMERGEインポートはEmailまたはIDだけで顧客を特定できるため、ブリッジ未存在の行でも部分的にインポート可能。既存メタフィールド値は保持される。
