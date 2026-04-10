@@ -213,3 +213,7 @@
 ## 2026-04-10 14:23 | dotfiles
 - [correction] 自走できるなら複合コマンド許可したはずなのですが。設定見直してください。
 - [gotcha] **WRONG** (replaces existing permissions):
+
+## 2026-04-10 14:23 | dotfiles [ai]
+- [gotcha] Claude Code permission rule で `Bash(*)` は真のワイルドカードではなく「`*` で始まるコマンド」と解釈される。複合コマンド許可は `"Bash"` のみが catch-all
+- [gotcha] `defaultMode: "bypassPermissions"` でも `deny` リストは有効。複合コマンドに deny ルールマッチが含まれると弾かれる
