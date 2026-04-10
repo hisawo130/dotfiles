@@ -244,3 +244,6 @@
 - [pattern] Shopifyメタフィールドをインポートする前に、そのメタフィールドが定義済みであることを確認。Matrixifyで`Metafield: custom.xxx [type]`を指定する際、型名（`single_line_text_field`など）は定義時の型と一致していることが必須
 - [gotcha] 要件が不明な場合、推測で複数の質問を重ねるより先に、サンプルファイルを実際に読み込んで現物から仕様を把握する。往復回数を減らせる
 - [tip] Matrixifyのメタフィールド値は型に応じた形式で指定（`single_line_text_field`なら`"希望する"`のような文字列）。テストインポートで値の形式が正しいことを早期に確認
+
+## 2026-04-10 16:39 | pietro-onlineshop_ver01
+- [pattern] 完了しました。
