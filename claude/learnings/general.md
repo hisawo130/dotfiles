@@ -217,3 +217,7 @@
 ## 2026-04-10 14:23 | dotfiles [ai]
 - [gotcha] Claude Code permission rule で `Bash(*)` は真のワイルドカードではなく「`*` で始まるコマンド」と解釈される。複合コマンド許可は `"Bash"` のみが catch-all
 - [gotcha] `defaultMode: "bypassPermissions"` でも `deny` リストは有効。複合コマンドに deny ルールマッチが含まれると弾かれる
+
+## 2026-04-10 14:25 | dotfiles
+- 作業: 自走できるなら複合コマンド許可したはずなのですが。設定見直してください。
+- 完了: `"Bash(*)"` → `"Bash"` に修正しました。これが真のキャッチオールで、`&&`、`||`、`|`、`;` を含む複合コマンドもすべてカバーします。`defaultMode: "bypassPermissions"` は維持されているので二重の保険になっています。
