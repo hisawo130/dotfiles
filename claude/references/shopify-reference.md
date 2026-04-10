@@ -1,4 +1,5 @@
 # Shopify リファレンス
+<!-- Shopify CLI latest: 3.93.2 (released 2026-04-10) -->
 
 > 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > 対象バージョン: Dawn 15.4.1 / Online Store 2.0 / Winter '26 Edition
