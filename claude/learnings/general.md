@@ -175,3 +175,8 @@
 
 ## 2026-04-10 13:58 | Pinup-Closet_ver01
 - 完了: `550adc4` をプッシュしました。[layout/theme.liquid:817](layout/theme.liquid#L817) の開くボタンクリック時に `.js-size-number.val('')` を追加しました。
+
+## 2026-04-10 13:58 | Pinup-Closet_ver01 [ai]
+- [gotcha] page.contentの管理画面HTMLと.liquidテンプレート内のHTMLは別物。デベロッパーツールでpage.contentのHTMLを確認しないと、テーマファイルだけでは検証不完全。
+- [pattern] product contextが必須なUIは条件分岐で出力制限されることが多い。LPページなど異なるコンテキストで使う場合は、テンプレートの条件を拡張してHTMLが出力されることを確認する。
+- [gotcha] モーダルやボタン実装では、HTMLの`data-remodal-id`定義とJSのイベントハンドラ両方が揃っていないと動作しない。片方だけでは不完全。
