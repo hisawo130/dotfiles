@@ -251,3 +251,7 @@
 ## 2026-04-10 16:39 | pietro-onlineshop_ver01 [ai]
 - [pattern] Shopify Matrixifyのメタフィールドインポートでは、顧客IDがなくてもEmailで顧客を特定できる。ID追加は後から必要に応じて対応
 - [tip] 顧客メタフィールドのMatrixifyフォーマット: 「ID, Email, Command, Metafield: custom.XXX [型]」で値を指定
+
+## 2026-04-10 16:40 | pietro-onlineshop_ver01
+- 作業: matrixifyのインポートファイル作成をお願いします
+- 完了: サンプルファイルにはIDがありましたが、ソースデータにはIDがないためEmail照合で作成しました。MatrixifyはEmailでも顧客を特定できます。インポート時に問題があればIDを追加する方法に切り替えます。
