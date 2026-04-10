@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(*)",
+      "Bash",
       "Bash(awk:*)",
       "Bash(base64:*)",
       "Bash(basename:*)",
