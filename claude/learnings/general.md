@@ -32,16 +32,63 @@
 
 - [tip] 注意点： localStorageに既に保存されている閲覧履歴には `productline` が含まれていないため、再訪問時に初めてラベルが保存されます。古い履歴はラベルなしで表示されます。
 
-## Recurring Patterns (updated 2026-04-10)
-- [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 8 times
+## 2026-04-10 | Pinup-Closet_ver01 [ai]
+
+- [gotcha] 管理画面ページコンテンツのHTMLから参照する要素（data-remodal-target等）は、テーマ側で無条件レンダリングされているか確認必須。Liquid条件分岐で出力制限されていると該当ページに存在しない
+- [pattern] product contextやページタイプに依存するモーダルは、複数ページから参照される可能性がある場合、条件を緩和するか汎用版を用意する
+- [tip] Remodal実装時は、data-remodal-id と data-remodal-target の対応をテンプレートとJS両面から検証する
+- [gotcha] Shopifyテーマで条件付き出力されるコンポーネント（モーダル、スニペット等）は、参照元が複数ページタイプにまたがる場合、すべてのコンテキストで出力されるか条件を見直す必要がある
+- [pattern] モーダル不表示の調査は、ボタンの`data-remodal-target`値から逆引きして対応する`data-remodal-id`のHTML定義を探すことから始める
+- [correction] 新しいモーダルを追加する前に、対象商品が既存のモーダルをどう参照しているか確認し、一貫性を保つべき
+- [gotcha] LPページはproduct contextを持たないため、`if product.id == ...` で条件分岐されたモーダルHTMLは出力されない。汎用モーダルはページ本文またはテンプレート上部に無条件で配置する必要がある
+- [pattern] Shopify管理画面のページコンテンツに定義されたモーダル（`data-remodal-id`）に対して、テーマのJS側でクリックハンドラをオーバーライドすることで機能追加できる（Sireneの例参照）
+- [tip] モーダルが動作しない場合、`data-remodal-target` 値がHTMLに存在するか確認する際、ページコンテンツ（Shopify管理画面）とテンプレート両方をチェックが必須
+- [gotcha] Shopifyテーマで `data-remodal-target` を使う場合、モーダルのHTML本体が `page.content`（管理画面ページ本文）内に定義されているか、テーマファイル内に定義されているか必ず確認する。テーマファイルだけでは完全な構造は見えない。
+- [pattern] Shopifyテーマで同一コンポーネント（モーダル等）が複数LPで使われる場合、JSオーバーライドで動作をページごとにカスタマイズするアプローチ（Sireneの事例）が保守性が高い。Liquid条件分岐より柔軟。
+- [tip] Shopifyテーマのモーダル実装確認はブラウザDevToolsで `data-remodal-id` 属性の有無を検査するのが最短。テーマファイルと管理画面を行き来するより効率的。
+- [gotcha] Shopify LP ページではproduct contextがないため、layout/theme.liquid の商品ID条件分岐（`if product.id == ...`）内で定義されたモーダルは表示されない。LP用モーダルは条件を変更するか別途定義が必要。
+- [pattern] Shopify LPページでモーダル機能を実装する場合、Sireneパターン（page.contentにHTMLを直書き + ページテンプレートでJSオーバーライド）を踏襲。modal-sireneのように `data-remodal-id` でページ本文に定義し、ページテンプレート側でイベントハンドラを追加。
+- [tip] モーダル問題が複数ある場合、ブラウザデベロッパーツールで実際にレンダリングされているHTMLを確認し、page.content内のモーダル定義状況を把握してから修正。テーマファイルだけでは管理画面コンテンツ確認不可。
+- [gotcha] page.content（Shopify管理画面で編集するページ本文）に埋め込まれたHTMLはテーマテンプレート分析では見えない。モーダルIDとボタンターゲットのペアリング検証にはブラウザ検査が必須。
+- [gotcha] 条件付きレンダリング（`if product.id == ...`）でモーダルを出力すると、そのコンテキストにない場所（LP等）ではHTML本体が存在しない。ボタンのみ存在する矛盾状態になる。
+- [pattern] LP固有UI実装パターン：モーダルHTMLはpage.contentに定義、JSハンドラはpage.lp-corset*.liquidで層分離する。ブランド追加時、LiquidはLP条件のみ、JSハンドラを足すだけで拡張可能。
+- [gotcha] Shopifyテーマでpage.contentに埋め込まれたHTMLモーダルはテーマファイルには見えない。ブラウザのデベロッパーツールで実際に`data-remodal-id`が存在するか確認が必須。
+- [gotcha] 商品ページ向けに`if product.id == ...`条件でモーダルHTMLをレンダリングすると、product contextを持たないLPページでは出力されない。複数ページタイプで使うモーダルは条件設計に注意。
+- [pattern] Shopifyテーマで複数ブランド向けモーダルを実装する場合、LiquidファイルのJSオーバーライド箇所で各ブランドID毎のハンドラを定義し、page.content側で共通のdata-remodal-idを指定する構造が統一的。
+- [gotcha] Shopifyテーマで page.content 内のボタンと theme.liquid のモーダル定義が分離していると、page.content からは見えない product context 条件分岐でモーダルが非表示になることがある。LPページでは product context がないため注意。
+- [pattern] モーダル実装は「HTML定義（Liquid）＋イベントハンドラ（JS）＋ボタンの data-remodal-target」の3点セット確認が必須。1つ欠けると動作しない。
+- [tip] page.content に書かれた data-remodal-target の値とテーマ側の data-remodal-id が一致しているか、ブラウザのデベロッパーツールで実HTML をレンダリング確認するのが確実。
+- [gotcha] Shopifyテーマの`page.content`内のHTML要素はLiquidテンプレートから見えない。ページコンテンツ関連のデバッグ時はブラウザまたは管理画面での直接確認が必須。
+- [gotcha] ページコンテンツで指定した`data-remodal-target`などのIDに対応するHTMLやJSハンドラがテーマ側に存在しないと動作しない。ページ側とテーマ側の整合性確認が重要。
+- [pattern] LPページなど複数の場面で再利用するモーダル・コンポーネントは、`if product.id == ...`の個別条件で制限せず、より広いスコープで定義する。
+- [gotcha] Shopify theme で page.content（管理画面コンテンツ）に埋め込まれた HTML と Liquid テンプレート内のモーダル定義は、テーマファイルだけでは対応関係を検証できない。button の data-remodal-target が実装前に page.content の構造を確認必須。
+- [pattern] LP やページ固有のモーダル JS オーバーライド（イベントハンドラ追加）は、そのページテンプレート（page.lp-corset01.liquid など）に直接記述するとロジック と使用箇所が一緒に管理でき保守性が上がる。
+- [tip] 複数の商品/モーダル種類がある場合、各モーダルの使用条件（product context 有無、ページタイプ等）と data-remodal-target の対応を一度整理してから修正すると、ボタン-モーダル不一致を防ぎやすい。
+- [gotcha] Shopifyテーマで商品ページ専用モーダル（`if product.id == ...`条件）をLP/ページから呼び出す場合、HTMLレンダリング条件を確認が必須。ボタンのターゲット指定だけでは不足。
+- [pattern] 複数ブランドのLP診断モーダル（Sirene/Sylphide）は`page.content`HTML定義 + テンプレート側のブランド別JSオーバーライドパターンで管理する（PR #26から）。
+- [gotcha] モーダル動作失敗は複合原因（HTML未出力 + JSハンドラ未定義）の場合がある。両方をセットで確認する。
+- [gotcha] Shopify page.contentに埋め込まれたHTMLはテーマLiquidから見えない。モーダルやボタンの挙動を調査する際は、管理画面コンテンツとテーマファイル両方を確認必須
+- [pattern] テンプレート内のモーダルをproduct ID条件で制限すると、商品ページ以外（LP）で参照されて破綻する。複数ページで共用する場合は `request.page_type` ベースの条件分岐が拡張性が高い
+- [tip] カスタムモーダル実装時は、JSハンドラ（クリックイベント）とHTMLの存在を同時に確認。一方だけでは動作しない
+- [gotcha] Shopifyページ（page.content）のHTML内容はテンプレートから見えない。ボタン実装とモーダル不一致の原因特定には、ブラウザのデベロッパーツール確認が必須。
+- [gotcha] LP ページは product context がないため、商品ページの `if product.id == ...` 条件でレンダリングされるモーダルは LP では出力されない。LP 用と product 用の条件分岐を分離して管理する必要がある。
+- [pattern] 複数 LP ページで複数モーダルを使う場合、page.content に各モーダル HTML を定義し、テンプレート側（page-xxx.liquid）で JS オーバーライドする二層構造が有効。
+- [gotcha] page.contentの管理画面HTMLと.liquidテンプレート内のHTMLは別物。デベロッパーツールでpage.contentのHTMLを確認しないと、テーマファイルだけでは検証不完全。
+- [pattern] product contextが必須なUIは条件分岐で出力制限されることが多い。LPページなど異なるコンテキストで使う場合は、テンプレートの条件を拡張してHTMLが出力されることを確認する。
+- [gotcha] モーダルやボタン実装では、HTMLの`data-remodal-id`定義とJSのイベントハンドラ両方が揃っていないと動作しない。片方だけでは不完全。
+- [gotcha] Shopifyテーマで複数ページでモーダルを共有する際、page.content（管理画面）のHTMLと`layout/theme.liquid`のHTMLの乖離を必ず確認する。product contextがないページではモーダルHTMLが出力されない可能性がある。
+- [pattern] テーマの既存実装パターン（例：Sirene用のJS実装）を参考に、同様の構造を別機能（Sylphide）に適用する方式が有効。一度動いているパターンを流用するほうが安全。
+- [gotcha] 商品ページの条件分岐内（`if product.id == ...`）でレンダリングされるコンポーネントは、該当ページのproduct contextがないLPページでは描画されない。複数ページで共有するモーダルの条件分岐を見直す際に注意。
+
+## Recurring Patterns (updated 2026-04-11)
+- [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 11 times
 - [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力 — seen 5 times
 - [matrixify] MatrixifyはShopify純正CSVと列名形式が異なる（型サフィックス付き・Fulfillment Line必須） — seen 3 times
 - [js] 非同期初期化待ちポーリング実装: windowフラグによるシングルトン化・名前空間付きイベント登録・DOM依存呼び出し回避 — seen 3 times
-- [shopify] page.content HTML不可視・LP product context条件分岐失敗: Liquidから見えず・product条件付きコンポーネントがLPで非表示 — seen 15 times
-- [matrixify] MatrixifyエクスポートEmail列は明示的に指定必須（Columns設定）: デフォルト不含でID紐付け失敗の原因 — seen 5 times
-- [claude-code] `Bash(*)`はワイルドカードではなく「*で始まるコマンド」: 複合コマンドのcatch-allは`"Bash"`のみ — seen 3 times
-
-
+- [shopify] page.content HTML不可視・LP product context条件分岐失敗: Liquidから見えず・product条件付きコンポーネントがLPで非表示 — seen 25 times
+- [matrixify] MatrixifyエクスポートEmail列は明示的に指定必須（Columns設定）: デフォルト不含でID紐付け失敗の原因 — seen 6 times
+- [claude-code] `Bash(*)`はワイルドカードではなく「*で始まるコマンド」: 複合コマンドのcatch-allは`"Bash"`のみ — seen 5 times
+- [matrixify] 複数ソース顧客メタフィールド更新はEmail→ID→CustomerCDブリッジファイルを事前作成してから実装: 後付けは往復増加 — seen 5 times
 ## 2026-04-06 | dotfiles [ai]
 
 - [gotcha] Chrome DevTools MCPはデフォルトで使用統計をGoogleに送信（`--no-usage-statistics`で無効化必須）
@@ -58,16 +105,6 @@
 - [pattern] 大規模キャンペーン（万単位の対象者）のLP・コード検証機能は、納期が短い場合（5月公開予定）、既存ECカートのテンプレートやノーコード施策で検討。完全カスタム構築は納期超過リスク。
 - [gotcha] 年齢確認（アルコール飲料対応）の法的責任と実装方法（本人確認・配送時確認）を事前に確認。提携企業の責任分担も明確化すべき。
 
-## 2026-04-10 12:18 | Pinup-Closet_ver01 [ai]
-- [gotcha] 管理画面ページコンテンツのHTMLから参照する要素（data-remodal-target等）は、テーマ側で無条件レンダリングされているか確認必須。Liquid条件分岐で出力制限されていると該当ページに存在しない
-- [pattern] product contextやページタイプに依存するモーダルは、複数ページから参照される可能性がある場合、条件を緩和するか汎用版を用意する
-- [tip] Remodal実装時は、data-remodal-id と data-remodal-target の対応をテンプレートとJS両面から検証する
-
-## 2026-04-10 12:21 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopifyテーマで条件付き出力されるコンポーネント（モーダル、スニペット等）は、参照元が複数ページタイプにまたがる場合、すべてのコンテキストで出力されるか条件を見直す必要がある
-- [pattern] モーダル不表示の調査は、ボタンの`data-remodal-target`値から逆引きして対応する`data-remodal-id`のHTML定義を探すことから始める
-- [correction] 新しいモーダルを追加する前に、対象商品が既存のモーダルをどう参照しているか確認し、一貫性を保つべき
-
 ## 2026-04-10 12:23 | Pinup-Closet_ver01
 - 作業: 以下ページのマイサイズを見つけるの挙動が変です。本当はチャート式になっているはずなので確認してください。
 - 完了: 追加しました。ただし、これはJSのオーバーライドです。**`modal-sylphide` のHTMLモーダル本体がpage.content（Shopify管理画面のページ本文）に存在しているか**が前提になります。
@@ -75,64 +112,6 @@
 
 ## 2026-04-10 12:23 | Pinup-Closet_ver01
 - [correction] 具体的には条件を変更します。修正してよいですか？
-
-## 2026-04-10 12:23 | Pinup-Closet_ver01 [ai]
-- [gotcha] LPページはproduct contextを持たないため、`if product.id == ...` で条件分岐されたモーダルHTMLは出力されない。汎用モーダルはページ本文またはテンプレート上部に無条件で配置する必要がある
-- [pattern] Shopify管理画面のページコンテンツに定義されたモーダル（`data-remodal-id`）に対して、テーマのJS側でクリックハンドラをオーバーライドすることで機能追加できる（Sireneの例参照）
-- [tip] モーダルが動作しない場合、`data-remodal-target` 値がHTMLに存在するか確認する際、ページコンテンツ（Shopify管理画面）とテンプレート両方をチェックが必須
-
-## 2026-04-10 12:23 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopifyテーマで `data-remodal-target` を使う場合、モーダルのHTML本体が `page.content`（管理画面ページ本文）内に定義されているか、テーマファイル内に定義されているか必ず確認する。テーマファイルだけでは完全な構造は見えない。
-- [pattern] Shopifyテーマで同一コンポーネント（モーダル等）が複数LPで使われる場合、JSオーバーライドで動作をページごとにカスタマイズするアプローチ（Sireneの事例）が保守性が高い。Liquid条件分岐より柔軟。
-- [tip] Shopifyテーマのモーダル実装確認はブラウザDevToolsで `data-remodal-id` 属性の有無を検査するのが最短。テーマファイルと管理画面を行き来するより効率的。
-
-
-## 2026-04-10 12:26 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopify LP ページではproduct contextがないため、layout/theme.liquid の商品ID条件分岐（`if product.id == ...`）内で定義されたモーダルは表示されない。LP用モーダルは条件を変更するか別途定義が必要。
-- [pattern] Shopify LPページでモーダル機能を実装する場合、Sireneパターン（page.contentにHTMLを直書き + ページテンプレートでJSオーバーライド）を踏襲。modal-sireneのように `data-remodal-id` でページ本文に定義し、ページテンプレート側でイベントハンドラを追加。
-- [tip] モーダル問題が複数ある場合、ブラウザデベロッパーツールで実際にレンダリングされているHTMLを確認し、page.content内のモーダル定義状況を把握してから修正。テーマファイルだけでは管理画面コンテンツ確認不可。
-
-
-## 2026-04-10 12:50 | Pinup-Closet_ver01 [ai]
-- [gotcha] page.content（Shopify管理画面で編集するページ本文）に埋め込まれたHTMLはテーマテンプレート分析では見えない。モーダルIDとボタンターゲットのペアリング検証にはブラウザ検査が必須。
-- [gotcha] 条件付きレンダリング（`if product.id == ...`）でモーダルを出力すると、そのコンテキストにない場所（LP等）ではHTML本体が存在しない。ボタンのみ存在する矛盾状態になる。
-- [pattern] LP固有UI実装パターン：モーダルHTMLはpage.contentに定義、JSハンドラはpage.lp-corset*.liquidで層分離する。ブランド追加時、LiquidはLP条件のみ、JSハンドラを足すだけで拡張可能。
-
-
-## 2026-04-10 12:53 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopifyテーマでpage.contentに埋め込まれたHTMLモーダルはテーマファイルには見えない。ブラウザのデベロッパーツールで実際に`data-remodal-id`が存在するか確認が必須。
-- [gotcha] 商品ページ向けに`if product.id == ...`条件でモーダルHTMLをレンダリングすると、product contextを持たないLPページでは出力されない。複数ページタイプで使うモーダルは条件設計に注意。
-- [pattern] Shopifyテーマで複数ブランド向けモーダルを実装する場合、LiquidファイルのJSオーバーライド箇所で各ブランドID毎のハンドラを定義し、page.content側で共通のdata-remodal-idを指定する構造が統一的。
-
-
-## 2026-04-10 12:55 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopifyテーマで page.content 内のボタンと theme.liquid のモーダル定義が分離していると、page.content からは見えない product context 条件分岐でモーダルが非表示になることがある。LPページでは product context がないため注意。
-- [pattern] モーダル実装は「HTML定義（Liquid）＋イベントハンドラ（JS）＋ボタンの data-remodal-target」の3点セット確認が必須。1つ欠けると動作しない。
-- [tip] page.content に書かれた data-remodal-target の値とテーマ側の data-remodal-id が一致しているか、ブラウザのデベロッパーツールで実HTML をレンダリング確認するのが確実。
-
-
-## 2026-04-10 12:56 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopifyテーマの`page.content`内のHTML要素はLiquidテンプレートから見えない。ページコンテンツ関連のデバッグ時はブラウザまたは管理画面での直接確認が必須。
-- [gotcha] ページコンテンツで指定した`data-remodal-target`などのIDに対応するHTMLやJSハンドラがテーマ側に存在しないと動作しない。ページ側とテーマ側の整合性確認が重要。
-- [pattern] LPページなど複数の場面で再利用するモーダル・コンポーネントは、`if product.id == ...`の個別条件で制限せず、より広いスコープで定義する。
-
-
-## 2026-04-10 12:57 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopify theme で page.content（管理画面コンテンツ）に埋め込まれた HTML と Liquid テンプレート内のモーダル定義は、テーマファイルだけでは対応関係を検証できない。button の data-remodal-target が実装前に page.content の構造を確認必須。
-- [pattern] LP やページ固有のモーダル JS オーバーライド（イベントハンドラ追加）は、そのページテンプレート（page.lp-corset01.liquid など）に直接記述するとロジック と使用箇所が一緒に管理でき保守性が上がる。
-- [tip] 複数の商品/モーダル種類がある場合、各モーダルの使用条件（product context 有無、ページタイプ等）と data-remodal-target の対応を一度整理してから修正すると、ボタン-モーダル不一致を防ぎやすい。
-
-
-## 2026-04-10 12:59 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopifyテーマで商品ページ専用モーダル（`if product.id == ...`条件）をLP/ページから呼び出す場合、HTMLレンダリング条件を確認が必須。ボタンのターゲット指定だけでは不足。
-- [pattern] 複数ブランドのLP診断モーダル（Sirene/Sylphide）は`page.content`HTML定義 + テンプレート側のブランド別JSオーバーライドパターンで管理する（PR #26から）。
-- [gotcha] モーダル動作失敗は複合原因（HTML未出力 + JSハンドラ未定義）の場合がある。両方をセットで確認する。
-
-
-## 2026-04-10 13:00 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopify page.contentに埋め込まれたHTMLはテーマLiquidから見えない。モーダルやボタンの挙動を調査する際は、管理画面コンテンツとテーマファイル両方を確認必須
-- [pattern] テンプレート内のモーダルをproduct ID条件で制限すると、商品ページ以外（LP）で参照されて破綻する。複数ページで共用する場合は `request.page_type` ベースの条件分岐が拡張性が高い
-- [tip] カスタムモーダル実装時は、JSハンドラ（クリックイベント）とHTMLの存在を同時に確認。一方だけでは動作しない
 
 ## 2026-04-10 13:30 | P130
 - [open] - 楽天スーパーロジスティクス・オープンロジ（中小向けB2C、酒類可否要確認）
@@ -149,24 +128,8 @@
 - [tip] 酒類キャンペーンは年齢確認法務・3PL酒類対応可否・役割分担を受注前に全て確認する必要がある
 
 
-## 2026-04-10 13:56 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopifyページ（page.content）のHTML内容はテンプレートから見えない。ボタン実装とモーダル不一致の原因特定には、ブラウザのデベロッパーツール確認が必須。
-- [gotcha] LP ページは product context がないため、商品ページの `if product.id == ...` 条件でレンダリングされるモーダルは LP では出力されない。LP 用と product 用の条件分岐を分離して管理する必要がある。
-- [pattern] 複数 LP ページで複数モーダルを使う場合、page.content に各モーダル HTML を定義し、テンプレート側（page-xxx.liquid）で JS オーバーライドする二層構造が有効。
-
 ## 2026-04-10 13:58 | Pinup-Closet_ver01
 - 完了: `550adc4` をプッシュしました。[layout/theme.liquid:817](layout/theme.liquid#L817) の開くボタンクリック時に `.js-size-number.val('')` を追加しました。
-
-## 2026-04-10 13:58 | Pinup-Closet_ver01 [ai]
-- [gotcha] page.contentの管理画面HTMLと.liquidテンプレート内のHTMLは別物。デベロッパーツールでpage.contentのHTMLを確認しないと、テーマファイルだけでは検証不完全。
-- [pattern] product contextが必須なUIは条件分岐で出力制限されることが多い。LPページなど異なるコンテキストで使う場合は、テンプレートの条件を拡張してHTMLが出力されることを確認する。
-- [gotcha] モーダルやボタン実装では、HTMLの`data-remodal-id`定義とJSのイベントハンドラ両方が揃っていないと動作しない。片方だけでは不完全。
-
-
-## 2026-04-10 13:59 | Pinup-Closet_ver01 [ai]
-- [gotcha] Shopifyテーマで複数ページでモーダルを共有する際、page.content（管理画面）のHTMLと`layout/theme.liquid`のHTMLの乖離を必ず確認する。product contextがないページではモーダルHTMLが出力されない可能性がある。
-- [pattern] テーマの既存実装パターン（例：Sirene用のJS実装）を参考に、同様の構造を別機能（Sylphide）に適用する方式が有効。一度動いているパターンを流用するほうが安全。
-- [gotcha] 商品ページの条件分岐内（`if product.id == ...`）でレンダリングされるコンポーネントは、該当ページのproduct contextがないLPページでは描画されない。複数ページで共有するモーダルの条件分岐を見直す際に注意。
 
 ## 2026-04-10 14:06 | pietro-onlineshop_ver01
 - [correction] ShopifyのリダイレクトはこのURL形式だとだめ？
@@ -196,7 +159,7 @@
 
 ## 2026-04-10 14:25 | dotfiles
 - 作業: 自走できるなら複合コマンド許可したはずなのですが。設定見直してください。
-- 完了: `"Bash(*)"` → `"Bash"` に修正しました。これが真のキャッチオールで、`&&`、`||`、`|`、`;` を含む複合コマンドもすべてカバーします。`defaultMode: "bypassPermissions"` は維持されているので二重の保険になっています。
+- [gotcha] 完了: `"Bash(*)"` → `"Bash"` に修正しました。これが真のキャッチオールで、`&&`、`||`、`|`、`;` を含む複合コマンドもすべてカバーします。`defaultMode: "bypassPermissions"` は維持されているので二重の保険になっています。
 
 ## 2026-04-10 14:25 | dotfiles [ai]
 - [gotcha] Claude Code の permission rule で `Bash(*)` はワイルドカード扱いではなく「`*` で始まるコマンド」と解釈される。複合コマンドの catch-all は `"Bash"` のみが正解。
@@ -228,7 +191,7 @@
 
 ## 2026-04-10 16:40 | pietro-onlineshop_ver01
 - 作業: matrixifyのインポートファイル作成をお願いします
-- 完了: サンプルファイルにはIDがありましたが、ソースデータにはIDがないためEmail照合で作成しました。MatrixifyはEmailでも顧客を特定できます。インポート時に問題があればIDを追加する方法に切り替えます。
+- [pattern] 完了: サンプルファイルにはIDがありましたが、ソースデータにはIDがないためEmail照合で作成しました。MatrixifyはEmailでも顧客を特定できます。インポート時に問題があればIDを追加する方法に切り替えます。
 
 ## 2026-04-10 16:40 | pietro-onlineshop_ver01 [ai]
 - [pattern] Shopify顧客メタフィールド更新では、Email照合でMatrixifyが顧客を識別可能 — IDを生成する手間を削減できる
