@@ -80,7 +80,7 @@
 - [pattern] テーマの既存実装パターン（例：Sirene用のJS実装）を参考に、同様の構造を別機能（Sylphide）に適用する方式が有効。一度動いているパターンを流用するほうが安全。
 - [gotcha] 商品ページの条件分岐内（`if product.id == ...`）でレンダリングされるコンポーネントは、該当ページのproduct contextがないLPページでは描画されない。複数ページで共有するモーダルの条件分岐を見直す際に注意。
 
-## Recurring Patterns (updated 2026-04-11)
+## Recurring Patterns (updated 2026-04-12)
 - [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 11 times
 - [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力 — seen 5 times
 - [matrixify] MatrixifyはShopify純正CSVと列名形式が異なる（型サフィックス付き・Fulfillment Line必須） — seen 3 times
@@ -108,9 +108,6 @@
 ## 2026-04-10 12:23 | Pinup-Closet_ver01
 - 作業: 以下ページのマイサイズを見つけるの挙動が変です。本当はチャート式になっているはずなので確認してください。
 - 完了: 追加しました。ただし、これはJSのオーバーライドです。**`modal-sylphide` のHTMLモーダル本体がpage.content（Shopify管理画面のページ本文）に存在しているか**が前提になります。
-
-
-## 2026-04-10 12:23 | Pinup-Closet_ver01
 - [correction] 具体的には条件を変更します。修正してよいですか？
 
 ## 2026-04-10 13:30 | P130
@@ -150,28 +147,16 @@
 - [pattern] Pythonパイプフィルター`compress-output.py`を`~/.claude/tools/`に置き、行動ルール化すれば全セッション対応の自動圧縮が実現。
 - [tip] 圧縮スクリプトは外部通信なし・オプションフラグ対応で汎用性確保。`--cmd`で直接実行、パイプで簡易フィルター両用可。
 
-## 2026-04-10 14:23 | dotfiles
-- [correction] 自走できるなら複合コマンド許可したはずなのですが。設定見直してください。
-
-## 2026-04-10 14:23 | dotfiles [ai]
-- [gotcha] Claude Code permission rule で `Bash(*)` は真のワイルドカードではなく「`*` で始まるコマンド」と解釈される。複合コマンド許可は `"Bash"` のみが catch-all
-- [gotcha] `defaultMode: "bypassPermissions"` でも `deny` リストは有効。複合コマンドに deny ルールマッチが含まれると弾かれる
-
-## 2026-04-10 14:25 | dotfiles
-- 作業: 自走できるなら複合コマンド許可したはずなのですが。設定見直してください。
-- [gotcha] 完了: `"Bash(*)"` → `"Bash"` に修正しました。これが真のキャッチオールで、`&&`、`||`、`|`、`;` を含む複合コマンドもすべてカバーします。`defaultMode: "bypassPermissions"` は維持されているので二重の保険になっています。
-
-## 2026-04-10 14:25 | dotfiles [ai]
-- [gotcha] Claude Code の permission rule で `Bash(*)` はワイルドカード扱いではなく「`*` で始まるコマンド」と解釈される。複合コマンドの catch-all は `"Bash"` のみが正解。
-- [pattern] 複合コマンド（`&&`, `||`, `|`, `;`）を自動許可するには `defaultMode: "bypassPermissions"` + `"Bash"` catch-all で実現。
-- [tip] `defaultMode: "bypassPermissions"` でも deny ルール内のパターンマッチ（例：`Bash(rm -rf *)`）は有効なため、複合コマンドが deny に該当するコマンド含むと弾かれる可能性。
-
 ## 2026-04-10 14:26 | dotfiles
-- [tip] ただし 注意点が1つあります: `"Bash(rm -rf *)"` のルールは `rm -rf ./node_modules` のような正当な操作も弾く可能性があります。必要なら `rm -rf ./` 系のみ許可するよう調整できます。
+- [correction] 自走できるなら複合コマンド許可したはずなのですが。設定見直してください。
+- [gotcha] 完了: `"Bash(*)"` → `"Bash"` に修正しました。これが真のキャッチオールで、`&&`、`||`、`|`、`;` を含む複合コマンドもすべてカバーします。`defaultMode: "bypassPermissions"` は維持されているので二重の保険になっています。
+- [tip] `"Bash(rm -rf *)"` のルールは `rm -rf ./node_modules` のような正当な操作も弾く可能性がある。必要なら `rm -rf ./` 系のみ許可するよう調整できる。
 
 ## 2026-04-10 14:26 | dotfiles [ai]
-- [gotcha] `Bash(*)` は真のキャッチオールではなく「`*` で始まるコマンド」と解釈される。複合コマンド許可には `"Bash"` のみが正しい。
+- [gotcha] Claude Code の permission rule で `Bash(*)` はワイルドカード扱いではなく「`*` で始まるコマンド」と解釈される。複合コマンドの catch-all は `"Bash"` のみが正解。
 - [gotcha] `defaultMode: "bypassPermissions"` でも `deny` リストは有効に機能する。フック層の実装と deny ルール間で重複保護が発生する場合がある。
+- [pattern] 複合コマンド（`&&`, `||`, `|`, `;`）を自動許可するには `defaultMode: "bypassPermissions"` + `"Bash"` catch-all で実現。
+- [tip] `defaultMode: "bypassPermissions"` でも deny ルール内のパターンマッチ（例：`Bash(rm -rf *)`）は有効なため、複合コマンドが deny に該当するコマンド含むと弾かれる可能性。
 - [pattern] フック（PreToolUse など）で既に実装されている制御は、deny ルールで二重に指定しない。単一層での管理が設定の可読性を保つ。
 
 ## 2026-04-10 16:29 | pietro-onlineshop_ver01 [ai]
