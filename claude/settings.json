@@ -399,6 +399,17 @@
         ]
       }
     ],
+    "StopFailure": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.stop_reason // \"unknown\"' | { read -r r; curl -s -H 'Title: Claude Code エラー' -H 'Priority: high' -H 'Tags: x' -d \"APIエラーで停止: $r\" ntfy.sh/claude-2e88e2160d55; } 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
     "PreCompact": [
       {
         "matcher": "",
@@ -424,7 +435,8 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/statusline.py"
+    "command": "~/.claude/statusline.py",
+    "refreshInterval": 30
   },
   "enabledPlugins": {
     "superpowers@superpowers-dev": true
