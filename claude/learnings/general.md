@@ -403,3 +403,6 @@
 - [gotcha] jQuery delegated eventと同一document レベルのイベントリスナー競合時、stopPropagation()ではなくstopImmediatePropagation()が必須（同レベルリスナーまで遮断される）
 - [pattern] サーバーサイド判定でクラス付与を出し分け、JS側の条件分岐を完全に不要化する（状態をクラス有無で表現）
 - [tip] CSS :after装飾要素はクラス単位でdisplay制御すると、HTMLの構造変更なしに見た目の出し分けが簡潔
+
+## 2026-04-13 21:02 | pietro-onlineshop_ver01
+- [correction] コードレビューを確認して必要であれば修正してください
