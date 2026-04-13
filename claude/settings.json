@@ -210,7 +210,9 @@
       "Skill(spec)",
       "Skill(spec:*)",
       "Read(//Users/P130/.claude/references/**)",
-      "Read(//Users/P130/dotfiles/claude/references/**)"
+      "Read(//Users/P130/dotfiles/claude/references/**)",
+      "Read(//Users/P130/GitHub/pietro-onlineshop_ver01/sections/**)",
+      "Read(//Users/P130/GitHub/pietro-onlineshop_ver01/assets/**)"
     ],
     "deny": [
       "Bash(rm -rf /)",
