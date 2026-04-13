@@ -320,3 +320,7 @@
 - [pattern] テーマスクリプト修正後に `shopify theme check` で差分を確認し、修正による新規エラーが無いことを立証。既存問題と新規問題を明確に分離してPR化。
 
 ## 2026-04-13 20:17 | pietro-onlineshop_ver01
+
+## 2026-04-13 20:17 | pietro-onlineshop_ver01 [ai]
+- [gotcha] jQuery delegated click と addEventListener が混在時、`stopImmediatePropagation()` が必須。`stopPropagation()` では同じ document レベルのリスナーは止まらない。
+- [tip] `stopImmediatePropagation()` は条件分岐（早期 return）前に実行することで、外部リスナーへの伝播を確実に防止できる。
