@@ -429,3 +429,7 @@
 - [gotcha] クリック不可要素は `cursor: default` と `pointer-events: none` の両方を設定しないと見た目と実装が乖離する（継承スタイルを打ち消す必要）
 
 ## 2026-04-13 21:06 | pietro-onlineshop_ver01
+
+## 2026-04-13 21:06 | pietro-onlineshop_ver01 [ai]
+- [pattern] メタフィールド判定でサーバーサイド（Liquid）出し分けするとクラス不在のため、後付け JS チェックが不要で堅牢
+- [gotcha] UI 非表示時もホバースタイルは継承されるため、cursor: default; pointer-events: none で明示的に制御が必須
