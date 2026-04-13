@@ -384,3 +384,8 @@
 - [tip] 複数の場所（一覧・検索・詳細ページ）で表示するコンポーネント（ラベル等）は、スニペットに集約して各セクションから呼び出すと変更時の管理が容易。
 
 ## 2026-04-13 20:39 | SERPENTINA
+
+## 2026-04-13 20:39 | SERPENTINA [ai]
+- [gotcha] Shopifyサードパーティアプリ（Rank King等）が生成するHTMLはLiquid制御不可。商品APIから取得したタグをJavaScriptで動的にDOM注入する必要がある。
+- [pattern] npmビルド環境に制約がある場合、assets/に独立したJSファイルを配置し、layout/theme.liquidの`<script>`から読み込み。
+- [correction] mainブランチへの直接コミットを避け、必ずfeat/*ブランチで作業してPRを上げるプロセスを厳守。reset --hard権限トラブル防止。
