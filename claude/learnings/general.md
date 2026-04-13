@@ -226,3 +226,8 @@
 ## 2026-04-13 19:00 | pietro-app [ai]
 - [gotcha] Shopify CLI の「The resource you have requested could not be found」エラーは client_id がログイン中の Partner 組織に存在していないことが原因。`shopify auth login` で正しい組織アカウントでログイン。
 - [pattern] Shopify アプリデプロイ前に partner.shopify.com で対象の client_id が存在するか確認。存在しない場合は Dev Dashboard でアプリを新規作成。
+
+## 2026-04-13 19:03 | pietro-app [ai]
+- [gotcha] Shopify app deploy の「resource not found」エラーは client_id がPartner組織に存在しないことが原因。Partner Dashboard で確認して正しいアカウントで shopify auth login し直す
+- [pattern] Shopify本番デプロイ手順：main にマージ → npm install → shopify auth login → shopify app deploy → Dev Dashboard でインストール
+- [tip] Partner Dashboard (partners.shopify.com) → Apps → 対象アプリ → App setup → Client ID で client_id を確認できる
