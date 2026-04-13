@@ -328,3 +328,8 @@
 ## 2026-04-13 20:22 | SERPENTINA
 - 作業: 以下条件のときに、商品一覧・検索結果・商品ページの商品名の上にラベル表示を行いたいです。
 - 完了: PR を作成しました: [CIN-GROUP-EC/SERPENTINA#5](https://github.com/CIN-GROUP-EC/SERPENTINA/pull/5)
+
+## 2026-04-13 20:22 | SERPENTINA [ai]
+- [gotcha] CSSビルド成果物（大規模ファイル）で権限エラーにより内容が消失する場合がある。git経由で元の内容を復元してから追記するプロセスを取る
+- [gotcha] VSCode拡張で `reset --hard` がブロックされる場合、ターミナルから直接実行すれば動く（Claude Codeの権限と独立）
+- [pattern] Shopifyテーマで複数ファイル修正時は、ビルド実行前に各セクション・スニペットで差分確認を完了させる
