@@ -275,3 +275,8 @@
 
 ## 2026-04-13 20:04 | SERPENTINA
 - [correction] - [gotcha] ビルドエラーでCSS成果物が消失した場合、`git show HEAD:path`で元の内容を復元してから新スタイルを追記する（上書きではなく復元→追記の二段階が重要）
+
+## 2026-04-13 20:04 | SERPENTINA [ai]
+- [gotcha] ビルドエラーでCSS成果物が消失した場合、`git show HEAD:path`で元の内容を復元してから新スタイルを追記する（上書きではなく復元→追記の二段階が重要）
+- [pattern] 複数Liquidファイルに同じ判定ロジックが必要な場合、スニペット化による再利用と実装負荷を天秤にかけ、要件外の改善は後回しにする判断が有効
+- [gotcha] Shopifyテーマで`npm run js-release`・`npm run sass-release`後は成果物をすぐに確認する（webpackの不安定性により大規模ファイル消失が発生する可能性）
