@@ -436,3 +436,8 @@
 
 ## 2026-04-13 21:12 | pietro-onlineshop_ver01
 - なぜ壊れたか：PR #30 の実装変更が根本原因です。
+
+## 2026-04-13 21:12 | pietro-onlineshop_ver01 [ai]
+- [pattern] Discount Deck の `handleOutsideClick` 競合回避には `stopImmediatePropagation()` が必須。同じ document レベルでは `stopPropagation()` 無効。
+- [gotcha] サーバーサイド判定（Liquid メタフィールド）でクラス自体を出し分けないと、JS では className 判定してもクリック可能に見える。
+- [tip] クリック不可要素は `cursor: default; pointer-events: none` で視覚的・機能的に無効化を統一する。
