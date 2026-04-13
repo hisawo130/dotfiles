@@ -219,3 +219,6 @@
 - [gotcha] `shopify app deploy`は対話プロンプトが出るため、自動実行せずターミナルで直接実行する
 - [pattern] デプロイ前の事前確認手順：mainブランチ確認 → npm install → Shopify CLI ログイン確認 → 本番設定ファイル選択
 - [tip] デプロイ完了後は Dev Dashboard から Install app を取得して本番ストアへインストール
+
+## 2026-04-13 19:00 | pietro-app
+- [gotcha] エラーの原因を調べます。「resource could not be found」はログイン中のPartnerアカウント/組織と `client_id` が一致していない場合に出ます。
