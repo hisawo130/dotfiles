@@ -324,3 +324,7 @@
 ## 2026-04-13 20:17 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQuery delegated click と addEventListener が混在時、`stopImmediatePropagation()` が必須。`stopPropagation()` では同じ document レベルのリスナーは止まらない。
 - [tip] `stopImmediatePropagation()` は条件分岐（早期 return）前に実行することで、外部リスナーへの伝播を確実に防止できる。
+
+## 2026-04-13 20:22 | SERPENTINA
+- 作業: 以下条件のときに、商品一覧・検索結果・商品ページの商品名の上にラベル表示を行いたいです。
+- 完了: PR を作成しました: [CIN-GROUP-EC/SERPENTINA#5](https://github.com/CIN-GROUP-EC/SERPENTINA/pull/5)
