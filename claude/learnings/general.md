@@ -89,6 +89,65 @@
 - [matrixify] MatrixifyエクスポートEmail列は明示的に指定必須（Columns設定）: デフォルト不含でID紐付け失敗の原因 — seen 6 times
 - [claude-code] `Bash(*)`はワイルドカードではなく「*で始まるコマンド」: 複合コマンドのcatch-allは`"Bash"`のみ — seen 5 times
 - [matrixify] 複数ソース顧客メタフィールド更新はEmail→ID→CustomerCDブリッジファイルを事前作成してから実装: 後付けは往復増加 — seen 5 times
+## 2026-04-10 | Pinup-Closet_ver01 [ai]
+
+- [gotcha] 管理画面ページコンテンツのHTMLから参照する要素（data-remodal-target等）は、テーマ側で無条件レンダリングされているか確認必須。Liquid条件分岐で出力制限されていると該当ページに存在しない
+- [pattern] product contextやページタイプに依存するモーダルは、複数ページから参照される可能性がある場合、条件を緩和するか汎用版を用意する
+- [tip] Remodal実装時は、data-remodal-id と data-remodal-target の対応をテンプレートとJS両面から検証する
+- [gotcha] Shopifyテーマで条件付き出力されるコンポーネント（モーダル、スニペット等）は、参照元が複数ページタイプにまたがる場合、すべてのコンテキストで出力されるか条件を見直す必要がある
+- [pattern] モーダル不表示の調査は、ボタンの`data-remodal-target`値から逆引きして対応する`data-remodal-id`のHTML定義を探すことから始める
+- [correction] 新しいモーダルを追加する前に、対象商品が既存のモーダルをどう参照しているか確認し、一貫性を保つべき
+- [gotcha] LPページはproduct contextを持たないため、`if product.id == ...` で条件分岐されたモーダルHTMLは出力されない。汎用モーダルはページ本文またはテンプレート上部に無条件で配置する必要がある
+- [pattern] Shopify管理画面のページコンテンツに定義されたモーダル（`data-remodal-id`）に対して、テーマのJS側でクリックハンドラをオーバーライドすることで機能追加できる（Sireneの例参照）
+- [tip] モーダルが動作しない場合、`data-remodal-target` 値がHTMLに存在するか確認する際、ページコンテンツ（Shopify管理画面）とテンプレート両方をチェックが必須
+- [gotcha] Shopifyテーマで `data-remodal-target` を使う場合、モーダルのHTML本体が `page.content`（管理画面ページ本文）内に定義されているか、テーマファイル内に定義されているか必ず確認する。テーマファイルだけでは完全な構造は見えない。
+- [pattern] Shopifyテーマで同一コンポーネント（モーダル等）が複数LPで使われる場合、JSオーバーライドで動作をページごとにカスタマイズするアプローチ（Sireneの事例）が保守性が高い。Liquid条件分岐より柔軟。
+- [tip] Shopifyテーマのモーダル実装確認はブラウザDevToolsで `data-remodal-id` 属性の有無を検査するのが最短。テーマファイルと管理画面を行き来するより効率的。
+- [gotcha] Shopify LP ページではproduct contextがないため、layout/theme.liquid の商品ID条件分岐（`if product.id == ...`）内で定義されたモーダルは表示されない。LP用モーダルは条件を変更するか別途定義が必要。
+- [pattern] Shopify LPページでモーダル機能を実装する場合、Sireneパターン（page.contentにHTMLを直書き + ページテンプレートでJSオーバーライド）を踏襲。modal-sireneのように `data-remodal-id` でページ本文に定義し、ページテンプレート側でイベントハンドラを追加。
+- [tip] モーダル問題が複数ある場合、ブラウザデベロッパーツールで実際にレンダリングされているHTMLを確認し、page.content内のモーダル定義状況を把握してから修正。テーマファイルだけでは管理画面コンテンツ確認不可。
+- [gotcha] page.content（Shopify管理画面で編集するページ本文）に埋め込まれたHTMLはテーマテンプレート分析では見えない。モーダルIDとボタンターゲットのペアリング検証にはブラウザ検査が必須。
+- [gotcha] 条件付きレンダリング（`if product.id == ...`）でモーダルを出力すると、そのコンテキストにない場所（LP等）ではHTML本体が存在しない。ボタンのみ存在する矛盾状態になる。
+- [pattern] LP固有UI実装パターン：モーダルHTMLはpage.contentに定義、JSハンドラはpage.lp-corset*.liquidで層分離する。ブランド追加時、LiquidはLP条件のみ、JSハンドラを足すだけで拡張可能。
+- [gotcha] Shopifyテーマでpage.contentに埋め込まれたHTMLモーダルはテーマファイルには見えない。ブラウザのデベロッパーツールで実際に`data-remodal-id`が存在するか確認が必須。
+- [gotcha] 商品ページ向けに`if product.id == ...`条件でモーダルHTMLをレンダリングすると、product contextを持たないLPページでは出力されない。複数ページタイプで使うモーダルは条件設計に注意。
+- [pattern] Shopifyテーマで複数ブランド向けモーダルを実装する場合、LiquidファイルのJSオーバーライド箇所で各ブランドID毎のハンドラを定義し、page.content側で共通のdata-remodal-idを指定する構造が統一的。
+- [gotcha] Shopifyテーマで page.content 内のボタンと theme.liquid のモーダル定義が分離していると、page.content からは見えない product context 条件分岐でモーダルが非表示になることがある。LPページでは product context がないため注意。
+- [pattern] モーダル実装は「HTML定義（Liquid）＋イベントハンドラ（JS）＋ボタンの data-remodal-target」の3点セット確認が必須。1つ欠けると動作しない。
+- [tip] page.content に書かれた data-remodal-target の値とテーマ側の data-remodal-id が一致しているか、ブラウザのデベロッパーツールで実HTML をレンダリング確認するのが確実。
+- [gotcha] Shopifyテーマの`page.content`内のHTML要素はLiquidテンプレートから見えない。ページコンテンツ関連のデバッグ時はブラウザまたは管理画面での直接確認が必須。
+- [gotcha] ページコンテンツで指定した`data-remodal-target`などのIDに対応するHTMLやJSハンドラがテーマ側に存在しないと動作しない。ページ側とテーマ側の整合性確認が重要。
+- [pattern] LPページなど複数の場面で再利用するモーダル・コンポーネントは、`if product.id == ...`の個別条件で制限せず、より広いスコープで定義する。
+- [gotcha] Shopify theme で page.content（管理画面コンテンツ）に埋め込まれた HTML と Liquid テンプレート内のモーダル定義は、テーマファイルだけでは対応関係を検証できない。button の data-remodal-target が実装前に page.content の構造を確認必須。
+- [pattern] LP やページ固有のモーダル JS オーバーライド（イベントハンドラ追加）は、そのページテンプレート（page.lp-corset01.liquid など）に直接記述するとロジック と使用箇所が一緒に管理でき保守性が上がる。
+- [tip] 複数の商品/モーダル種類がある場合、各モーダルの使用条件（product context 有無、ページタイプ等）と data-remodal-target の対応を一度整理してから修正すると、ボタン-モーダル不一致を防ぎやすい。
+- [gotcha] Shopifyテーマで商品ページ専用モーダル（`if product.id == ...`条件）をLP/ページから呼び出す場合、HTMLレンダリング条件を確認が必須。ボタンのターゲット指定だけでは不足。
+- [pattern] 複数ブランドのLP診断モーダル（Sirene/Sylphide）は`page.content`HTML定義 + テンプレート側のブランド別JSオーバーライドパターンで管理する（PR #26から）。
+- [gotcha] モーダル動作失敗は複合原因（HTML未出力 + JSハンドラ未定義）の場合がある。両方をセットで確認する。
+- [gotcha] Shopify page.contentに埋め込まれたHTMLはテーマLiquidから見えない。モーダルやボタンの挙動を調査する際は、管理画面コンテンツとテーマファイル両方を確認必須
+- [pattern] テンプレート内のモーダルをproduct ID条件で制限すると、商品ページ以外（LP）で参照されて破綻する。複数ページで共用する場合は `request.page_type` ベースの条件分岐が拡張性が高い
+- [tip] カスタムモーダル実装時は、JSハンドラ（クリックイベント）とHTMLの存在を同時に確認。一方だけでは動作しない
+- [gotcha] Shopifyページ（page.content）のHTML内容はテンプレートから見えない。ボタン実装とモーダル不一致の原因特定には、ブラウザのデベロッパーツール確認が必須。
+- [gotcha] LP ページは product context がないため、商品ページの `if product.id == ...` 条件でレンダリングされるモーダルは LP では出力されない。LP 用と product 用の条件分岐を分離して管理する必要がある。
+- [pattern] 複数 LP ページで複数モーダルを使う場合、page.content に各モーダル HTML を定義し、テンプレート側（page-xxx.liquid）で JS オーバーライドする二層構造が有効。
+- [gotcha] page.contentの管理画面HTMLと.liquidテンプレート内のHTMLは別物。デベロッパーツールでpage.contentのHTMLを確認しないと、テーマファイルだけでは検証不完全。
+- [pattern] product contextが必須なUIは条件分岐で出力制限されることが多い。LPページなど異なるコンテキストで使う場合は、テンプレートの条件を拡張してHTMLが出力されることを確認する。
+- [gotcha] モーダルやボタン実装では、HTMLの`data-remodal-id`定義とJSのイベントハンドラ両方が揃っていないと動作しない。片方だけでは不完全。
+- [gotcha] Shopifyテーマで複数ページでモーダルを共有する際、page.content（管理画面）のHTMLと`layout/theme.liquid`のHTMLの乖離を必ず確認する。product contextがないページではモーダルHTMLが出力されない可能性がある。
+- [pattern] テーマの既存実装パターン（例：Sirene用のJS実装）を参考に、同様の構造を別機能（Sylphide）に適用する方式が有効。一度動いているパターンを流用するほうが安全。
+- [gotcha] 商品ページの条件分岐内（`if product.id == ...`）でレンダリングされるコンポーネントは、該当ページのproduct contextがないLPページでは描画されない。複数ページで共有するモーダルの条件分岐を見直す際に注意。
+
+## Recurring Patterns (updated 2026-04-13)
+- [general] 実装後は必ず実機・ブラウザで動作確認する — seen 69 times
+- [shopify] Liquid/schemaファイルは変更後に再読み込み・バリデーションを行う — seen 46 times
+- [js] fetch/API呼び出しは必ず res.ok 確認とエラーハンドリングを実装 — seen 24 times
+- [shopify] Metafieldはnamespace+keyのペアで一意、型は作成時に固定 — seen 18 times
+- [git] コミットメッセージは <type>: <日本語説明> 形式 — seen 8 times
+- [js] 非同期処理は async/await と適切なエラーハンドリングで実装 — seen 4 times
+- [shopify] shopify.app.toml はアプリ設定の正とし、手動変更後は push が必要 — seen 4 times
+- [general] コードにローカル絶対パス (/Users/) を含めない — seen 3 times
+- [api] ShopifyはGraphQL Admin API を優先、RESTは非推奨化が進んでいる — seen 3 times
+
 ## 2026-04-06 | dotfiles [ai]
 
 - [gotcha] Chrome DevTools MCPはデフォルトで使用統計をGoogleに送信（`--no-usage-statistics`で無効化必須）
@@ -303,6 +362,7 @@
 
 ## 2026-04-13 20:14 | pietro-onlineshop_ver01
 - 作業: 以下の修正をお願いしたいです。
+- [correction] 作業: 以下の修正をお願いしたいです。
 - 完了: PR を作成しました。
 
 ## 2026-04-13 20:14 | pietro-onlineshop_ver01 [ai]
@@ -422,6 +482,7 @@
 
 ## 2026-04-13 21:05 | pietro-onlineshop_ver01
 - PR #32 に `/gemini review` を投稿しました。次回以降、レビュー修正のプッシュ後は必ず `gh pr comment` で再レビューをトリガーします。
+- [correction] PR #32 に `/gemini review` を投稿しました。次回以降、レビュー修正のプッシュ後は必ず `gh pr comment` で再レビューをトリガーします。
 
 ## 2026-04-13 21:05 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQuery delegated event と addEventListener の競合時は stopPropagation ではなく stopImmediatePropagation を使う（同一 bubble phase での複数リスナーでは前者では遮断不可）
