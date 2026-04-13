@@ -411,3 +411,6 @@
 - [gotcha] jQuery delegated eventとネイティブEventListenerが同一document レベルで競合する場合、`stopPropagation()` では不十分で、`stopImmediatePropagation()` が必須
 - [pattern] 条件付きで要素を非アクティブにする場合、JS後付けチェックより Liquid でクラス自体を出し分けてCSS制御する方が堅牢
 - [gotcha] 親要素のホバー・カーソルスタイルが子要素に継承される場合、`cursor: default; pointer-events: none` で明示的に無効化しないと見た目と挙動が不一致になる
+
+## 2026-04-13 21:04 | pietro-onlineshop_ver01
+- 記憶しました。次回以降、PR作成時は本文末尾に `/gemini review` を必ず含めます。
