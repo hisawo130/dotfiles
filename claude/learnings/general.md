@@ -248,3 +248,6 @@
 
 ## 2026-04-13 19:14 | pietro-app [ai]
 - [gotcha] Shopifyアプリのtomlファイルのclient_idと実際のPartner Dashboard上のアプリIDが一致していないと、デプロイ時に「resource not found」エラーが出る
+
+## 2026-04-13 19:15 | pietro-app
+- 重要：確認してから進めてください
