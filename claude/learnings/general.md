@@ -444,3 +444,8 @@
 
 ## 2026-04-13 21:52 | pietro-onlineshop_ver01
 - [correction] コードレビューを確認して必要なら修正してください
+
+## 2026-04-13 21:52 | pietro-onlineshop_ver01 [ai]
+- [gotcha] 同一イベント伝播内で複数リスナーが起動する場合、stopPropagation では次のリスナーは実行される — stopImmediatePropagation で完全遮断が必須。
+- [pattern] クリック無効状態は CSS (pointer-events: none; cursor: default) で表現 — JS の条件判定より宣言的かつ確実。
+- [tip] イベント処理のコメントは「何をするか」だけでなく「なぜそれが必須か」を明記 — 次のエンジニアの誤った最適化を防ぐ。
