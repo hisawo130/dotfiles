@@ -447,6 +447,12 @@
         "source": "github",
         "repo": "obra/superpowers"
       }
+    },
+    "shopify-ai-toolkit": {
+      "source": {
+        "source": "github",
+        "repo": "Shopify/shopify-ai-toolkit"
+      }
     }
   },
   "effortLevel": "medium",
