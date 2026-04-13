@@ -433,3 +433,6 @@
 ## 2026-04-13 21:06 | pietro-onlineshop_ver01 [ai]
 - [pattern] メタフィールド判定でサーバーサイド（Liquid）出し分けするとクラス不在のため、後付け JS チェックが不要で堅牢
 - [gotcha] UI 非表示時もホバースタイルは継承されるため、cursor: default; pointer-events: none で明示的に制御が必須
+
+## 2026-04-13 21:12 | pietro-onlineshop_ver01
+- なぜ壊れたか：PR #30 の実装変更が根本原因です。
