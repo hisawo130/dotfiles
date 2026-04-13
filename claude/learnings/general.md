@@ -458,3 +458,5 @@
 - [pattern] Prestige テーマで新規セクション実装時は、外部ライブラリより内蔵 Web Component（slideshow-carousel など）を活用する方が保守性が高い
 - [pattern] vw + gap で PC/SP の異なるレイアウト（1.5 枚表示 vs 全幅など）を CSS のみで効率的に実装できる
 - [gotcha] 第三者テーマ（Prestige）の既存構造・命名規則・アーキテクチャを破らず、スキーマ追記も既存グループに統合する
+
+## 2026-04-13 22:02 | teras-taya
