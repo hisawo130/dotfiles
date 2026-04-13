@@ -235,3 +235,8 @@
 ## 2026-04-13 19:04 | pietro-app [ai]
 - [gotcha] Shopify CLI デプロイの「resource not found」エラーは、`client_id` がログイン中の Partner 組織に存在しないことが原因。Partner Dashboard での app 存在確認と client_id 一致確認が解決策。
 - [pattern] デプロイ前に `shopify auth login` で正しい Partner 組織のアカウントでログインし、複数組織がある場合は選択時に対象組織を指定する。
+
+## 2026-04-13 19:05 | pietro-app [ai]
+- [gotcha] Shopifyアプリデプロイで「resource could not be found」エラーが出た場合、client_idが現在のPartnerアカウントに存在しないことが原因。デプロイ前にPartner Dashboardでアプリが実在するか確認すべき。
+- [pattern] 本番・開発でアプリを分ける場合、各tomlファイルのclient_idが事前にPartner Dashboardで作成・確認されていることが必須。デプロイはそれ以降に実行する。
+- [tip] shopify app deployエラーのデバッグは「ログイン状態確認 → client_id設定値確認 → Partner Dashboardでそのclient_idのアプリ存在確認」の順で進める。
