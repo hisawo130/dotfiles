@@ -318,3 +318,5 @@
 ## 2026-04-13 20:16 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQueryのdelegated eventと外部ライブラリのeventListener が同じバブリング内で競合する場合、`stopImmediatePropagation()` で制御が必要。`stopPropagation()` では兄弟ハンドラーに伝播するため不十分。
 - [pattern] テーマスクリプト修正後に `shopify theme check` で差分を確認し、修正による新規エラーが無いことを立証。既存問題と新規問題を明確に分離してPR化。
+
+## 2026-04-13 20:17 | pietro-onlineshop_ver01
