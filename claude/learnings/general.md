@@ -389,3 +389,5 @@
 - [gotcha] Shopifyサードパーティアプリ（Rank King等）が生成するHTMLはLiquid制御不可。商品APIから取得したタグをJavaScriptで動的にDOM注入する必要がある。
 - [pattern] npmビルド環境に制約がある場合、assets/に独立したJSファイルを配置し、layout/theme.liquidの`<script>`から読み込み。
 - [correction] mainブランチへの直接コミットを避け、必ずfeat/*ブランチで作業してPRを上げるプロセスを厳守。reset --hard権限トラブル防止。
+
+## 2026-04-13 20:53 | pietro-onlineshop_ver01
