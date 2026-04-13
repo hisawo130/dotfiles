@@ -391,3 +391,8 @@
 - [correction] mainブランチへの直接コミットを避け、必ずfeat/*ブランチで作業してPRを上げるプロセスを厳守。reset --hard権限トラブル防止。
 
 ## 2026-04-13 20:53 | pietro-onlineshop_ver01
+
+## 2026-04-13 20:53 | pietro-onlineshop_ver01 [ai]
+- [gotcha] jQuery delegated event と document.addEventListener の競合では stopImmediatePropagation() 必須。stopPropagation() では同一レベルの listener は止まらずイベント即閉じが発生する。
+- [pattern] サーバーサイド（Liquid）メタフィールド判定を導入時は、テキスト表示だけでなくクラス属性も同じ条件で出し分ける。片方だけ条件分岐するとJS側の条件判定が活き続け保守バグの温床になる。
+- [tip] jQuery namespace イベント（click.discountDeck）とネイティブ listener の競合疑いは Event Timeline や DevTools Debugger で伝播順序を確認するのが効果的。
