@@ -251,3 +251,11 @@
 
 ## 2026-04-13 19:15 | pietro-app
 - 重要：確認してから進めてください
+
+## 2026-04-13 19:15 | pietro-app
+- [gotcha] - [pattern] 本番デプロイ実行時はエクステンション削除確認が出る場合がある。「Removing extensions can permanently delete app user data」と表示されたら、意図しない削除がないか必ず確認してから進める
+
+## 2026-04-13 19:15 | pietro-app [ai]
+- [gotcha] Shopify CLI deploy時の「resource not found」エラーはprod設定ファイルのclient_idがPartner Dashboardに存在しないことが原因。デプロイ前に必ずPartner Dashboardで本番アプリのclient_idを確認し、toml設定ファイルと一致させる
+- [pattern] 本番デプロイ実行時はエクステンション削除確認が出る場合がある。「Removing extensions can permanently delete app user data」と表示されたら、意図しない削除がないか必ず確認してから進める
+- [tip] Shopify Partner Dashboardのログイン状態を確認。複数アカウントがある場合は`shopify auth login`でログイン直後、正しい組織が選択されていることを確認
