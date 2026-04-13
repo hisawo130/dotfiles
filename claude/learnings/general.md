@@ -342,3 +342,8 @@
 - [gotcha] VSCode拡張で `reset --hard` / `push --force-with-lease` などの危険操作がブロックされることがある。必要な場合はターミナルから直接実行する必要がある。
 
 ## 2026-04-13 20:23 | SERPENTINA
+
+## 2026-04-13 20:23 | SERPENTINA [ai]
+- [gotcha] npm/webpack環境でSassビルドエラー発生時、CSSファイルが全行破壊される可能性がある → 環境制約でCSS直接追記が必要な場合がある
+- [gotcha] VSCode Claude拡張が `reset --hard` を自動ブロック → ターミナルで直接実行が必要
+- [pattern] ファイル破壊時はgitで元の内容を復元してから新しいスタイルを末尾追記する（完全上書きでなく追記）
