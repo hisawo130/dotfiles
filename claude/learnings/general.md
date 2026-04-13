@@ -464,3 +464,5 @@
 ## 2026-04-13 22:02 | teras-taya [ai]
 - [pattern] Prestige テーマは Swiper 不要、独自の `slideshow-carousel` Web Component を使用。新しいスライダー実装時は既存テーマのコンポーネント構造を確認してから共通化すべき。
 - [gotcha] `shopify theme push` 実行時、複数ストアが紐付いている場合はテーマ ID を明示的に指定する必要がある。手元の dev 環境と本番プッシュ対象を間違えるリスク。
+
+## 2026-04-13 22:14 | pietro-onlineshop_ver01
