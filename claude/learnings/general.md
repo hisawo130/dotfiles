@@ -304,3 +304,8 @@
 ## 2026-04-13 20:14 | pietro-onlineshop_ver01
 - 作業: 以下の修正をお願いしたいです。
 - 完了: PR を作成しました。
+
+## 2026-04-13 20:14 | pietro-onlineshop_ver01 [ai]
+- [gotcha] jQuery delegated event と document.addEventListener() 混在時、イベント伝播順序が予測困難になり競合が発生。外部ライブラリとテーマ側のイベントハンドラが同じバブルフェーズで干渉する
+- [pattern] stopImmediatePropagation() で意図的にイベント伝播を遮断。外部ライブラリ側の自動削除ロジックとの競合を1行の修正で解決可能
+- [tip] jQuery delegated event 登録時は .off() → .on() パターンで既存リスナーをクリーンアップしてから新規登録。resize など頻繁に発火するイベントでのメモリリークを防止
