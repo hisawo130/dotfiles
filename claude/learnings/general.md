@@ -414,3 +414,8 @@
 
 ## 2026-04-13 21:04 | pietro-onlineshop_ver01
 - 記憶しました。次回以降、PR作成時は本文末尾に `/gemini review` を必ず含めます。
+
+## 2026-04-13 21:04 | pietro-onlineshop_ver01 [ai]
+- [gotcha] jQuery delegated event + document global listener の同一伝播内での競合 — 同じ`document`レベルの異なるリスナーが同一イベント伝播で動作するとお互いをキャンセルしてしまう。`stopImmediatePropagation()`で強制遮断が必須
+- [pattern] Liquid のサーバーサイド条件判定で HTML 要素のクラス・属性を出し分け — UI 状態に応じてクラスを変えることで JS 側の追加条件判定を不要にでき、ブランチロジックをテンプレートレベルで完結できる
+- [tip] CSS で`cursor`と`pointer-events`を同時に制御 — 見た目（カーソル）と実装（クリック動作）の矛盾は UX 混乱の源。`pointer-events: none`で根本的にクリック無効化
