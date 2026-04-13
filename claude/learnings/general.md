@@ -375,3 +375,5 @@
 - [pattern] Shopify製サードパーティアプリが生成するHTMLに対し、Liquidでは制御不可な場合、JavaScriptで商品URLから handle を取得し `/products/<handle>.js` APIでタグを取得してDOM注入する方法が有効
 - [gotcha] ビルドエラー時に大規模ファイルの内容が全削除される可能性がある。修正は git から完全に元の状態を復元してから、スタイル追記のみ行う必要がある
 - [pattern] webpack ビルド実行が環境制約で不可な場合、ビルド不要な独立JSファイルを `assets/` に直接配置し `layout/theme.liquid` から読み込む方式で回避可能
+
+## 2026-04-13 20:38 | SERPENTINA
