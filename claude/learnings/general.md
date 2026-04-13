@@ -406,3 +406,8 @@
 
 ## 2026-04-13 21:02 | pietro-onlineshop_ver01
 - [correction] コードレビューを確認して必要であれば修正してください
+
+## 2026-04-13 21:02 | pietro-onlineshop_ver01 [ai]
+- [gotcha] jQuery delegated eventとネイティブEventListenerが同一document レベルで競合する場合、`stopPropagation()` では不十分で、`stopImmediatePropagation()` が必須
+- [pattern] 条件付きで要素を非アクティブにする場合、JS後付けチェックより Liquid でクラス自体を出し分けてCSS制御する方が堅牢
+- [gotcha] 親要素のホバー・カーソルスタイルが子要素に継承される場合、`cursor: default; pointer-events: none` で明示的に無効化しないと見た目と挙動が不一致になる
