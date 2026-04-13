@@ -245,3 +245,6 @@
 - [gotcha] Shopify CLI デプロイの「resource could not be found」エラーは client_id 不一致が原因。Partner ログイン状態とtomlの client_id とPartner Dashboard のアプリ存在を全て照合すること
 - [pattern] Shopify アプリのdev/prod構成は新規アプリ作成か既存アプリの config link のどちらかを選べる。Partner Dashboard の Apps 一覧で既存アプリを確認してから判断する
 - [tip] Shopify CLI デプロイエラー時は、Partner Dashboard → Apps で使用中の client_id のアプリが実在し、ログイン組織に属しているかを先に検証するステップを挟むべき
+
+## 2026-04-13 19:14 | pietro-app [ai]
+- [gotcha] Shopifyアプリのtomlファイルのclient_idと実際のPartner Dashboard上のアプリIDが一致していないと、デプロイ時に「resource not found」エラーが出る
