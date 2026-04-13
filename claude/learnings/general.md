@@ -377,3 +377,8 @@
 - [pattern] webpack ビルド実行が環境制約で不可な場合、ビルド不要な独立JSファイルを `assets/` に直接配置し `layout/theme.liquid` から読み込む方式で回避可能
 
 ## 2026-04-13 20:38 | SERPENTINA
+
+## 2026-04-13 20:38 | SERPENTINA [ai]
+- [gotcha] Shopify 埋め込みアプリ（Rank King等）が生成するHTMLはLiquidで直接制御不可。JavaScriptのDOM注入で対応。
+- [pattern] サードパーティアプリカードへのラベル追加：`/products/<handle>.js`でタグ情報を非同期取得し、JavaScriptで動的にDOM挿入する。
+- [tip] 複数の場所（一覧・検索・詳細ページ）で表示するコンポーネント（ラベル等）は、スニペットに集約して各セクションから呼び出すと変更時の管理が容易。
