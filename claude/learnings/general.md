@@ -422,3 +422,8 @@
 
 ## 2026-04-13 21:05 | pietro-onlineshop_ver01
 - PR #32 に `/gemini review` を投稿しました。次回以降、レビュー修正のプッシュ後は必ず `gh pr comment` で再レビューをトリガーします。
+
+## 2026-04-13 21:05 | pietro-onlineshop_ver01 [ai]
+- [gotcha] jQuery delegated event と addEventListener の競合時は stopPropagation ではなく stopImmediatePropagation を使う（同一 bubble phase での複数リスナーでは前者では遮断不可）
+- [pattern] JS でユーザー状態をチェックするより、Liquid サーバーサイドでクラス自体を条件付き付与する方が UI 制御として堅牢
+- [gotcha] クリック不可要素は `cursor: default` と `pointer-events: none` の両方を設定しないと見た目と実装が乖離する（継承スタイルを打ち消す必要）
