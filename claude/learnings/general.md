@@ -349,3 +349,8 @@
 - [pattern] ファイル破壊時はgitで元の内容を復元してから新しいスタイルを末尾追記する（完全上書きでなく追記）
 
 ## 2026-04-13 20:24 | SERPENTINA
+
+## 2026-04-13 20:24 | SERPENTINA [ai]
+- [gotcha] ビルド失敗でファイル破壊時は `git show` で元状態を復元してから追記。直接修正は避ける。
+- [gotcha] shared repository の main に誤ってコミットした場合、force-with-lease での巻き戻しは origin にも影響。共同開発環境では確認必須。
+- [tip] VSCode拡張で `git reset --hard` がブロックされても、ターミナルから直接実行すると通る可能性がある。
