@@ -295,3 +295,8 @@
 - [gotcha] Shopifyビルドエラー後、アセットファイル（CSS等）が全削除される → git復旧後、末尾に新スタイル追記で対応
 - [gotcha] 作業ブランチ作成後も誤ってmainに直接コミット → コミット前に`git branch`で確認し、フローの習慣化が重要
 - [tip] VSCode拡張が`git reset --hard`をブロックする場合、ターミナルから直接実行できる
+
+## 2026-04-13 20:12 | pietro-onlineshop_ver01 [ai]
+- [gotcha] jQuery delegated eventとネイティブイベントリスナーは同じバブリング内で順序に依存して動作する。複数ハンドラが登録されていると予期しない挙動が起きるため、stopImmediatePropagation()で後続ハンドラをブロック。
+- [pattern] サードパーティスクリプト（アプリ側）がdocumentレベルでリッスンしている場合、テーマ側でイベント伝播を制御。stopImmediatePropagation()で同一イベント内の後続ハンドラを遮断。
+- [tip] ポップアップが一瞬開いて即閉じする場合、同一イベント内でopen/closeが連続実行されていないか確認。イベント伝播制御とハンドラ実行順序を疑う。
