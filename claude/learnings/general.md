@@ -533,3 +533,8 @@
 - [gotcha] `shopify theme push` 実行時、複数ストアが紐付いている場合はテーマ ID を明示的に指定する必要がある。手元の dev 環境と本番プッシュ対象を間違えるリスク。
 
 ## 2026-04-13 22:14 | pietro-onlineshop_ver01
+
+## 2026-04-13 22:14 | pietro-onlineshop_ver01 [ai]
+- [gotcha] `stopImmediatePropagation()` は同一リスナーレベルの兄弟リスナーの伝播を止める。`stopPropagation()` では Discount Deck の `handleOutsideClick` には効かない（親子関係ではないため）
+- [pattern] チケット有無判定はサーバーサイド Liquid メタフィールド条件分岐で制御。クラス出し分けにより CSS で `pointer-events: none` と `cursor: default` で視覚的フィードバック統一
+- [tip] 外部アプリ（Discount Deck）の制約は memory に記録。PR は `/gemini review` 付きで作成、修正後は `gh pr comment` で再レビュー依頼
