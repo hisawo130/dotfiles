@@ -91,6 +91,9 @@ Auto-commit triggers:
 
 Stage only task-relevant files. Never `git add .`.
 
+## PR workflow
+- After creating or updating a PR, post a `/gemini review` comment to trigger Gemini code review.
+
 ## Task routing
 
 | Task | Route |
