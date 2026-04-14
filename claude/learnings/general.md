@@ -12,6 +12,12 @@
 - [pattern] 非同期初期化待ち: `.dd-button.click()` のようなDOM依存呼び出しではなく `window.discountDeckInstance.showCoupons()` を直接呼び出す — ポーリングで初期化を待つ実装に合わせるため。
 - [open] Rivyoが `DOMContentLoaded` より後にバッジを注入する場合は `MutationObserver` への変更が必要になる可能性がある（実装後に確認）。
 
+## コードレビューループ（Gemini / AI レビュー）
+
+- [pattern] AI レビュー（Gemini 等）は同じ指摘を逆方向に繰り返すことがある（stopPropagation ↔ stopImmediatePropagation 等）。3回以上往復したら循環と判断し、技術的に正しい方を選んで固定する
+- [correction] ユーザーから「致命的なエラー以外は修正しなくていい」と言われたら、スタイル・アクセシビリティ改善・命名規則の指摘はスキップし、バグ・セキュリティ問題のみ対応する
+- [gotcha] AI レビューの提案が「以前試して動かなかった修正」と一致する場合は適用しない。過去のコミット履歴で既検証済みと明記してスキップする
+
 ## Git / dotfiles
 
 - [pattern] save-learnings.sh の再帰防止: `CLAUDE_LEARNING_EXTRACT=1` 環境変数で自己呼び出しをガード

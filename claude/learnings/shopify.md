@@ -7,6 +7,15 @@
 ## 2026-03-25 | idol-anime.com
 - [correction] 表示崩れはcss/jsを確認して修正 — PC/SP画像切替時のアスペクト比崩れを修正 `d6b0d21`
 
+## 2026-04-14 | pietro-onlineshop_ver01 — イベント競合・CSS漏れ・Liquid メタフィールド
+
+- [gotcha] `customer.metafields['ns']['key']` はすでに値を返す。`.value` を重ねると `nil` になりチケットありでも `blank` 判定になる。OS2.0では `.value` 不要
+- [gotcha] `<span>` 内に `<span class="title">` をネストすると、`.item span` のような祖先セレクタが内側 span にも適用される（padding/border/::after が二重に付く）。直接子セレクタ `.item > span` に絞ること
+- [pattern] メニューリストで `<a>` 以外の要素（span等）をクリッカブルにする際は `.item > a, .item > span` の直接子セレクタを使い、内側 span へのスタイル漏れを防ぐ
+- [pattern] jQuery 委譲先を `document` から特定コンテナ（`.cbs-customer` 等）に変更した場合、`stopPropagation()` でクリックが `document` に到達しなくなるため `stopImmediatePropagation()` は不要
+- [gotcha] `stopImmediatePropagation()` が必要なのは委譲先が `document` で、同一ノードに別のリスナー（Discount Deck の `handleOutsideClick` 等）がある場合のみ
+- [correction] `<div>` inside `<span>` は HTML スペック違反。`<span>` に変えるときは内側要素が既存 CSS の span ルールにマッチしないか必ず確認する
+
 ## 2026-04-02 | pietro-onlineshop_ver01 — Swiper 11 + チラ見せループ対応
 
 - [gotcha] Swiper 11で `loopedSlides` は廃止済み。指定しても無視される
