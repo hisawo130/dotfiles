@@ -614,3 +614,8 @@
 
 ## 2026-04-15 17:45 | teras-taya
 - [correction] コードレビューを確認してクリティカル部分を修正してください
+
+## 2026-04-15 17:45 | teras-taya [ai]
+- [gotcha] ドラッグUI で位置確定後にアニメーション再開する際、確定位置から開始すると視覚的にジャンプして見える。ユーザーが離した位置からスムーズに開始すべき（`jumpTo` → `slideTo` の順序は誤り）。
+- [pattern] `pointermove` など高頻度イベント内の重い計算（`getComputedStyle`等）は、`pointerdown` など起点イベントで1度だけ実行・キャッシュし、高頻度リスナーではキャッシュ値を使用。レイアウトスラッシング防止。
+- [gotcha] Web Components の `setTimeout`/`setInterval` は必ず `disconnectedCallback` でクリア。再接続時のメモリリークと二重実行が発生。同じく `connectedCallback` 先頭にガード条件を入れてリスナー二重登録を防止。
