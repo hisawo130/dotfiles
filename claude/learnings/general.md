@@ -584,3 +584,8 @@
 
 ## 2026-04-15 16:44 | teras-taya
 - 2. ループジャンプ後の `data-instant` 残留: `_setPos(idx, true)` の後、必ず rAF で `removeAttribute` する
+
+## 2026-04-15 16:44 | teras-taya [ai]
+- [gotcha] scroll-carouselで `scrollTo("auto")` は非同期なのに直後に `select()` で `scrollTo("smooth")` を呼ぶと、scrollLeftが更新される前に次の距離計算が走って速度がズレて見える — 非同期完了を待つか、シーケンシャルに処理すべき
+- [pattern] 「次インデックスを計算して返す」関数が副作用で `instantJump()` も呼ぶ設計は二重呼び出しになりやすい — 純粋な計算関数にして、呼び出し側でイベント完了後に順序立てて処理する
+- [tip] Infinite carousel で末端スライドのclone peekが見えない場合、`scroll-snap-align: center` がcloneまで機能してるか、`overflow: hidden` でcarousel外のcloneがクリップされてないか、両方確認する必要がある
