@@ -654,3 +654,8 @@
 - [gotcha] Web Components のライフサイクル：`disconnectedCallback` でタイマー・イベントリスナーをクリアしないとメモリリーク・二重登録が発生。必ず cleanup を実装する
 - [pattern] ドラッグ UI のパフォーマンス：レイアウト計算をドラッグ開始時にキャッシュして、高頻度の `pointermove` では計算結果のみ参照。スラッシング回避と同時に `_tx()` を pure な関数に
 - [pattern] 非同期操作の競合制御：animation 完了コールバックなど非同期処理の状態を generation ID で追跡。前のアニメーション完了が新しい操作を上書きしないようガード
+
+## 2026-04-15 18:25 | teras-taya [ai]
+- [gotcha] Web Components で DOM 再接続時にイベントリスナーが二重登録される。connectedCallback 先頭でガード（_bound フラグ等）を置く。
+- [pattern] ドラッグ中の重い DOM 計算（offsetWidth, getComputedStyle）をキャッシュして、_tx() は純粋計算化。ResizeObserver だけで寸法を更新。
+- [gotcha] transitionend リスナーが新アニメーション時に無効化されないと、旧アニメーション完了時に誤発火。generation カウンターでリスナー ID を管理。
