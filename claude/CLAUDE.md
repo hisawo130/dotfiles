@@ -89,6 +89,9 @@ Auto-commit triggers:
 - Shopify theme → commit; push only if `/shopify-push` or PR requested
 - ecforce theme → commit locally; push only when explicitly asked
 
+PR update trigger:
+- After pushing updates to a branch with an open PR, always post `/gemini review` as a PR comment.
+
 Stage only task-relevant files. Never `git add .`.
 
 ## PR workflow
