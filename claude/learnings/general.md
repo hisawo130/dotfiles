@@ -611,3 +611,6 @@
 - [gotcha] Custom Element の `disconnectedCallback` でタイマー（`clearTimeout`）をクリアしないとメモリリーク。`_autoR` などの非同期処理は必ずクリーンアップ
 - [pattern] `pointermove` など高頻度イベント内で `getComputedStyle`/`offsetWidth` を呼ぶな。イベント開始時に1回計算してキャッシュし再利用
 - [gotcha] ドラッグUI の終了時に `_jumpTo()` → アニメーションすると視覚的ジャンプが見える。状態のみ更新し、アニメーション位置は現在値から継続させる
+
+## 2026-04-15 17:45 | teras-taya
+- [correction] コードレビューを確認してクリティカル部分を修正してください
