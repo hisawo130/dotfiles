@@ -495,3 +495,8 @@
 - [tip] 外部アプリ（Discount Deck）の制約は memory に記録。PR は `/gemini review` 付きで作成、修正後は `gh pr comment` で再レビュー依頼
 
 ## 2026-04-15 12:22 | pietro-onlineshop_ver01
+
+## 2026-04-15 12:22 | pietro-onlineshop_ver01 [ai]
+- [gotcha] jQuery delegated eventで外部アプリのDOM操作と同じバブリング内で実行される場合、`stopPropagation()`では不十分で`stopImmediatePropagation()`が必須。外部リスナーが同じdocumentレベルに登録されているとイベントが止まらない。
+- [pattern] 条件付きボタン無効化：メタフィールドで出し分ける場合はクラス自体を条件付きで付与（サーバーサイド）し、スタイル側で`cursor: default; pointer-events: none`で無効状態を表現する。
+- [tip] イベント競合調査時は「各ハンドラがdocument/elementのどのレベルに登録されているか」を最優先に確認。`stopPropagation`と`stopImmediatePropagation`の効果の違いはリスナーレベルで決まる。
