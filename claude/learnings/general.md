@@ -786,3 +786,7 @@
 - [gotcha] Shopify で subgrid 使用時、カスタムフィールド未設定なら `<span>` が空になり行が消える。常時レンダリング＋`&nbsp;` で行確保。
 - [pattern] メタフィールドに自身が含まれる場合、ループ内で ID 比較してスキップ。重複表示防止。
 - [gotcha] Shopify section に新規ブロック追加時、schema 定義だけでなく template.json の `allow_blocks` リストにも追加しないと表示されない。
+
+## 2026-04-15 22:55 | teras-taya [ai]
+- [gotcha] Prestige テーマのセクション余白調整は `--section-vertical-spacing-override` カスタムプロパティを使う。他の名前では効果なし。
+- [pattern] テーマの既存クラスをオーバーライドする際は、まずテーマが使用しているカスタムプロパティ名を確認してから `{%- style -%}` で上書きする。
