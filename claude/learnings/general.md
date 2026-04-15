@@ -693,3 +693,7 @@
 ## 2026-04-15 19:01 | teras-taya
 - 作業: https://github.com/CIN-GROUP-EC/teras-taya/pull/4
 - 完了: - A) このPRをそのままレビュー・マージ対応（`/gemini review` コメント投稿など）
+
+## 2026-04-15 19:01 | teras-taya
+- [correction] - B) 上記の潜在的な問題を修正してから完成させる
+- [correction] 同じ行番号で内容が違う。ファイルに複数の `when 'vendor'` ブロックがあるか確認します。
