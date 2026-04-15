@@ -781,3 +781,8 @@
 - [tip] 複数カード内の要素が可変行数（カテゴリーテキスト2行など）の場合、CSS subgrid で親グリッドの行を共有するとすべてのカードで要素の横位置が自動で揃う。
 
 ## 2026-04-15 22:30 | teras-taya
+
+## 2026-04-15 22:30 | teras-taya [ai]
+- [gotcha] Shopify で subgrid 使用時、カスタムフィールド未設定なら `<span>` が空になり行が消える。常時レンダリング＋`&nbsp;` で行確保。
+- [pattern] メタフィールドに自身が含まれる場合、ループ内で ID 比較してスキップ。重複表示防止。
+- [gotcha] Shopify section に新規ブロック追加時、schema 定義だけでなく template.json の `allow_blocks` リストにも追加しないと表示されない。
