@@ -495,5 +495,6 @@
         "--no-usage-statistics"
       ]
     }
-  }
+  },
+  "model": "opus"
 }
