@@ -629,3 +629,8 @@
 - [pattern] ドラッグ中のレイアウトスラッシング回避：DOM計測（`getComputedStyle`/`offsetWidth`）をドラッグ開始時に1回実施・キャッシュし、`pointermove`以降はキャッシュ値を参照する
 - [pattern] Generation カウンターで陳腐化コールバック無効化：複数の非同期操作が競合する場面で、カウンターを世代追跡に使い古い世代のコールバックを条件で無視することで競合状態を根絶
 - [gotcha] Custom Element の接続/切断時リソース漏れ：`connectedCallback`で登録したタイマー・リスナーは`disconnectedCallback`で必ずクリアする。DOM再接続時は二重実行ガードを先頭に配置
+
+## 2026-04-15 17:54 | teras-taya [ai]
+- [gotcha] ドラッグUI終了時に「目標位置へジャンプ」→「アニメーション」する手順は視覚的ジャンプを招く。リリース位置のスナップショット保持 → そこからアニメーション開始すべき
+- [pattern] `pointermove` など高頻度ハンドラーでの `getComputedStyle`/`offsetWidth` 計算はドラッグ開始時に1回キャッシュ。以降ループではキャッシュ値使用でレイアウトスラッシング防止
+- [pattern] アニメーションコールバック（`done()` 等）の陳腐化は generation カウンター（シンプルなカウント変数）で防止。`clearTimeout` では enqueue 済みコールバック排除不可
