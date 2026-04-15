@@ -506,3 +506,7 @@
 ## 2026-04-15 12:28 | pietro-onlineshop_ver01 [ai]
 - [gotcha] 同一レベルの document listener に対して stopPropagation() では不十分。stopImmediatePropagation() が必須（jQuery delegated handler → 親要素の listener が同じ document レベルの場合）。
 - [pattern] メタフィールド値に応じてサーバーサイド（Liquid）でクラスを出し分け、CSS で `pointer-events: none` + `cursor: default` で操作不可状態を表現する。
+
+## 2026-04-15 12:44 | teras-taya
+- 問題1の根本原因確定: `nextIndexFor(realCount + 1)` 内で:
+- [correction] メインビジュアルスライダーの挙動を修正してください
