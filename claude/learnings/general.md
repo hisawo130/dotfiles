@@ -603,3 +603,11 @@
 - [gotcha] スクロール系UIで副作用関数と同期・非同期の混在は罠。`instantJump()` で状態を同期変更した直後に別の `select()` を呼ぶと、非同期の `scrollTo()` 完了前に距離計算が実行され、スピードが異常に見える。
 - [pattern] カルーセルの無限ループ実装では副作用を関数から分離し、イベントハンドラでシーケンシャルに呼び出す。呼び出し順序が明示的になり、タイミング問題を回避できる。
 - [tip] scroll-snap時のclone peekが見えない場合、carouselのoverflow設定とwrapperのclipping、またsnap-alignがcloneにも適用されているか確認する。
+
+## 2026-04-15 17:23 | teras-taya
+- - [gotcha] Custom Element の `disconnectedCallback` でタイマー（`clearTimeout`）をクリアしないとメモリリーク。`_autoR` などの非同期処理は必ずクリーンアップ
+
+## 2026-04-15 17:22 | teras-taya [ai]
+- [gotcha] Custom Element の `disconnectedCallback` でタイマー（`clearTimeout`）をクリアしないとメモリリーク。`_autoR` などの非同期処理は必ずクリーンアップ
+- [pattern] `pointermove` など高頻度イベント内で `getComputedStyle`/`offsetWidth` を呼ぶな。イベント開始時に1回計算してキャッシュし再利用
+- [gotcha] ドラッグUI の終了時に `_jumpTo()` → アニメーションすると視覚的ジャンプが見える。状態のみ更新し、アニメーション位置は現在値から継続させる
