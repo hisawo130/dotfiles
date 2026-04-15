@@ -679,3 +679,8 @@
 - [gotcha] `transitionend` はバブルイベント — 子要素の transition でも親リスナーが反応する。`e.target === this._track` チェックで発火元を限定必須
 - [pattern] AbortController で全リスナーを signal で登録し、`disconnectedCallback` で `abort()` すれば、DOM 再接続時のリスナー二重登録が完全に回避できる
 - [gotcha] スナップ復帰時に no-op ガード（`idx === _idx なら return`）を入れると `transitionend` が発火せず、`_busy` が永遠に `true` になる — 同一位置への遷移も明示的にアニメーション実行が必要な場合がある
+
+## 2026-04-15 18:54 | teras-taya [ai]
+- [gotcha] Animation state lock：no-op ガード（early return）で transitionend が発火せず _busy がロック。state 遷移が必要な場合は force フラグか条件付き処理が必須。
+- [pattern] AbortController でリスナー一括管理：disconnect/reconnect 時の二重登録リスク。signal abort() で全リスナー削除が確実。
+- [gotcha] CSS 意図しない混入：全体影響の CSS は git diff で毎回確認。マルチファイル編集時にキャッシュ残留で混入しやすい。
