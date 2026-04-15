@@ -644,3 +644,8 @@
 - [pattern] Prestige カスタムエレメント内の非同期コールバック（`transitionend` など）は generation カウンター（インクリメント ID）で陳腐化を検出し、旧コールバックを無効化する
 - [pattern] `pointermove` など頻発イベント内の `getComputedStyle()` / `offsetWidth` 読み取りは、イベント開始時に1回だけ計算してキャッシュし再利用する（レイアウトスラッシング防止）
 - [gotcha] カスタムエレメントの `disconnectedCallback` で `clearTimeout()` / `removeEventListener()` 忘れはメモリリーク。`_bound` フラグガードと併用して二重登録も防ぐ
+
+## 2026-04-15 18:03 | teras-taya [ai]
+- [gotcha] `pointermove`ごとに`getComputedStyle`/`offsetWidth`呼ぶと毎フレーム強制レイアウト。ドラッグ開始時に1度だけ計算してキャッシュ推奨
+- [pattern] generation カウンターで非同期イベント（`transitionend`など）の陳腐化防止：前世代コールバックをスキップさせる
+- [gotcha] Web Components `connectedCallback`でイベントリスナー二重登録リスク。ガード + `disconnectedCallback`で`clearTimeout`忘れはメモリリーク
