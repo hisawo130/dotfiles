@@ -659,3 +659,8 @@
 - [gotcha] Web Components で DOM 再接続時にイベントリスナーが二重登録される。connectedCallback 先頭でガード（_bound フラグ等）を置く。
 - [pattern] ドラッグ中の重い DOM 計算（offsetWidth, getComputedStyle）をキャッシュして、_tx() は純粋計算化。ResizeObserver だけで寸法を更新。
 - [gotcha] transitionend リスナーが新アニメーション時に無効化されないと、旧アニメーション完了時に誤発火。generation カウンターでリスナー ID を管理。
+
+## 2026-04-15 18:40 | teras-taya [ai]
+- [pattern] Web Components でイベントリスナー管理に AbortController を使用。disconnectedCallback で abort() して一括削除でき、メモリリーク・二重登録を防止
+- [gotcha] pointermove など高頻度イベント内での DOM 読み取り（offsetWidth/getComputedStyle）はレイアウトスラッシング。開始時に1回だけ計算してキャッシュ、以後は値を再利用
+- [gotcha] ドラッグ速度計算の除算で dt > 0 ガード漏れ → v = Infinity が発生して意図しない遷移。必ず条件式で保護してから除算
