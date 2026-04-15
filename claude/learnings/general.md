@@ -523,3 +523,7 @@
 - [gotcha] 関数内の副作用（instantJump）と呼び出し元の処理（select）が重なると、非同期スクロール完了前に次の命令が実行され、タイミング問題でスピード異常が発生する
 - [pattern] スライダーの複数ステップ制御は、ヘルパー関数を純粋（インデックス計算のみ）にして、イベントハンドラ側でシーケンシャル処理（scrollend待機後に次のselect）する
 - [tip] carouselのclone peek見えない問題は、clone遷移の完了漏れが原因の場合が多い。非同期処理のタイミングが正しいか確認する
+
+## 2026-04-15 14:04 | teras-taya
+- [pattern] mainブランチで作業していたためPRは不要な状態です。pull → rebase → pushが完了しました。
+- [pattern] - `git pull --rebase`: remote mainの1コミットをrebaseで取り込み
