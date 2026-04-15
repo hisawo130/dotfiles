@@ -527,3 +527,7 @@
 ## 2026-04-15 14:04 | teras-taya
 - [pattern] mainブランチで作業していたためPRは不要な状態です。pull → rebase → pushが完了しました。
 - [pattern] - `git pull --rebase`: remote mainの1コミットをrebaseで取り込み
+
+## 2026-04-15 14:04 | teras-taya [ai]
+- [gotcha] スクロール操作の副作用を関数内に持たせると、呼び出し側での二重実行になりやすい → 副作用は避け、呼び出し元（イベントハンドラ）で制御すべき
+- [pattern] 非同期スクロール後の次操作は `scrollend` イベント待ちで順序を保証 → instant移動と smooth移動の混在時に必須
