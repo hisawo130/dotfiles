@@ -684,3 +684,8 @@
 - [gotcha] Animation state lock：no-op ガード（early return）で transitionend が発火せず _busy がロック。state 遷移が必要な場合は force フラグか条件付き処理が必須。
 - [pattern] AbortController でリスナー一括管理：disconnect/reconnect 時の二重登録リスク。signal abort() で全リスナー削除が確実。
 - [gotcha] CSS 意図しない混入：全体影響の CSS は git diff で毎回確認。マルチファイル編集時にキャッシュ残留で混入しやすい。
+
+## 2026-04-15 18:58 | teras-taya [ai]
+- [gotcha] Web Component で `disconnectedCallback` にタイマーやリスナーの cleanup を漏らしやすい→AbortController で一括管理すると安全
+- [gotcha] `transitionend` はバブリングするため、複数のリスナーがあると旧アニメーションのリスナーが誤発火する→`e.target === this._track` で対象確認必須
+- [pattern] DOM読み取り（`offsetWidth`など）は毎フレーム実行するのではなく、`ResizeObserver`等で必要な時点にキャッシュして pure な計算関数で再利用する
