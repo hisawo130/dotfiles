@@ -581,3 +581,6 @@
 - [gotcha] スクロール/アニメーション関数で非同期操作の副作用（instantJump）と戻り値（次idx）を混ぜると、呼び出し元で二重呼び出しによる競合状態が発生。関数の責務を分離し、呼び出し元でシーケンシャルに制御する。
 - [pattern] 非同期スクロール（scrollTo）の完了を待たずに次の操作を開始しない。同期的な状態を仮定しない。イベント待機（scrollend等）で順序立てた制御が必須。
 - [gotcha] 複数の似た操作ロジック（nextIndexFor/prevIndexFor/autoplay advance）がある場合、同じバグが各所に潜んでないか確認。1箇所の修正だけでは不完全。
+
+## 2026-04-15 16:44 | teras-taya
+- 2. ループジャンプ後の `data-instant` 残留: `_setPos(idx, true)` の後、必ず rAF で `removeAttribute` する
