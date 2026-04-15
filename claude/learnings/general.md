@@ -798,3 +798,7 @@
 - [gotcha] Prestigeテーマで section-spacing 上下余白を調整するには、セクション内 `{%- style -%}` で `--section-vertical-spacing-override: Xrem` のカスタムプロパティオーバーライドを設定する必要がある
 - [pattern] 異なるブランチから特定コミットのみ現在ブランチに取り込む場合は `git cherry-pick <hash>` を使用。関連コミット複数の場合は取捨選別を慎重に行う
 - [gotcha] リモートより遅れてるブランチにpushする前に必ず `git pull` で最新化してから push する
+
+## 2026-04-15 22:57 | teras-taya
+- 作業: blog-posts-news.liquid
+- 完了: - コミット: `style: NEWSセクションの上下余白を縮小（section-vertical-spacing-override: 3rem）`
