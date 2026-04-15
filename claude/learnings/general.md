@@ -751,3 +751,6 @@
 - [gotcha] Shopify theme の `settings_data.json` は自動同期でコミット差分に含まれやすく、マージ時に `main` と競合。メタフィールド設定追加時は特に注意し、必要に応じて `git checkout main -- config/settings_data.json` で除外。
 - [gotcha] `shopify--discovery--product_recommendation.complementary_products` メタフィールドには当該商品自体が含まれる可能性がある。ループ内で商品 ID を比較してスキップ処理を実装しないと二重表示が発生。
 - [pattern] Shopify メタフィールド実装時は、メタフィールド仕様（データ内容の重複・現在値の包含など）を実装前に確認。設計段階での仕様理解が後の修正コストを大幅削減。
+
+## 2026-04-15 21:50 | teras-taya
+- [pattern] 修正しました。
