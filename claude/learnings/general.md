@@ -624,3 +624,8 @@
 - [pattern] `pointermove`イベント内の計算（`getComputedStyle`等）をドラッグ開始時に1回計算してキャッシュ。フレーム毎の呼び出しはレイアウトスラッシング原因
 - [pattern] `generation` カウンターで古い `done()`/`transitionend` リスナーを無効化。複数アニメーション割り込み時の状態競合解決の常套手段
 - [gotcha] `connectedCallback`/`disconnectedCallback` ペア実装時、`clearTimeout`・リスナー登録ガードの漏れはメモリリーク。DOM 再接続で二重登録も発生しやすい
+
+## 2026-04-15 17:51 | teras-taya [ai]
+- [pattern] ドラッグ中のレイアウトスラッシング回避：DOM計測（`getComputedStyle`/`offsetWidth`）をドラッグ開始時に1回実施・キャッシュし、`pointermove`以降はキャッシュ値を参照する
+- [pattern] Generation カウンターで陳腐化コールバック無効化：複数の非同期操作が競合する場面で、カウンターを世代追跡に使い古い世代のコールバックを条件で無視することで競合状態を根絶
+- [gotcha] Custom Element の接続/切断時リソース漏れ：`connectedCallback`で登録したタイマー・リスナーは`disconnectedCallback`で必ずクリアする。DOM再接続時は二重実行ガードを先頭に配置
