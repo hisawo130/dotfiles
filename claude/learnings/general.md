@@ -725,3 +725,5 @@
 - [pattern] Web Components のドラッグ処理で計算値（translate など）をキャッシュし、`pointermove` では計算結果のみ使用。`getComputedStyle`/`offsetWidth` を毎回読まずレイアウトスラッシングを防ぐ
 - [gotcha] スナップバック機能を実装する際、「同スライドには遷移しない」ガードが必要な場合がある。単純な `if (current === target) return` では UI 回復操作が不可能になる。強制実行パラメーターで解決
 - [gotcha] Web Components の `disconnectedCallback` でタイマー・リスナー・Observer をクリア忘れすると要素が DOM から抜けてもメモリが解放されない。`AbortController` で一括管理し、かつ `_bound` フラグをリセット
+
+## 2026-04-15 19:14 | teras-taya
