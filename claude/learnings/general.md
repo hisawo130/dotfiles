@@ -758,3 +758,8 @@
 ## 2026-04-15 21:50 | teras-taya
 - 作業: 学習ログ抽出システムです。以下のClaude Codeセッションから、将来同様の問題で悩んだ時に役立つ学びを抽出してください。
 - 完了: - [pattern] Shopify theme で `settings_data.json` は自動同期により変更される。PR作成時は事前に確認し、必要に応じてマージ時に `main` と同期させる手順を用意。
+
+## 2026-04-15 21:50 | teras-taya [ai]
+- [gotcha] Shopifyの `complementary_products` メタフィールドに当該商品自身が含まれる場合がある。ループ内で `product.id` との重複チェックでスキップ必須。
+- [pattern] Shopify theme で `settings_data.json` は自動同期により変更される。PR作成時は事前に確認し、必要に応じてマージ時に `main` と同期させる手順を用意。
+- [tip] メタフィールドデータをテンプレートで使う前に、バリデーション・フィルタリングステップを入れるとデータ品質の問題に強くなる。
