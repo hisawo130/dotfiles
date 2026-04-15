@@ -649,3 +649,8 @@
 - [gotcha] `pointermove`ごとに`getComputedStyle`/`offsetWidth`呼ぶと毎フレーム強制レイアウト。ドラッグ開始時に1度だけ計算してキャッシュ推奨
 - [pattern] generation カウンターで非同期イベント（`transitionend`など）の陳腐化防止：前世代コールバックをスキップさせる
 - [gotcha] Web Components `connectedCallback`でイベントリスナー二重登録リスク。ガード + `disconnectedCallback`で`clearTimeout`忘れはメモリリーク
+
+## 2026-04-15 18:08 | teras-taya [ai]
+- [gotcha] Web Components のライフサイクル：`disconnectedCallback` でタイマー・イベントリスナーをクリアしないとメモリリーク・二重登録が発生。必ず cleanup を実装する
+- [pattern] ドラッグ UI のパフォーマンス：レイアウト計算をドラッグ開始時にキャッシュして、高頻度の `pointermove` では計算結果のみ参照。スラッシング回避と同時に `_tx()` を pure な関数に
+- [pattern] 非同期操作の競合制御：animation 完了コールバックなど非同期処理の状態を generation ID で追跡。前のアニメーション完了が新しい操作を上書きしないようガード
