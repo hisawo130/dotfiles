@@ -732,3 +732,6 @@
 - [gotcha] ドラッグ離し時にスナップ位置にジャンプしてからアニメーションすると視覚的ジャンプが発生 → リリース位置から直接スムーズにアニメーション開始する
 - [pattern] `AbortController` で `connectedCallback/disconnectedCallback` のイベントリスナー登録/削除を一括管理すると DOM 再接続時の二重登録が防止できる
 - [gotcha] `transitionend` が複数アニメーションをリッスンするとバブリングで古いリスナーが誤発火 → generation カウンターまたはターゲットチェック（`e.target === expectedElement`）で validation する
+
+## 2026-04-15 21:38 | teras-taya
+- 重要なファイルの構造を確認します。
