@@ -502,3 +502,7 @@
 - [tip] イベント競合調査時は「各ハンドラがdocument/elementのどのレベルに登録されているか」を最優先に確認。`stopPropagation`と`stopImmediatePropagation`の効果の違いはリスナーレベルで決まる。
 
 ## 2026-04-15 12:28 | pietro-onlineshop_ver01
+
+## 2026-04-15 12:28 | pietro-onlineshop_ver01 [ai]
+- [gotcha] 同一レベルの document listener に対して stopPropagation() では不十分。stopImmediatePropagation() が必須（jQuery delegated handler → 親要素の listener が同じ document レベルの場合）。
+- [pattern] メタフィールド値に応じてサーバーサイド（Liquid）でクラスを出し分け、CSS で `pointer-events: none` + `cursor: default` で操作不可状態を表現する。
