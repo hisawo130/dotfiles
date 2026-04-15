@@ -674,3 +674,8 @@
 - [pattern] `AbortController` でイベントリスナーを一括管理。`disconnectedCallback` で `abort()` + `_bound=false` 済みで reconnect 時の二重登録を防止。
 - [gotcha] `transitionend` のバブリング対策は `e.target === this._track` チェック必須。子要素イベントが親処理に誤発火する。
 - [gotcha] 同一スライド呼び出しで `transitionend` 発火しない → `force` パラメーターで強制実行。transition なしだと `_busy` ロック解放されず。
+
+## 2026-04-15 18:51 | teras-taya [ai]
+- [gotcha] `transitionend` はバブルイベント — 子要素の transition でも親リスナーが反応する。`e.target === this._track` チェックで発火元を限定必須
+- [pattern] AbortController で全リスナーを signal で登録し、`disconnectedCallback` で `abort()` すれば、DOM 再接続時のリスナー二重登録が完全に回避できる
+- [gotcha] スナップ復帰時に no-op ガード（`idx === _idx なら return`）を入れると `transitionend` が発火せず、`_busy` が永遠に `true` になる — 同一位置への遷移も明示的にアニメーション実行が必要な場合がある
