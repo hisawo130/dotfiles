@@ -8,6 +8,9 @@
 
 ## 📋 Recent Changelog
 
+### 2026-04-15: [New CSS variable for mobile safe area insets](https://shopify.dev/changelog/new-css-variable-for-mobile-safe-area-insets)
+A new `--shopify-safe-area-inset-bottom` CSS variable is available for embedded apps on Shopify Mobile. Most apps need no code changes, but developers using custom overlay positioning should evaluate this variable.
+
 ### 2026-04-01: [Create subscriptions contracts without payment methods](https://shopify.dev/changelog/create-subscriptions-contracts-without-payment-methods)
 The `paymentMethodId` field is now optional in `subscriptionContractAtomicCreate` and `subscriptionContractCreate` mutations, enabling migration of subscription contracts that lack valid payment methods.
 

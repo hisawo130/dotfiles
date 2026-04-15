@@ -6,6 +6,9 @@
 
 ## 📋 Recent Changelog
 
+### 2026-04-15: [Removing deprecated PRIVATE and PUBLIC_READ enums on metaobject definitions](https://shopify.dev/changelog/removing-deprecated-private-and-publicread-enums-on-metaobject-definitions)
+The `MetaobjectAdminAccess` enum removes obsolete `PRIVATE` and `PUBLIC_READ` values. Developers must update any code referencing these enum values to maintain compatibility with the Admin API.
+
 ### 2026-04-01: [Metafield translations now available via GraphQL Admin API](https://shopify.dev/changelog/metafield-translations-now-available-via-graphql-admin-api)
 Admin API 2026-04 adds a `translations` field to the `Metafield` object, allowing querying of published translated values with locale and market filtering.
 
