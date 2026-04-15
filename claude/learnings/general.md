@@ -718,3 +718,5 @@
 - [gotcha] pointermove/touchmoveなどのイベントループ内でDOM読み取り（offsetWidth等）をするとレイアウトスラッシング。イベント開始時に一度だけ計算してキャッシュ値を使用する。
 - [pattern] transitionendやdecode()など非同期イベントの誤発火を防ぐ。操作のたび世代カウンターを進めてリスナー内で世代チェック。古い世代のイベントは無視。
 - [pattern] disconnectedCallback でAbortController.abort() + フラグresetで、DOM再接続時の二重登録とメモリリークを防止。
+
+## 2026-04-15 19:11 | teras-taya
