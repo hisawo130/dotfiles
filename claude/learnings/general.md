@@ -87,6 +87,7 @@
 - [gotcha] 商品ページの条件分岐内（`if product.id == ...`）でレンダリングされるコンポーネントは、該当ページのproduct contextがないLPページでは描画されない。複数ページで共有するモーダルの条件分岐を見直す際に注意。
 
 ## Recurring Patterns (updated 2026-04-12)
+## Recurring Patterns (updated 2026-04-15)
 - [shopify] インポートデータの列名・フォーマット厳格性: Matrixify列名差異・Line:Type必須・タグ上書き — seen 11 times
 - [shopify] Liquidフィルター精度: divided_by整数除算・img_url廃止・リスト型メタフィールド出力 — seen 5 times
 - [matrixify] MatrixifyはShopify純正CSVと列名形式が異なる（型サフィックス付き・Fulfillment Line必須） — seen 3 times
@@ -109,6 +110,12 @@
 - [general] コードにローカル絶対パス (/Users/) を含めない — seen 3 times
 - [api] ShopifyはGraphQL Admin API を優先、RESTは非推奨化が進んでいる — seen 3 times
 
+- [js] 非同期スクロール/アニメーション関数は副作用を持たせず純粋計算のみ: scrollend/transitionend待機後シーケンシャル実行が必須 — seen 18 times
+- [js] Web Components disconnectedCallbackでタイマー・リスナーをクリア必須: AbortControllerで一括管理が推奨 — seen 12 times
+- [js] pointermove等高頻度イベント内でgetComputedStyle/offsetWidth禁止: 開始時1回キャッシュしレイアウトスラッシング防止 — seen 10 times
+- [js] generationカウンターで非同期コールバック陳腐化防止: 前世代のtransitionend等を無効化する常套手段 — seen 6 times
+- [shopify] Shopify CLIデプロイ「resource not found」エラーはclient_idとPartner組織不一致が原因: Partner Dashboardで確認 — seen 7 times
+- [js] stopImmediatePropagation必須: documentレベルに複数リスナーがある場合stopPropagationでは同レベルリスナーを止められない — seen 8 times
 ## 2026-04-06 | dotfiles [ai]
 
 - [gotcha] Chrome DevTools MCPはデフォルトで使用統計をGoogleに送信（`--no-usage-statistics`で無効化必須）
@@ -158,6 +165,16 @@
 - [tip] Shopifyリダイレクトでクエリパラメータ対応が必要なら、リダイレクトアプリ導入（Traffic Control等）またはJS転送実装を検討する。
 
 ## 2026-04-10 14:11 | pietro-onlineshop_ver01 [ai]
+## 2026-04-10 13:58 | Pinup-Closet_ver01
+- 完了: `550adc4` をプッシュしました。[layout/theme.liquid:817](layout/theme.liquid#L817) の開くボタンクリック時に `.js-size-number.val('')` を追加しました。
+
+## 2026-04-10 14:11 | pietro-onlineshop_ver01 [ai]
+
+- [correction] ShopifyのリダイレクトはこのURL形式だとだめ？
+- [correction] &以降がだめ？
+- [gotcha] Shopifyのリダイレクト機能はクエリパラメータをマッチング条件に使えない。パス部分のみが対象で、`&cc=CA057` をつけると完全一致しない。
+- [pattern] 旧商品コードを新URLへ振り分ける際、パラメータバリエーションが多い場合は、`theme.liquid` のJSマッピング+`location.replace()` が複数リダイレクト登録より効率的。
+- [tip] Shopifyリダイレクトでクエリパラメータ対応が必要なら、リダイレクトアプリ導入（Traffic Control等）またはJS転送実装を検討する。
 - [gotcha] Shopifyリダイレクト機能はパス部分のみマッチ対象。クエリパラメータ（`?pn=XX&cc=YY`）は条件として機能しない。完全一致する複数パターン登録も必要。
 - [pattern] クエリパラメータ組み合わせが少なければJS転送（`location.replace()`でマッピング実装）、多ければリダイレクトアプリ導入を選択。
 - [tip] JS転送は301リダイレクトと比べSEO評価引き継ぎが弱い。件数多いなら正式リダイレクト（アプリ）を優先。
@@ -224,6 +241,28 @@
 
 
 ## 2026-04-10 16:54 | pietro-onlineshop_ver01 [ai]
+## 2026-04-10 16:54 | pietro-onlineshop_ver01 [ai]
+
+- [gotcha] Shopifyメタフィールドをインポートする際、型（boolean/text等）を事前確認しないと型不一致エラーになる
+- [pattern] メタフィールドインポート前に「型定義→値形式→対象レコード」を確認してからスクリプトを作成する
+- [tip] インポート対象が「新規追加か既存更新か」「どの顧客範囲か」を明確にしないとマッピングが曖昧になる
+- [pattern] Shopifyメタフィールドをインポートする前に、そのメタフィールドが定義済みであることを確認。Matrixifyで`Metafield: custom.xxx [type]`を指定する際、型名（`single_line_text_field`など）は定義時の型と一致していることが必須
+- [gotcha] 要件が不明な場合、推測で複数の質問を重ねるより先に、サンプルファイルを実際に読み込んで現物から仕様を把握する。往復回数を減らせる
+- [tip] Matrixifyのメタフィールド値は型に応じた形式で指定（`single_line_text_field`なら`"希望する"`のような文字列）。テストインポートで値の形式が正しいことを早期に確認
+- [pattern] Shopify Matrixifyのメタフィールドインポートでは、顧客IDがなくてもEmailで顧客を特定できる。ID追加は後から必要に応じて対応
+- [tip] 顧客メタフィールドのMatrixifyフォーマット: 「ID, Email, Command, Metafield: custom.XXX [型]」で値を指定
+- 作業: matrixifyのインポートファイル作成をお願いします
+- [pattern] 完了: サンプルファイルにはIDがありましたが、ソースデータにはIDがないためEmail照合で作成しました。MatrixifyはEmailでも顧客を特定できます。インポート時に問題があればIDを追加する方法に切り替えます。
+- [pattern] Shopify顧客メタフィールド更新では、Email照合でMatrixifyが顧客を識別可能 — IDを生成する手間を削減できる
+- [gotcha] 複数の確認質問を重ねると、ユーザーが自分で判断・実装してしまう — 十分な情報があったら確認を打ち切って実装に進むべき
+- [pattern] 複数CSVの結合作業は事前に各ファイルの連携キー（ID、Email、Customer CDなど）を一覧化し、マッピング可能性を確認してから実装開始する。
+- [pattern] 複数CSVを結合する場合、先にEmail→Shopify ID→customer_cdのブリッジファイルを作成してから他データと結合する
+- [tip] MatrixifyインポートはUTF-8 BOM必須。IDがない行でもEmailがあれば顧客照合できるため、ブリッジファイルの不完全マッチも許容可能
+- [pattern] メタフィールド一括インポートで複数ソースを結合する場合、ブリッジファイル（Email・ID・customer_cdの対応表）をタスク開始直後に準備する。後付けすると往復が増える。
+- [tip] MatrixifyのMERGEインポートはEmailまたはIDだけで顧客を特定できるため、ブリッジ未存在の行でも部分的にインポート可能。既存メタフィールド値は保持される。
+- [gotcha] Matrixifyカスタマーエクスポートで、EmailはColumns設定で明示的に追加が必須。デフォルトなしだとID紐付けができず後続の顧客CDマッピング失敗
+- [pattern] 複数ソース顧客メタフィール更新は優先度付け（ソースシステム優先→DMファイル補完）。Matrixify MERGEで空値は既存値保持されるため部分更新に活用
+- [tip] インポート前に必ずブリッジファイルのマッチング件数確認。ブリッジ未存在顧客はメタフィールド値が空になりMERGE対象外
 - [pattern] 複数データソースの優先度チェーンをコードに明示する。「hcf_customersファイル優先 → DMファイルで補完」というルールをコード上で見える化すると、ユーザーの確認質問に正確に答えられ、修正も速くなる。
 - [gotcha] ソースシステムの全顧客 ≠ Shopify 顧客。メタフィールド追加時、ソース側にいる顧客がShopifyに存在しないと出力に含められず、データ差異が発生する。上流データとShopifyのマスタ照合を明示的にステップとして記録すべき。
 
@@ -276,6 +315,28 @@
 - [gotcha] - [pattern] 本番デプロイ実行時はエクステンション削除確認が出る場合がある。「Removing extensions can permanently delete app user data」と表示されたら、意図しない削除がないか必ず確認してから進める
 
 ## 2026-04-13 19:15 | pietro-app [ai]
+## 2026-04-13 19:15 | pietro-app [ai]
+
+- [gotcha] `shopify app deploy`は対話プロンプトが出るため、自動実行せずターミナルで直接実行する
+- [pattern] デプロイ前の事前確認手順：mainブランチ確認 → npm install → Shopify CLI ログイン確認 → 本番設定ファイル選択
+- [tip] デプロイ完了後は Dev Dashboard から Install app を取得して本番ストアへインストール
+- [gotcha] エラーの原因を調べます。「resource could not be found」はログイン中のPartnerアカウント/組織と `client_id` が一致していない場合に出ます。
+- [gotcha] Shopify CLI の「The resource you have requested could not be found」エラーは client_id がログイン中の Partner 組織に存在していないことが原因。`shopify auth login` で正しい組織アカウントでログイン。
+- [pattern] Shopify アプリデプロイ前に partner.shopify.com で対象の client_id が存在するか確認。存在しない場合は Dev Dashboard でアプリを新規作成。
+- [gotcha] Shopify app deploy の「resource not found」エラーは client_id がPartner組織に存在しないことが原因。Partner Dashboard で確認して正しいアカウントで shopify auth login し直す
+- [pattern] Shopify本番デプロイ手順：main にマージ → npm install → shopify auth login → shopify app deploy → Dev Dashboard でインストール
+- [tip] Partner Dashboard (partners.shopify.com) → Apps → 対象アプリ → App setup → Client ID で client_id を確認できる
+- [gotcha] Shopify CLI デプロイの「resource not found」エラーは、`client_id` がログイン中の Partner 組織に存在しないことが原因。Partner Dashboard での app 存在確認と client_id 一致確認が解決策。
+- [pattern] デプロイ前に `shopify auth login` で正しい Partner 組織のアカウントでログインし、複数組織がある場合は選択時に対象組織を指定する。
+- [gotcha] Shopifyアプリデプロイで「resource could not be found」エラーが出た場合、client_idが現在のPartnerアカウントに存在しないことが原因。デプロイ前にPartner Dashboardでアプリが実在するか確認すべき。
+- [pattern] 本番・開発でアプリを分ける場合、各tomlファイルのclient_idが事前にPartner Dashboardで作成・確認されていることが必須。デプロイはそれ以降に実行する。
+- [tip] shopify app deployエラーのデバッグは「ログイン状態確認 → client_id設定値確認 → Partner Dashboardでそのclient_idのアプリ存在確認」の順で進める。
+- [gotcha] Shopify CLI デプロイの「resource could not be found」エラーは client_id 不一致が原因。Partner ログイン状態とtomlの client_id とPartner Dashboard のアプリ存在を全て照合すること
+- [pattern] Shopify アプリのdev/prod構成は新規アプリ作成か既存アプリの config link のどちらかを選べる。Partner Dashboard の Apps 一覧で既存アプリを確認してから判断する
+- [tip] Shopify CLI デプロイエラー時は、Partner Dashboard → Apps で使用中の client_id のアプリが実在し、ログイン組織に属しているかを先に検証するステップを挟むべき
+- [gotcha] Shopifyアプリのtomlファイルのclient_idと実際のPartner Dashboard上のアプリIDが一致していないと、デプロイ時に「resource not found」エラーが出る
+- 重要：確認してから進めてください
+- [gotcha] - [pattern] 本番デプロイ実行時はエクステンション削除確認が出る場合がある。「Removing extensions can permanently delete app user data」と表示されたら、意図しない削除がないか必ず確認してから進める
 - [gotcha] Shopify CLI deploy時の「resource not found」エラーはprod設定ファイルのclient_idがPartner Dashboardに存在しないことが原因。デプロイ前に必ずPartner Dashboardで本番アプリのclient_idを確認し、toml設定ファイルと一致させる
 - [pattern] 本番デプロイ実行時はエクステンション削除確認が出る場合がある。「Removing extensions can permanently delete app user data」と表示されたら、意図しない削除がないか必ず確認してから進める
 - [tip] Shopify Partner Dashboardのログイン状態を確認。複数アカウントがある場合は`shopify auth login`でログイン直後、正しい組織が選択されていることを確認
@@ -312,6 +373,25 @@
 - [tip] VSCode拡張が `git reset --hard` をブロックした場合、ターミナルから直接実行で回避可能
 
 ## 2026-04-13 20:07 | SERPENTINA [ai]
+## 2026-04-13 20:07 | SERPENTINA [ai]
+
+- 詳細な調査ができました。次に既存ファイルの重要な部分を直接確認します。
+- [gotcha] Sassビルドでファイル全削除の可能性。CSS直接追記時は git show HEAD で元内容確認→復元してから新スタイル追記を行うこと
+- [pattern] ファイル破壊時の復旧: `git show HEAD:path` で元内容確認→復元、新スタイルを末尾に追記。既存コード保護＋機能追加を両立
+- [tip] 実装タスクの完了基準が「動作」の場合、コード重複改善はrefactoring scope外として見送る判断が重要（scope creep防止）
+- [gotcha] Webpack等ビルドツール経由の出力ファイルは実行エラー時に全削除される可能性がある。大規模ファイルは git diff --stat で事前確認が必須。
+- [pattern] CSSビルド破損時は git show で元コンテンツを復元し、その後新スタイルを末尾に追記する順序が重要。
+- [correction] 実装前に作業ブランチを先に用意してから進める。main への誤りコミットはコミット移動などの手作業を増やす。
+- [correction] - [gotcha] ビルドエラーでCSS成果物が消失した場合、`git show HEAD:path`で元の内容を復元してから新スタイルを追記する（上書きではなく復元→追記の二段階が重要）
+- [gotcha] ビルドエラーでCSS成果物が消失した場合、`git show HEAD:path`で元の内容を復元してから新スタイルを追記する（上書きではなく復元→追記の二段階が重要）
+- [pattern] 複数Liquidファイルに同じ判定ロジックが必要な場合、スニペット化による再利用と実装負荷を天秤にかけ、要件外の改善は後回しにする判断が有効
+- [gotcha] Shopifyテーマで`npm run js-release`・`npm run sass-release`後は成果物をすぐに確認する（webpackの不安定性により大規模ファイル消失が発生する可能性）
+- [gotcha] Shopify テーマの複数ファイル実装では、feature ブランチを切って PR 経由で merge すること。main への直コミット回避で git 履歴が汚れる。
+- [gotcha] Sass ビルド環境で CSS に直接追記する場合、ビルド失敗時にファイル全体（9700行超）が消失するリスク。変更前に Git で履歴を確保。
+- [pattern] マルチファイル実装でも Task 単位で細分化し、Subagent に委託可能な作業（Sass 変更など）を分離すると管理効率向上。
+- [gotcha] Webpack ビルド実行時にCSSファイルが破壊される可能性がある（出力ファイルが空になるケース）。ビルド前のバックアップ確保またはビルド成功判定を厳密にすること
+- [pattern] 重要な機能修正は初期段階で専用ブランチを切り、main へのダイレクトコミットを避ける。巻き戻し時に作業内容が保護され復旧が容易になる
+- [tip] VSCode拡張が `git reset --hard` をブロックした場合、ターミナルから直接実行で回避可能
 - [gotcha] Shopifyビルドエラー後、アセットファイル（CSS等）が全削除される → git復旧後、末尾に新スタイル追記で対応
 - [gotcha] 作業ブランチ作成後も誤ってmainに直接コミット → コミット前に`git branch`で確認し、フローの習慣化が重要
 - [tip] VSCode拡張が`git reset --hard`をブロックする場合、ターミナルから直接実行できる
@@ -407,6 +487,50 @@
 ## 2026-04-13 20:39 | SERPENTINA
 
 ## 2026-04-13 20:39 | SERPENTINA [ai]
+## 2026-04-13 20:17 | pietro-onlineshop_ver01 [ai]
+
+- [gotcha] jQuery delegated eventとネイティブイベントリスナーは同じバブリング内で順序に依存して動作する。複数ハンドラが登録されていると予期しない挙動が起きるため、stopImmediatePropagation()で後続ハンドラをブロック。
+- [pattern] サードパーティスクリプト（アプリ側）がdocumentレベルでリッスンしている場合、テーマ側でイベント伝播を制御。stopImmediatePropagation()で同一イベント内の後続ハンドラを遮断。
+- [tip] ポップアップが一瞬開いて即閉じする場合、同一イベント内でopen/closeが連続実行されていないか確認。イベント伝播制御とハンドラ実行順序を疑う。
+- 作業: 以下の修正をお願いしたいです。
+- 完了: PR を作成しました。
+- [gotcha] jQuery delegated event と document.addEventListener() 混在時、イベント伝播順序が予測困難になり競合が発生。外部ライブラリとテーマ側のイベントハンドラが同じバブルフェーズで干渉する
+- [pattern] stopImmediatePropagation() で意図的にイベント伝播を遮断。外部ライブラリ側の自動削除ロジックとの競合を1行の修正で解決可能
+- [tip] jQuery delegated event 登録時は .off() → .on() パターンで既存リスナーをクリーンアップしてから新規登録。resize など頻繁に発火するイベントでのメモリリークを防止
+- [pattern] - [pattern] テーマスクリプト修正後に `shopify theme check` で差分を確認し、修正による新規エラーが無いことを立証。既存問題と新規問題を明確に分離してPR化。
+- [gotcha] jQueryのdelegated eventと外部ライブラリのeventListener が同じバブリング内で競合する場合、`stopImmediatePropagation()` で制御が必要。`stopPropagation()` では兄弟ハンドラーに伝播するため不十分。
+- [pattern] テーマスクリプト修正後に `shopify theme check` で差分を確認し、修正による新規エラーが無いことを立証。既存問題と新規問題を明確に分離してPR化。
+- [gotcha] jQuery delegated click と addEventListener が混在時、`stopImmediatePropagation()` が必須。`stopPropagation()` では同じ document レベルのリスナーは止まらない。
+- [tip] `stopImmediatePropagation()` は条件分岐（早期 return）前に実行することで、外部リスナーへの伝播を確実に防止できる。
+
+## 2026-04-13 20:39 | SERPENTINA [ai]
+
+- 作業: 以下条件のときに、商品一覧・検索結果・商品ページの商品名の上にラベル表示を行いたいです。
+- 完了: PR を作成しました: [CIN-GROUP-EC/SERPENTINA#5](https://github.com/CIN-GROUP-EC/SERPENTINA/pull/5)
+- [gotcha] CSSビルド成果物（大規模ファイル）で権限エラーにより内容が消失する場合がある。git経由で元の内容を復元してから追記するプロセスを取る
+- [gotcha] VSCode拡張で `reset --hard` がブロックされる場合、ターミナルから直接実行すれば動く（Claude Codeの権限と独立）
+- [pattern] Shopifyテーマで複数ファイル修正時は、ビルド実行前に各セクション・スニペットで差分確認を完了させる
+- [gotcha] ビルドツール（webpack）実行中にCSSソースファイルが全内容消失する可能性がある。ビルドエラー時の状態保存と復旧手順（git復元）を想定すること。
+- [pattern] Shopifyテーマ開発では、大型機能を main に直コミットせず必ず作業ブランチ + PR フロー で進める。設計変更やデザイン調整の追加指摘に対応しやすい。
+- [gotcha] VSCode拡張で `reset --hard` / `push --force-with-lease` などの危険操作がブロックされることがある。必要な場合はターミナルから直接実行する必要がある。
+- [gotcha] npm/webpack環境でSassビルドエラー発生時、CSSファイルが全行破壊される可能性がある → 環境制約でCSS直接追記が必要な場合がある
+- [gotcha] VSCode Claude拡張が `reset --hard` を自動ブロック → ターミナルで直接実行が必要
+- [pattern] ファイル破壊時はgitで元の内容を復元してから新しいスタイルを末尾追記する（完全上書きでなく追記）
+- [gotcha] ビルド失敗でファイル破壊時は `git show` で元状態を復元してから追記。直接修正は避ける。
+- [gotcha] shared repository の main に誤ってコミットした場合、force-with-lease での巻き戻しは origin にも影響。共同開発環境では確認必須。
+- [tip] VSCode拡張で `git reset --hard` がブロックされても、ターミナルから直接実行すると通る可能性がある。
+- [gotcha] npm ビルド中に大規模 CSS ファイル（9700+ 行）が全削除される場合がある。`git show HEAD:file` で復旧後、差分を再適用する
+- [pattern] Shopify テーマには複数サードパーティアプリが生成するカード（ランキングアプリ等）が混在。実装スコープ確定前に「テーマコード vs アプリ生成」の境界を確認すべき
+- [pattern] 複数 Liquid ファイルで同じ商品タグ判定が重複する場合、判定ロジックをスニペット化して DRY を維持
+- [gotcha] ビルドエラーでCSSが全削除される場合：元ファイルがgitで復元可能か必ず確認し、復元後に変更を再適用する。ビルド成功後にファイルサイズが劇的に縮小していないか検証
+- [pattern] Shopifyサードパーティアプリのカスタマイズ：アプリが独自HTMLを生成する場合、Liquidからは制御不可。JavaScriptでタグ取得＆DOM注入が現実的なアプローチ
+- [tip] webpack必須環境でも、独立JSファイルをassets/直接配置＋theme.liquidで読み込みすることでビルド工程をバイパス可能。緊急時の回避手段として活用
+- [pattern] Shopify製サードパーティアプリが生成するHTMLに対し、Liquidでは制御不可な場合、JavaScriptで商品URLから handle を取得し `/products/<handle>.js` APIでタグを取得してDOM注入する方法が有効
+- [gotcha] ビルドエラー時に大規模ファイルの内容が全削除される可能性がある。修正は git から完全に元の状態を復元してから、スタイル追記のみ行う必要がある
+- [pattern] webpack ビルド実行が環境制約で不可な場合、ビルド不要な独立JSファイルを `assets/` に直接配置し `layout/theme.liquid` から読み込む方式で回避可能
+- [gotcha] Shopify 埋め込みアプリ（Rank King等）が生成するHTMLはLiquidで直接制御不可。JavaScriptのDOM注入で対応。
+- [pattern] サードパーティアプリカードへのラベル追加：`/products/<handle>.js`でタグ情報を非同期取得し、JavaScriptで動的にDOM挿入する。
+- [tip] 複数の場所（一覧・検索・詳細ページ）で表示するコンポーネント（ラベル等）は、スニペットに集約して各セクションから呼び出すと変更時の管理が容易。
 - [gotcha] Shopifyサードパーティアプリ（Rank King等）が生成するHTMLはLiquid制御不可。商品APIから取得したタグをJavaScriptで動的にDOM注入する必要がある。
 - [pattern] npmビルド環境に制約がある場合、assets/に独立したJSファイルを配置し、layout/theme.liquidの`<script>`から読み込み。
 - [correction] mainブランチへの直接コミットを避け、必ずfeat/*ブランチで作業してPRを上げるプロセスを厳守。reset --hard権限トラブル防止。
@@ -468,6 +592,33 @@
 - [correction] コードレビューを確認して必要なら修正してください
 
 ## 2026-04-13 21:52 | pietro-onlineshop_ver01 [ai]
+## 2026-04-13 21:52 | pietro-onlineshop_ver01 [ai]
+
+- [gotcha] jQuery delegated event と document.addEventListener の競合では stopImmediatePropagation() 必須。stopPropagation() では同一レベルの listener は止まらずイベント即閉じが発生する。
+- [pattern] サーバーサイド（Liquid）メタフィールド判定を導入時は、テキスト表示だけでなくクラス属性も同じ条件で出し分ける。片方だけ条件分岐するとJS側の条件判定が活き続け保守バグの温床になる。
+- [tip] jQuery namespace イベント（click.discountDeck）とネイティブ listener の競合疑いは Event Timeline や DevTools Debugger で伝播順序を確認するのが効果的。
+- [gotcha] jQuery delegated eventと同一document レベルのイベントリスナー競合時、stopPropagation()ではなくstopImmediatePropagation()が必須（同レベルリスナーまで遮断される）
+- [pattern] サーバーサイド判定でクラス付与を出し分け、JS側の条件分岐を完全に不要化する（状態をクラス有無で表現）
+- [tip] CSS :after装飾要素はクラス単位でdisplay制御すると、HTMLの構造変更なしに見た目の出し分けが簡潔
+- [correction] コードレビューを確認して必要であれば修正してください
+- [gotcha] jQuery delegated eventとネイティブEventListenerが同一document レベルで競合する場合、`stopPropagation()` では不十分で、`stopImmediatePropagation()` が必須
+- [pattern] 条件付きで要素を非アクティブにする場合、JS後付けチェックより Liquid でクラス自体を出し分けてCSS制御する方が堅牢
+- [gotcha] 親要素のホバー・カーソルスタイルが子要素に継承される場合、`cursor: default; pointer-events: none` で明示的に無効化しないと見た目と挙動が不一致になる
+- 記憶しました。次回以降、PR作成時は本文末尾に `/gemini review` を必ず含めます。
+- [gotcha] jQuery delegated event + document global listener の同一伝播内での競合 — 同じ`document`レベルの異なるリスナーが同一イベント伝播で動作するとお互いをキャンセルしてしまう。`stopImmediatePropagation()`で強制遮断が必須
+- [pattern] Liquid のサーバーサイド条件判定で HTML 要素のクラス・属性を出し分け — UI 状態に応じてクラスを変えることで JS 側の追加条件判定を不要にでき、ブランチロジックをテンプレートレベルで完結できる
+- [tip] CSS で`cursor`と`pointer-events`を同時に制御 — 見た目（カーソル）と実装（クリック動作）の矛盾は UX 混乱の源。`pointer-events: none`で根本的にクリック無効化
+- PR #32 に `/gemini review` を投稿しました。次回以降、レビュー修正のプッシュ後は必ず `gh pr comment` で再レビューをトリガーします。
+- [gotcha] jQuery delegated event と addEventListener の競合時は stopPropagation ではなく stopImmediatePropagation を使う（同一 bubble phase での複数リスナーでは前者では遮断不可）
+- [pattern] JS でユーザー状態をチェックするより、Liquid サーバーサイドでクラス自体を条件付き付与する方が UI 制御として堅牢
+- [gotcha] クリック不可要素は `cursor: default` と `pointer-events: none` の両方を設定しないと見た目と実装が乖離する（継承スタイルを打ち消す必要）
+- [pattern] メタフィールド判定でサーバーサイド（Liquid）出し分けするとクラス不在のため、後付け JS チェックが不要で堅牢
+- [gotcha] UI 非表示時もホバースタイルは継承されるため、cursor: default; pointer-events: none で明示的に制御が必須
+- なぜ壊れたか：PR #30 の実装変更が根本原因です。
+- [pattern] Discount Deck の `handleOutsideClick` 競合回避には `stopImmediatePropagation()` が必須。同じ document レベルでは `stopPropagation()` 無効。
+- [gotcha] サーバーサイド判定（Liquid メタフィールド）でクラス自体を出し分けないと、JS では className 判定してもクリック可能に見える。
+- [tip] クリック不可要素は `cursor: default; pointer-events: none` で視覚的・機能的に無効化を統一する。
+- [correction] コードレビューを確認して必要なら修正してください
 - [gotcha] 同一イベント伝播内で複数リスナーが起動する場合、stopPropagation では次のリスナーは実行される — stopImmediatePropagation で完全遮断が必須。
 - [pattern] クリック無効状態は CSS (pointer-events: none; cursor: default) で表現 — JS の条件判定より宣言的かつ確実。
 - [tip] イベント処理のコメントは「何をするか」だけでなく「なぜそれが必須か」を明記 — 次のエンジニアの誤った最適化を防ぐ。
@@ -488,6 +639,16 @@
 - [gotcha] `shopify theme push` 実行時、複数ストアが紐付いている場合はテーマ ID を明示的に指定する必要がある。手元の dev 環境と本番プッシュ対象を間違えるリスク。
 
 ## 2026-04-13 22:14 | pietro-onlineshop_ver01
+
+## 2026-04-13 22:02 | teras-taya [ai]
+
+- 作業: トップページのメインビジュアルに使用する新しいカスタムセクションを作成してください。
+- 完了: 2ファイルを作成しました。
+- [pattern] Prestige テーマで新規セクション実装時は、外部ライブラリより内蔵 Web Component（slideshow-carousel など）を活用する方が保守性が高い
+- [pattern] vw + gap で PC/SP の異なるレイアウト（1.5 枚表示 vs 全幅など）を CSS のみで効率的に実装できる
+- [gotcha] 第三者テーマ（Prestige）の既存構造・命名規則・アーキテクチャを破らず、スキーマ追記も既存グループに統合する
+- [pattern] Prestige テーマは Swiper 不要、独自の `slideshow-carousel` Web Component を使用。新しいスライダー実装時は既存テーマのコンポーネント構造を確認してから共通化すべき。
+- [gotcha] `shopify theme push` 実行時、複数ストアが紐付いている場合はテーマ ID を明示的に指定する必要がある。手元の dev 環境と本番プッシュ対象を間違えるリスク。
 
 ## 2026-04-13 22:14 | pietro-onlineshop_ver01 [ai]
 - [gotcha] `stopImmediatePropagation()` は同一リスナーレベルの兄弟リスナーの伝播を止める。`stopPropagation()` では Discount Deck の `handleOutsideClick` には効かない（親子関係ではないため）
@@ -804,6 +965,76 @@
 - 完了: - コミット: `style: NEWSセクションの上下余白を縮小（section-vertical-spacing-override: 3rem）`
 
 ## 2026-04-15 22:57 | teras-taya [ai]
+## 2026-04-15 22:57 | teras-taya [ai]
+
+- 問題1の根本原因確定: `nextIndexFor(realCount + 1)` 内で:
+- [correction] メインビジュアルスライダーの挙動を修正してください
+- [gotcha] スクロールカルーセルで `instantJump()` を副作用で呼びつつ戻り値を返し、呼び出し元で再度 `select()` すると非同期競合が発生。副作用と値の返却を同時にしない。
+- [pattern] スクロール完了後のロジック（次のスライドへの遷移など）は `scrollend` イベント後にシーケンシャルで実行する。非同期と同期の処理順序を明確に分ける。
+- [gotcha] `scroll-snap` の snap point と `overflow: hidden` の clip 領域を組み合わせるときは、末端スライドでのクローン peek が意図通り表示されるか CSS と JS の snap 設定を一貫させて検証が必須。
+- [pattern] 2点修正しました:
+- [gotcha] 関数内の副作用（instantJump）と呼び出し元の処理（select）が重なると、非同期スクロール完了前に次の命令が実行され、タイミング問題でスピード異常が発生する
+- [pattern] スライダーの複数ステップ制御は、ヘルパー関数を純粋（インデックス計算のみ）にして、イベントハンドラ側でシーケンシャル処理（scrollend待機後に次のselect）する
+- [tip] carouselのclone peek見えない問題は、clone遷移の完了漏れが原因の場合が多い。非同期処理のタイミングが正しいか確認する
+- [pattern] mainブランチで作業していたためPRは不要な状態です。pull → rebase → pushが完了しました。
+- [pattern] - `git pull --rebase`: remote mainの1コミットをrebaseで取り込み
+- 完了: 完了しました。`ca152d3`
+- 完了: - コミット: `ca152d3` (scroll-carousel非依存の再実装)
+- [gotcha] カルーセルで非同期の scrollTo と同期的な距離計算が混在すると、scrollLeft がまだ更新中の状態で次の移動距離が計算され、速度がおかしく見える
+- [gotcha] 複数の似た操作ロジック（nextIndexFor/prevIndexFor/autoplay advance）がある場合、同じバグが各所に潜んでないか確認。1箇所の修正だけでは不完全。
+- 2. ループジャンプ後の `data-instant` 残留: `_setPos(idx, true)` の後、必ず rAF で `removeAttribute` する
+- - [gotcha] Custom Element の `disconnectedCallback` でタイマー（`clearTimeout`）をクリアしないとメモリリーク。`_autoR` などの非同期処理は必ずクリーンアップ
+- [gotcha] Custom Element の `disconnectedCallback` でタイマー（`clearTimeout`）をクリアしないとメモリリーク。`_autoR` などの非同期処理は必ずクリーンアップ
+- [pattern] `pointermove` など高頻度イベント内で `getComputedStyle`/`offsetWidth` を呼ぶな。イベント開始時に1回計算してキャッシュし再利用
+- [gotcha] ドラッグUI の終了時に `_jumpTo()` → アニメーションすると視覚的ジャンプが見える。状態のみ更新し、アニメーション位置は現在値から継続させる
+- [correction] コードレビューを確認してクリティカル部分を修正してください
+- [pattern] `pointermove` など高頻度イベント内の重い計算（`getComputedStyle`等）は、`pointerdown` など起点イベントで1度だけ実行・キャッシュし、高頻度リスナーではキャッシュ値を使用。レイアウトスラッシング防止。
+- [pattern] `generation` カウンターで古い `done()`/`transitionend` リスナーを無効化。複数アニメーション割り込み時の状態競合解決の常套手段
+- [gotcha] ドラッグUI終了時に「目標位置へジャンプ」→「アニメーション」する手順は視覚的ジャンプを招く。リリース位置のスナップショット保持 → そこからアニメーション開始すべき
+- [pattern] `generation` カウンター使用で非同期コールバック（`transitionend` など）の陳腐化を防止。複数のアニメーション状態が競合する場合に有効
+- [gotcha] Web Components で DOM 再接続時にイベントリスナーが二重登録される。connectedCallback 先頭でガード（_bound フラグ等）を置く。
+- [gotcha] `transitionend` のバブリング対策は `e.target === this._track` チェック必須。子要素イベントが親処理に誤発火する。
+- [gotcha] 同一スライド呼び出しで `transitionend` 発火しない → `force` パラメーターで強制実行。transition なしだと `_busy` ロック解放されず。
+- [pattern] AbortController でリスナー一括管理：disconnect/reconnect 時の二重登録リスク。signal abort() で全リスナー削除が確実。
+- 作業: https://github.com/CIN-GROUP-EC/teras-taya/pull/4
+- 完了: - A) このPRをそのままレビュー・マージ対応（`/gemini review` コメント投稿など）
+- [correction] - B) 上記の潜在的な問題を修正してから完成させる
+- [correction] 同じ行番号で内容が違う。ファイルに複数の `when 'vendor'` ブロックがあるか確認します。
+- [gotcha] Shopifyテーマ開発でPR引き継ぎ時は、現在のブランチと作業ディレクトリを確認すること。複数の機能ブランチがあると誤った場所で作業する可能性がある。
+- [gotcha] ローカルファイルとリモートコミット内容が乖離することがある。行番号が同じでも内容が違う場合は`git diff HEAD`で確認が必須。
+- [pattern] Liquidのメタオブジェクト参照処理は「型定義確認→参照値のnullチェック→`.title`が空時のフォールバック処理」の3段階で設計すること。
+- 作業: https://github.com/CIN-GROUP-EC/teras-taya/pull/3
+- 完了: プッシュ済み（commit `95df368`）。ファイルがまた main に切り替わっていますが PR ブランチへの push は完了しています。
+- [gotcha] 注意: メタフィールドが未設定の商品では何も表示されません。`custom.category` も未設定の場合はカテゴリーテキストが省略されます。
+- [gotcha] Shopify テーマ開発で settings_data.json が diff に含まれることがある。コミット前に確認し、不要な場合は unstage すること。
+- 確認事項（⚠️）
+- [gotcha] Shopify theme の `settings_data.json` は自動同期でコミット差分に含まれやすく、マージ時に `main` と競合。メタフィールド設定追加時は特に注意し、必要に応じて `git checkout main -- config/settings_data.json` で除外。
+- [gotcha] `shopify--discovery--product_recommendation.complementary_products` メタフィールドには当該商品自体が含まれる可能性がある。ループ内で商品 ID を比較してスキップ処理を実装しないと二重表示が発生。
+- [pattern] Shopify メタフィールド実装時は、メタフィールド仕様（データ内容の重複・現在値の包含など）を実装前に確認。設計段階での仕様理解が後の修正コストを大幅削減。
+- [pattern] 修正しました。
+- 作業: 学習ログ抽出システムです。以下のClaude Codeセッションから、将来同様の問題で悩んだ時に役立つ学びを抽出してください。
+- 完了: - [pattern] Shopify theme で `settings_data.json` は自動同期により変更される。PR作成時は事前に確認し、必要に応じてマージ時に `main` と同期させる手順を用意。
+- [gotcha] Shopifyの `complementary_products` メタフィールドに当該商品自身が含まれる場合がある。ループ内で `product.id` との重複チェックでスキップ必須。
+- [pattern] Shopify theme で `settings_data.json` は自動同期により変更される。PR作成時は事前に確認し、必要に応じてマージ時に `main` と同期させる手順を用意。
+- [tip] メタフィールドデータをテンプレートで使う前に、バリデーション・フィルタリングステップを入れるとデータ品質の問題に強くなる。
+- 作業: 商品メタフィールド
+- 完了: 修正しました。
+- [gotcha] Shopifyメタフィールド（List of products）には対象商品自体が含まれていることがある — ループ内で`product.id`との一致判定を入れてスキップ必須
+- [pattern] 複数カード要素の行揃えにはCSS subgridが有効 — 画像・テキスト・価格などの高さを自動統一できる
+- [tip] 配列型メタフィールドの複数値を表示するなら`・`区切り結合で見栄え向上
+- [gotcha] Shopifyテーマの `settings_data.json` は自動同期される。PR差分に含まれると競合リスクがあるため、マージ前に `main` と同期する処理が必要。
+- [pattern] メタフィールドに自身のIDが含まれる構造では、ループ内で `id` 比較してスキップする処理を必ず追加。2重表示バグの原因になりやすい。
+- [tip] 複数カード内の要素が可変行数（カテゴリーテキスト2行など）の場合、CSS subgrid で親グリッドの行を共有するとすべてのカードで要素の横位置が自動で揃う。
+- [gotcha] Shopify で subgrid 使用時、カスタムフィールド未設定なら `<span>` が空になり行が消える。常時レンダリング＋`&nbsp;` で行確保。
+- [pattern] メタフィールドに自身が含まれる場合、ループ内で ID 比較してスキップ。重複表示防止。
+- [gotcha] Prestige テーマのセクション余白調整は `--section-vertical-spacing-override` カスタムプロパティを使う。他の名前では効果なし。
+- [pattern] テーマの既存クラスをオーバーライドする際は、まずテーマが使用しているカスタムプロパティ名を確認してから `{%- style -%}` で上書きする。
+- - [gotcha] リモートより遅れてるブランチにpushする前に必ず `git pull` で最新化してから push する
+- [gotcha] Prestigeテーマで section-spacing 上下余白を調整するには、セクション内 `{%- style -%}` で `--section-vertical-spacing-override: Xrem` のカスタムプロパティオーバーライドを設定する必要がある
+- [pattern] 異なるブランチから特定コミットのみ現在ブランチに取り込む場合は `git cherry-pick <hash>` を使用。関連コミット複数の場合は取捨選別を慎重に行う
+- [gotcha] リモートより遅れてるブランチにpushする前に必ず `git pull` で最新化してから push する
+- 作業: blog-posts-news.liquid
+- 完了: - コミット: `style: NEWSセクションの上下余白を縮小（section-vertical-spacing-override: 3rem）`
 - [pattern] Prestige のセクション余白は `--section-vertical-spacing-override` カスタムプロパティで制御。直接 margin/padding 指定ではなくこのプロパティを上書きする。
 - [gotcha] 複数フィーチャーが混在するブランチから特定の修正のみ main に反映する場合は cherry-pick を使用。全マージすると無関係な機能が含まれるリスク。
 - [tip] Prestige ではセクション内パディングとセクション間ギャップが異なるプロパティで制御される（`--section-vertical-spacing-override` vs `section-stack-gap`）。余白調整時は両方確認が必要。
