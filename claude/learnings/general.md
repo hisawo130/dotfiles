@@ -634,3 +634,8 @@
 - [gotcha] ドラッグUI終了時に「目標位置へジャンプ」→「アニメーション」する手順は視覚的ジャンプを招く。リリース位置のスナップショット保持 → そこからアニメーション開始すべき
 - [pattern] `pointermove` など高頻度ハンドラーでの `getComputedStyle`/`offsetWidth` 計算はドラッグ開始時に1回キャッシュ。以降ループではキャッシュ値使用でレイアウトスラッシング防止
 - [pattern] アニメーションコールバック（`done()` 等）の陳腐化は generation カウンター（シンプルなカウント変数）で防止。`clearTimeout` では enqueue 済みコールバック排除不可
+
+## 2026-04-15 17:56 | teras-taya [ai]
+- [pattern] `generation` カウンター使用で非同期コールバック（`transitionend` など）の陳腐化を防止。複数のアニメーション状態が競合する場合に有効
+- [gotcha] `pointermove` イベントハンドラで毎回 `getComputedStyle`/`offsetWidth` を読むとレイアウトスラッシング。ドラッグ開始時にキャッシュして、ムーブハンドラはキャッシュ値のみ使用
+- [pattern] `ResizeObserver` でレイアウト寸法を一度だけ計算・キャッシュし、座標計算関数を DOM 読み取りゼロの pure function に — フレーム内で複数回呼ばれる場合に効果的
