@@ -669,3 +669,8 @@
 - [gotcha] DOM 再接続時にイベントリスナーが二重登録される — AbortController で listeners を一括管理し、disconnectedCallback で abort()・フラグリセットで確実に cleanup 必須
 - [pattern] 非同期 complete callbacks（transitionend 等）では generation カウンターで古い世代をフィルタ。新操作開始時に increment し callback 内で generation 比較
 - [gotcha] CSS transition の transitionend は「値が実際に変わる場合のみ」発火。同一スライドへの _slideTo() は no-op ガード（現在値 == 目標値なら return）で complete ハンドラーの誤発火を防止必須
+
+## 2026-04-15 18:48 | teras-taya [ai]
+- [pattern] `AbortController` でイベントリスナーを一括管理。`disconnectedCallback` で `abort()` + `_bound=false` 済みで reconnect 時の二重登録を防止。
+- [gotcha] `transitionend` のバブリング対策は `e.target === this._track` チェック必須。子要素イベントが親処理に誤発火する。
+- [gotcha] 同一スライド呼び出しで `transitionend` 発火しない → `force` パラメーターで強制実行。transition なしだと `_busy` ロック解放されず。
