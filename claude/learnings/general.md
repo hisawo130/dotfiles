@@ -591,3 +591,8 @@
 - [tip] Infinite carousel で末端スライドのclone peekが見えない場合、`scroll-snap-align: center` がcloneまで機能してるか、`overflow: hidden` でcarousel外のcloneがクリップされてないか、両方確認する必要がある
 
 ## 2026-04-15 16:47 | teras-taya
+
+## 2026-04-15 16:47 | teras-taya [ai]
+- [gotcha] カルーセル非同期スクロール操作で、副作用関数（instantJump）と呼び出し元のselectが重複すると競合状態が発生。「即座スクロール → smoothスクロール」の順序なのに、前の操作完了前に次が始まるとタイミング問題が起きる
+- [pattern] スクロール操作はイベント待機（scrollend/carousel:change）で前の操作完了を確認してからシーケンシャル実行。副作用と明示的な制御を分離し、ハンドラレベルで順序を管理する
+- [tip] カルーセル最終スライドのclone非表示問題：CSS設計は正しくてもJS側の遷移フロー（instantJump→selectの順序，重複実行）が完了していないと見えない。まずはJS側の操作流を確認する
