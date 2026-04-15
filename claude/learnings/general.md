@@ -619,3 +619,8 @@
 - [gotcha] ドラッグUI で位置確定後にアニメーション再開する際、確定位置から開始すると視覚的にジャンプして見える。ユーザーが離した位置からスムーズに開始すべき（`jumpTo` → `slideTo` の順序は誤り）。
 - [pattern] `pointermove` など高頻度イベント内の重い計算（`getComputedStyle`等）は、`pointerdown` など起点イベントで1度だけ実行・キャッシュし、高頻度リスナーではキャッシュ値を使用。レイアウトスラッシング防止。
 - [gotcha] Web Components の `setTimeout`/`setInterval` は必ず `disconnectedCallback` でクリア。再接続時のメモリリークと二重実行が発生。同じく `connectedCallback` 先頭にガード条件を入れてリスナー二重登録を防止。
+
+## 2026-04-15 17:48 | teras-taya [ai]
+- [pattern] `pointermove`イベント内の計算（`getComputedStyle`等）をドラッグ開始時に1回計算してキャッシュ。フレーム毎の呼び出しはレイアウトスラッシング原因
+- [pattern] `generation` カウンターで古い `done()`/`transitionend` リスナーを無効化。複数アニメーション割り込み時の状態競合解決の常套手段
+- [gotcha] `connectedCallback`/`disconnectedCallback` ペア実装時、`clearTimeout`・リスナー登録ガードの漏れはメモリリーク。DOM 再接続で二重登録も発生しやすい
