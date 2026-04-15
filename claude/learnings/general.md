@@ -711,3 +711,5 @@
 - [pattern] AbortController で イベントリスナー・タイマー・Observer を一括管理 → `disconnectedCallback` で `abort()` するだけで全登録が自動クリア。重複登録・メモリリークを確実に防ぐ
 - [gotcha] `pointermove` など高頻度イベント内で `getComputedStyle` / `offsetWidth` を呼ぶとレイアウトスラッシング → 値をキャッシュ変数に保持し、イベント発生時は1回のみ更新、後続処理ではキャッシュ値を使用
 - [gotcha] 同じスライド位置への `transitionend` が発火しない → `_busy` フラグが永遠にロック。`force` パラメーターや skip ガード条件を用意して意図しないリセット時に確実に次操作を許可すべし
+
+## 2026-04-15 19:07 | teras-taya
