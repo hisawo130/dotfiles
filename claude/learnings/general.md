@@ -535,3 +535,6 @@
 ## 2026-04-15 14:06 | teras-taya
 - 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/teras-taya/sections/cbs-mainvisual.liquid in the IDE. This 
 - 完了: 完了しました。`ca152d3`
+
+## 2026-04-15 14:06 | teras-taya [ai]
+- [gotcha] 非同期スクロール(instantJump)と戻り値で次のselect()を同時に実行すると、スクロール完了前に次の処理が走り位置計算が狂う。副作用と戻り値の両立設計は避けて、scrollendイベント待機後のシーケンシャル処理で競合を回避する
