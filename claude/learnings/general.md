@@ -510,3 +510,8 @@
 ## 2026-04-15 12:44 | teras-taya
 - 問題1の根本原因確定: `nextIndexFor(realCount + 1)` 内で:
 - [correction] メインビジュアルスライダーの挙動を修正してください
+
+## 2026-04-15 12:44 | teras-taya [ai]
+- [gotcha] スクロールカルーセルで `instantJump()` を副作用で呼びつつ戻り値を返し、呼び出し元で再度 `select()` すると非同期競合が発生。副作用と値の返却を同時にしない。
+- [pattern] スクロール完了後のロジック（次のスライドへの遷移など）は `scrollend` イベント後にシーケンシャルで実行する。非同期と同期の処理順序を明確に分ける。
+- [gotcha] `scroll-snap` の snap point と `overflow: hidden` の clip 領域を組み合わせるときは、末端スライドでのクローン peek が意図通り表示されるか CSS と JS の snap 設定を一貫させて検証が必須。
