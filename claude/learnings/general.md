@@ -639,3 +639,8 @@
 - [pattern] `generation` カウンター使用で非同期コールバック（`transitionend` など）の陳腐化を防止。複数のアニメーション状態が競合する場合に有効
 - [gotcha] `pointermove` イベントハンドラで毎回 `getComputedStyle`/`offsetWidth` を読むとレイアウトスラッシング。ドラッグ開始時にキャッシュして、ムーブハンドラはキャッシュ値のみ使用
 - [pattern] `ResizeObserver` でレイアウト寸法を一度だけ計算・キャッシュし、座標計算関数を DOM 読み取りゼロの pure function に — フレーム内で複数回呼ばれる場合に効果的
+
+## 2026-04-15 17:59 | teras-taya [ai]
+- [pattern] Prestige カスタムエレメント内の非同期コールバック（`transitionend` など）は generation カウンター（インクリメント ID）で陳腐化を検出し、旧コールバックを無効化する
+- [pattern] `pointermove` など頻発イベント内の `getComputedStyle()` / `offsetWidth` 読み取りは、イベント開始時に1回だけ計算してキャッシュし再利用する（レイアウトスラッシング防止）
+- [gotcha] カスタムエレメントの `disconnectedCallback` で `clearTimeout()` / `removeEventListener()` 忘れはメモリリーク。`_bound` フラグガードと併用して二重登録も防ぐ
