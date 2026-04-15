@@ -689,3 +689,7 @@
 - [gotcha] Web Component で `disconnectedCallback` にタイマーやリスナーの cleanup を漏らしやすい→AbortController で一括管理すると安全
 - [gotcha] `transitionend` はバブリングするため、複数のリスナーがあると旧アニメーションのリスナーが誤発火する→`e.target === this._track` で対象確認必須
 - [pattern] DOM読み取り（`offsetWidth`など）は毎フレーム実行するのではなく、`ResizeObserver`等で必要な時点にキャッシュして pure な計算関数で再利用する
+
+## 2026-04-15 19:01 | teras-taya
+- 作業: https://github.com/CIN-GROUP-EC/teras-taya/pull/4
+- 完了: - A) このPRをそのままレビュー・マージ対応（`/gemini review` コメント投稿など）
