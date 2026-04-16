@@ -20,8 +20,6 @@
   3. 出荷実績CSVと `Name` で突き合わせて追跡番号をマージ
   4. `Line: Type = Fulfillment Line` を追加してインポート
 
-- [gotcha] `Fulfillment: Tracking Number` や `Fulfillment: Status` だけでは不十分。`Line: Type` がないと列ごと無視される。
-
 ## 2026-03-25 | P130 (顧客データ移行)
 - [gotcha] ⚠️ Matrixifyエクスポートの列名は型サフィックス付き: `Metafield: custom.customer_cd [number_integer]`（Shopify純正CSVは `Metafield: custom.customer_cd`）
 - [gotcha] 純正CSVとMatrixify CSVを混在させると列名不一致でメタフィールドが空になる
