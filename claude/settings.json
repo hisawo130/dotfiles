@@ -441,7 +441,8 @@
     "refreshInterval": 30
   },
   "enabledPlugins": {
-    "superpowers@superpowers-dev": true
+    "superpowers@superpowers-dev": true,
+    "claude-mem@thedotmack": true
   },
   "extraKnownMarketplaces": {
     "superpowers-dev": {
@@ -455,9 +456,15 @@
         "source": "github",
         "repo": "Shopify/shopify-ai-toolkit"
       }
+    },
+    "thedotmack": {
+      "source": {
+        "source": "github",
+        "repo": "thedotmack/claude-mem"
+      }
     }
   },
-  "effortLevel": "max",
+  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
   "skipAutoPermissionPrompt": true,
   "autoMode": {
