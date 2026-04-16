@@ -457,7 +457,10 @@
       }
     }
   },
+<<<<<<< HEAD
   "effortLevel": "max",
+=======
+>>>>>>> 152594a (chore: セッション終了時の自動同期)
   "skipDangerousModePermissionPrompt": true,
   "skipAutoPermissionPrompt": true,
   "autoMode": {
