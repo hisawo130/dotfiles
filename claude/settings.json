@@ -501,6 +501,20 @@
         "chrome-devtools-mcp@latest",
         "--no-usage-statistics"
       ]
+    },
+    "shopify-dev": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@shopify/dev-mcp@latest"
+      ]
+    },
+    "shopify-admin": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "shopify-mcp"
+      ]
     }
   }
 }
