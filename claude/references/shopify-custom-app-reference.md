@@ -8,6 +8,9 @@
 
 ## 📋 Recent Changelog
 
+### 2026-04-17: [Updates to Italy's Sardinian province definitions](https://changelog.shopify.com/posts/italy-s-sardinian-province-definitions-updated)
+Address validation and autocomplete APIs now reflect updated Sardinian province names and new selectable provinces for accurate geographic data.
+
 ### 2026-04-01: [Add Tags to Discounts](https://shopify.dev/changelog/add-tags-to-discounts)
 Admin API 2026-04 adds a `tags` field to all discount types, allowing merchants and apps to label, filter, and organize discounts via GraphQL mutations.
 
