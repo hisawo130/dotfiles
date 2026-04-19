@@ -86,93 +86,25 @@
 - [pattern] テーマの既存実装パターン（例：Sirene用のJS実装）を参考に、同様の構造を別機能（Sylphide）に適用する方式が有効。一度動いているパターンを流用するほうが安全。
 - [gotcha] 商品ページの条件分岐内（`if product.id == ...`）でレンダリングされるコンポーネントは、該当ページのproduct contextがないLPページでは描画されない。複数ページで共有するモーダルの条件分岐を見直す際に注意。
 
-## Recurring Patterns (updated 2026-04-17)
-- [general] gotcha — seen 185 times
-- [general] pattern — seen 150 times
-- [shopify] shopify — seen 60 times
-- [shopify] liquid — seen 26 times
-- [general] times — seen 24 times
-- [general] correction — seen 22 times
-- [general] domain — seen 21 times
-- [general] product — seen 20 times
-- [general] stopimmediatepropagation — seen 19 times
-- [general] remodal — seen 19 times
-- [shopify] theme — seen 17 times
-- [general] transitionend — seen 17 times
-- [general] disconnectedcallback — seen 17 times
-- [general] stoppropagation — seen 14 times
-- [general] target — seen 14 times
-- [general] content — seen 14 times
-- [general] fulfillment — seen 14 times
-- [general] partner — seen 14 times
-- [general] instantjump — seen 14 times
-- [general] jquery — seen 13 times
+## Recurring Patterns (updated 2026-04-19)
+- [shopify] Liquid — seen 24 times
+- [shopify] Shopify CLI — seen 6 times
+- [api] metafield — seen 5 times
 
-## Recurring Patterns (updated 2026-04-17)
-- [general] gotcha — seen 185 times
-- [general] pattern — seen 150 times
-- [shopify] shopify — seen 60 times
-- [shopify] liquid — seen 26 times
-- [general] times — seen 24 times
-- [general] correction — seen 22 times
-- [general] domain — seen 21 times
-- [general] product — seen 20 times
-- [general] stopimmediatepropagation — seen 19 times
-- [general] remodal — seen 19 times
-- [shopify] theme — seen 17 times
-- [general] transitionend — seen 17 times
-- [general] disconnectedcallback — seen 17 times
-- [general] stoppropagation — seen 14 times
-- [general] target — seen 14 times
-- [general] content — seen 14 times
-- [general] fulfillment — seen 14 times
-- [general] partner — seen 14 times
-- [general] instantjump — seen 14 times
-- [general] jquery — seen 13 times
+## Recurring Patterns (updated 2026-04-19)
+- [shopify] Liquid — seen 24 times
+- [shopify] Shopify CLI — seen 6 times
+- [api] metafield — seen 5 times
 
-## Recurring Patterns (updated 2026-04-17)
-- [general] gotcha — seen 185 times
-- [general] pattern — seen 150 times
-- [shopify] shopify — seen 60 times
-- [shopify] liquid — seen 26 times
-- [general] times — seen 24 times
-- [general] correction — seen 22 times
-- [general] domain — seen 21 times
-- [general] product — seen 20 times
-- [general] stopimmediatepropagation — seen 19 times
-- [general] remodal — seen 19 times
-- [shopify] theme — seen 17 times
-- [general] transitionend — seen 17 times
-- [general] disconnectedcallback — seen 17 times
-- [general] stoppropagation — seen 14 times
-- [general] target — seen 14 times
-- [general] content — seen 14 times
-- [general] fulfillment — seen 14 times
-- [general] partner — seen 14 times
-- [general] instantjump — seen 14 times
-- [general] jquery — seen 13 times
+## Recurring Patterns (updated 2026-04-19)
+- [shopify] Liquid — seen 24 times
+- [shopify] Shopify CLI — seen 6 times
+- [api] metafield — seen 5 times
 
-## Recurring Patterns (updated 2026-04-17)
-- [general] gotcha — seen 185 times
-- [general] pattern — seen 150 times
-- [shopify] shopify — seen 60 times
-- [shopify] liquid — seen 26 times
-- [general] times — seen 24 times
-- [general] correction — seen 22 times
-- [general] domain — seen 21 times
-- [general] product — seen 20 times
-- [general] stopimmediatepropagation — seen 19 times
-- [general] remodal — seen 19 times
-- [shopify] theme — seen 17 times
-- [general] transitionend — seen 17 times
-- [general] disconnectedcallback — seen 17 times
-- [general] stoppropagation — seen 14 times
-- [general] target — seen 14 times
-- [general] content — seen 14 times
-- [general] fulfillment — seen 14 times
-- [general] partner — seen 14 times
-- [general] instantjump — seen 14 times
-- [general] jquery — seen 13 times
+## Recurring Patterns (updated 2026-04-19)
+- [shopify] Liquid — seen 24 times
+- [shopify] Shopify CLI — seen 6 times
+- [api] metafield — seen 5 times
 
 ## 2026-04-06 | dotfiles [ai]
 
