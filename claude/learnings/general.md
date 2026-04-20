@@ -105,6 +105,19 @@
 - [shopify] Liquid — seen 24 times
 - [shopify] Shopify CLI — seen 6 times
 - [api] metafield — seen 5 times
+## Recurring Patterns (updated 2026-04-20)
+- [js] pointermove layout thrashing — seen 37 times
+- [js] transitionend/scrollend event — seen 28 times
+- [shopify] remodal/modal — seen 21 times
+- [js] stopImmediatePropagation — seen 21 times
+- [shopify] page.content modal — seen 21 times
+- [js] disconnectedCallback cleanup — seen 18 times
+- [js] instantJump carousel — seen 15 times
+- [shopify] Shopify deploy Partner Dashboard — seen 15 times
+- [js] generation counter — seen 11 times
+- [js] AbortController — seen 10 times
+- [shopify] metafield import — seen 8 times
+
 
 ## 2026-04-06 | dotfiles [ai]
 
@@ -435,7 +448,6 @@
 - [tip] CSS で`cursor`と`pointer-events`を同時に制御 — 見た目（カーソル）と実装（クリック動作）の矛盾は UX 混乱の源。`pointer-events: none`で根本的にクリック無効化
 
 ## 2026-04-13 21:05 | pietro-onlineshop_ver01
-- PR #32 に `/gemini review` を投稿しました。次回以降、レビュー修正のプッシュ後は必ず `gh pr comment` で再レビューをトリガーします。
 - [correction] PR #32 に `/gemini review` を投稿しました。次回以降、レビュー修正のプッシュ後は必ず `gh pr comment` で再レビューをトリガーします。
 
 ## 2026-04-13 21:05 | pietro-onlineshop_ver01 [ai]
@@ -524,7 +536,6 @@
 - [pattern] 非同期スクロール後の次操作は `scrollend` イベント待ちで順序を保証 → instant移動と smooth移動の混在時に必須
 
 ## 2026-04-15 14:06 | teras-taya
-- [pattern] 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/teras-taya/sections/cbs-mainvisual.liquid in the IDE. This 
 - 完了: 完了しました。`ca152d3`
 
 ## 2026-04-15 14:06 | teras-taya [ai]
@@ -570,7 +581,7 @@
 - [gotcha] 複数の似た操作ロジック（nextIndexFor/prevIndexFor/autoplay advance）がある場合、同じバグが各所に潜んでないか確認。1箇所の修正だけでは不完全。
 
 ## 2026-04-15 16:44 | teras-taya
-- 2. ループジャンプ後の `data-instant` 残留: `_setPos(idx, true)` の後、必ず rAF で `removeAttribute` する
+- [gotcha] 2. ループジャンプ後の `data-instant` 残留: `_setPos(idx, true)` の後、必ず rAF で `removeAttribute` する
 
 ## 2026-04-15 16:44 | teras-taya [ai]
 - [gotcha] scroll-carouselで `scrollTo("auto")` は非同期なのに直後に `select()` で `scrollTo("smooth")` を呼ぶと、scrollLeftが更新される前に次の距離計算が走って速度がズレて見える — 非同期完了を待つか、シーケンシャルに処理すべき
@@ -718,8 +729,6 @@
 ## 2026-04-15 21:38 | teras-taya
 - 重要なファイルの構造を確認します。
 
-## 2026-04-15 21:40 | teras-taya
-- 注意: メタフィールドが未設定の商品では何も表示されません。`custom.category` も未設定の場合はカテゴリーテキストが省略されます。
 
 ## 2026-04-15 21:40 | teras-taya [ai]
 - [gotcha] Shopify テーマ開発で settings_data.json が diff に含まれることがある。コミット前に確認し、不要な場合は unstage すること。
