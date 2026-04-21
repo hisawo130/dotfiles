@@ -42,5 +42,23 @@ else
   PULL_MSG="⚠️ git pull失敗: $(echo "$PULL_OUT" | head -c 120)"
 fi
 
-jq -n --arg m "🛍️ Shopify Theme | ${AUTH_MSG} | ${PULL_MSG}" '{"systemMessage": $m}'
+# .envrc の SHOPIFY_FLAG_STORE チェック
+STORE_MSG=""
+STORE_CONTEXT=""
+if [ -f "$CWD/.envrc" ] && grep -q 'SHOPIFY_FLAG_STORE' "$CWD/.envrc" 2>/dev/null; then
+  STORE=$(grep 'SHOPIFY_FLAG_STORE' "$CWD/.envrc" | head -1 | sed 's/.*=//;s/"//g;s/'"'"'//g;s/ *$//')
+  STORE_MSG="🏪 store: ${STORE}"
+else
+  STORE_MSG="⚠️ SHOPIFY_FLAG_STORE未設定"
+  STORE_CONTEXT="このShopifyプロジェクト($CWD)には .envrc の SHOPIFY_FLAG_STORE が設定されていません。セッション開始時にユーザーに日本語で「このプロジェクトのShopifyストアドメイン（xxx.myshopify.com）を教えてください。.envrcに設定します」と質問してください。"
+fi
+
+SYS_MSG="🛍️ Shopify Theme | ${AUTH_MSG} | ${PULL_MSG} | ${STORE_MSG}"
+
+if [ -n "$STORE_CONTEXT" ]; then
+  jq -n --arg m "$SYS_MSG" --arg c "$STORE_CONTEXT" \
+    '{"systemMessage": $m, "hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": $c}}'
+else
+  jq -n --arg m "$SYS_MSG" '{"systemMessage": $m}'
+fi
 exit 0

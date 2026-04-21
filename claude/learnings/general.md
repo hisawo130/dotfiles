@@ -99,6 +99,39 @@
 - [shopify] complementary_products metafield may include the current product; add product.id skip check inside loop — seen 3+ times
 - [shopify] Prestige theme section spacing: set --section-vertical-spacing-override CSS custom property, not margin/padding directly — seen 3+ times
 - [shopify] OS2.0 Liquid metafield: .value accessor not needed; customer.metafields['ns']['key'] already returns the value — seen 3+ times
+## Recurring Patterns (updated 2026-04-19)
+- [shopify] Liquid — seen 24 times
+- [shopify] Shopify CLI — seen 6 times
+- [api] metafield — seen 5 times
+
+## Recurring Patterns (updated 2026-04-19)
+- [shopify] Liquid — seen 24 times
+- [shopify] Shopify CLI — seen 6 times
+- [api] metafield — seen 5 times
+
+## Recurring Patterns (updated 2026-04-19)
+- [shopify] Liquid — seen 24 times
+- [shopify] Shopify CLI — seen 6 times
+- [api] metafield — seen 5 times
+
+## Recurring Patterns (updated 2026-04-19)
+- [shopify] Liquid — seen 24 times
+- [shopify] Shopify CLI — seen 6 times
+- [api] metafield — seen 5 times
+## Recurring Patterns (updated 2026-04-20)
+- [js] pointermove layout thrashing — seen 37 times
+- [js] transitionend/scrollend event — seen 28 times
+- [shopify] remodal/modal — seen 21 times
+- [js] stopImmediatePropagation — seen 21 times
+- [shopify] page.content modal — seen 21 times
+- [js] disconnectedCallback cleanup — seen 18 times
+- [js] instantJump carousel — seen 15 times
+- [shopify] Shopify deploy Partner Dashboard — seen 15 times
+- [js] generation counter — seen 11 times
+- [js] AbortController — seen 10 times
+- [shopify] metafield import — seen 8 times
+
+
 ## 2026-04-06 | dotfiles [ai]
 
 - [gotcha] Chrome DevTools MCPはデフォルトで使用統計をGoogleに送信（`--no-usage-statistics`で無効化必須）
@@ -400,6 +433,8 @@
 - [pattern] Liquid のサーバーサイド条件判定で HTML 要素のクラス・属性を出し分け — UI 状態に応じてクラスを変えることで JS 側の追加条件判定を不要にでき、ブランチロジックをテンプレートレベルで完結できる
 - [tip] CSS で`cursor`と`pointer-events`を同時に制御 — 見た目（カーソル）と実装（クリック動作）の矛盾は UX 混乱の源。`pointer-events: none`で根本的にクリック無効化
 
+## 2026-04-13 21:05 | pietro-onlineshop_ver01
+- [correction] PR #32 に `/gemini review` を投稿しました。次回以降、レビュー修正のプッシュ後は必ず `gh pr comment` で再レビューをトリガーします。
 
 ## 2026-04-13 21:05 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQuery delegated event と addEventListener の競合時は stopPropagation ではなく stopImmediatePropagation を使う（同一 bubble phase での複数リスナーでは前者では遮断不可）
@@ -473,6 +508,8 @@
 - [gotcha] スクロール操作の副作用を関数内に持たせると、呼び出し側での二重実行になりやすい → 副作用は避け、呼び出し元（イベントハンドラ）で制御すべき
 - [pattern] 非同期スクロール後の次操作は `scrollend` イベント待ちで順序を保証 → instant移動と smooth移動の混在時に必須
 
+## 2026-04-15 14:06 | teras-taya
+- 完了: 完了しました。`ca152d3`
 
 ## 2026-04-15 14:06 | teras-taya [ai]
 - [gotcha] 非同期スクロール(instantJump)と戻り値で次のselect()を同時に実行すると、スクロール完了前に次の処理が走り位置計算が狂う。副作用と戻り値の両立設計は避けて、scrollendイベント待機後のシーケンシャル処理で競合を回避する
@@ -513,7 +550,7 @@
 - [gotcha] 複数の似た操作ロジック（nextIndexFor/prevIndexFor/autoplay advance）がある場合、同じバグが各所に潜んでないか確認。1箇所の修正だけでは不完全。
 
 ## 2026-04-15 16:44 | teras-taya
-- 2. ループジャンプ後の `data-instant` 残留: `_setPos(idx, true)` の後、必ず rAF で `removeAttribute` する
+- [gotcha] 2. ループジャンプ後の `data-instant` 残留: `_setPos(idx, true)` の後、必ず rAF で `removeAttribute` する
 
 ## 2026-04-15 16:44 | teras-taya [ai]
 - [gotcha] scroll-carouselで `scrollTo("auto")` は非同期なのに直後に `select()` で `scrollTo("smooth")` を呼ぶと、scrollLeftが更新される前に次の距離計算が走って速度がズレて見える — 非同期完了を待つか、シーケンシャルに処理すべき
