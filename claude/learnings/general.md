@@ -86,94 +86,19 @@
 - [pattern] テーマの既存実装パターン（例：Sirene用のJS実装）を参考に、同様の構造を別機能（Sylphide）に適用する方式が有効。一度動いているパターンを流用するほうが安全。
 - [gotcha] 商品ページの条件分岐内（`if product.id == ...`）でレンダリングされるコンポーネントは、該当ページのproduct contextがないLPページでは描画されない。複数ページで共有するモーダルの条件分岐を見直す際に注意。
 
-## Recurring Patterns (updated 2026-04-17)
-- [general] gotcha — seen 185 times
-- [general] pattern — seen 150 times
-- [shopify] shopify — seen 60 times
-- [shopify] liquid — seen 26 times
-- [general] times — seen 24 times
-- [general] correction — seen 22 times
-- [general] domain — seen 21 times
-- [general] product — seen 20 times
-- [general] stopimmediatepropagation — seen 19 times
-- [general] remodal — seen 19 times
-- [shopify] theme — seen 17 times
-- [general] transitionend — seen 17 times
-- [general] disconnectedcallback — seen 17 times
-- [general] stoppropagation — seen 14 times
-- [general] target — seen 14 times
-- [general] content — seen 14 times
-- [general] fulfillment — seen 14 times
-- [general] partner — seen 14 times
-- [general] instantjump — seen 14 times
-- [general] jquery — seen 13 times
-
-## Recurring Patterns (updated 2026-04-17)
-- [general] gotcha — seen 185 times
-- [general] pattern — seen 150 times
-- [shopify] shopify — seen 60 times
-- [shopify] liquid — seen 26 times
-- [general] times — seen 24 times
-- [general] correction — seen 22 times
-- [general] domain — seen 21 times
-- [general] product — seen 20 times
-- [general] stopimmediatepropagation — seen 19 times
-- [general] remodal — seen 19 times
-- [shopify] theme — seen 17 times
-- [general] transitionend — seen 17 times
-- [general] disconnectedcallback — seen 17 times
-- [general] stoppropagation — seen 14 times
-- [general] target — seen 14 times
-- [general] content — seen 14 times
-- [general] fulfillment — seen 14 times
-- [general] partner — seen 14 times
-- [general] instantjump — seen 14 times
-- [general] jquery — seen 13 times
-
-## Recurring Patterns (updated 2026-04-17)
-- [general] gotcha — seen 185 times
-- [general] pattern — seen 150 times
-- [shopify] shopify — seen 60 times
-- [shopify] liquid — seen 26 times
-- [general] times — seen 24 times
-- [general] correction — seen 22 times
-- [general] domain — seen 21 times
-- [general] product — seen 20 times
-- [general] stopimmediatepropagation — seen 19 times
-- [general] remodal — seen 19 times
-- [shopify] theme — seen 17 times
-- [general] transitionend — seen 17 times
-- [general] disconnectedcallback — seen 17 times
-- [general] stoppropagation — seen 14 times
-- [general] target — seen 14 times
-- [general] content — seen 14 times
-- [general] fulfillment — seen 14 times
-- [general] partner — seen 14 times
-- [general] instantjump — seen 14 times
-- [general] jquery — seen 13 times
-
-## Recurring Patterns (updated 2026-04-17)
-- [general] gotcha — seen 185 times
-- [general] pattern — seen 150 times
-- [shopify] shopify — seen 60 times
-- [shopify] liquid — seen 26 times
-- [general] times — seen 24 times
-- [general] correction — seen 22 times
-- [general] domain — seen 21 times
-- [general] product — seen 20 times
-- [general] stopimmediatepropagation — seen 19 times
-- [general] remodal — seen 19 times
-- [shopify] theme — seen 17 times
-- [general] transitionend — seen 17 times
-- [general] disconnectedcallback — seen 17 times
-- [general] stoppropagation — seen 14 times
-- [general] target — seen 14 times
-- [general] content — seen 14 times
-- [general] fulfillment — seen 14 times
-- [general] partner — seen 14 times
-- [general] instantjump — seen 14 times
-- [general] jquery — seen 13 times
-
+## Recurring Patterns (updated 2026-04-21)
+- [javascript] stopImmediatePropagation required (not stopPropagation) when jQuery delegated + document-level listeners coexist — seen 12+ times
+- [javascript] Web Component disconnectedCallback must clear all timers and listeners; AbortController simplifies bulk cleanup — seen 10+ times
+- [javascript] async scroll side effects (instantJump) must be separated from return values to prevent scrollend race conditions — seen 9+ times
+- [javascript] High-frequency event handlers (pointermove): cache getComputedStyle/offsetWidth at drag-start, reuse cached value — seen 8+ times
+- [javascript] transitionend: use generation counter to detect and skip stale callbacks from superseded animations — seen 7+ times
+- [shopify] Shopify page.content modal HTML is invisible to Liquid templates; verify data-remodal-id via browser DevTools — seen 7+ times
+- [shopify] Shopify app deploy: client_id in toml must match an app in the currently-logged-in Partner organization — seen 6+ times
+- [shopify] webpack/Sass build failure can delete entire CSS output file; restore via git show before adding new styles — seen 5+ times
+- [shopify] settings_data.json is auto-synced; always unstage before committing to avoid main-branch conflicts — seen 4+ times
+- [shopify] complementary_products metafield may include the current product; add product.id skip check inside loop — seen 3+ times
+- [shopify] Prestige theme section spacing: set --section-vertical-spacing-override CSS custom property, not margin/padding directly — seen 3+ times
+- [shopify] OS2.0 Liquid metafield: .value accessor not needed; customer.metafields['ns']['key'] already returns the value — seen 3+ times
 ## 2026-04-06 | dotfiles [ai]
 
 - [gotcha] Chrome DevTools MCPはデフォルトで使用統計をGoogleに送信（`--no-usage-statistics`で無効化必須）
@@ -191,8 +116,6 @@
 - [gotcha] 年齢確認（アルコール飲料対応）の法的責任と実装方法（本人確認・配送時確認）を事前に確認。提携企業の責任分担も明確化すべき。
 
 ## 2026-04-10 12:23 | Pinup-Closet_ver01
-- 作業: 以下ページのマイサイズを見つけるの挙動が変です。本当はチャート式になっているはずなので確認してください。
-- 完了: 追加しました。ただし、これはJSのオーバーライドです。**`modal-sylphide` のHTMLモーダル本体がpage.content（Shopify管理画面のページ本文）に存在しているか**が前提になります。
 - [correction] 具体的には条件を変更します。修正してよいですか？
 
 ## 2026-04-10 13:30 | P130
@@ -210,12 +133,7 @@
 - [tip] 酒類キャンペーンは年齢確認法務・3PL酒類対応可否・役割分担を受注前に全て確認する必要がある
 
 
-## 2026-04-10 13:58 | Pinup-Closet_ver01
-- 完了: `550adc4` をプッシュしました。[layout/theme.liquid:817](layout/theme.liquid#L817) の開くボタンクリック時に `.js-size-number.val('')` を追加しました。
 
-## 2026-04-10 14:06 | pietro-onlineshop_ver01
-- [correction] ShopifyのリダイレクトはこのURL形式だとだめ？
-- [correction] &以降がだめ？
 
 ## 2026-04-10 14:06 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyのリダイレクト機能はクエリパラメータをマッチング条件に使えない。パス部分のみが対象で、`&cc=CA057` をつけると完全一致しない。
@@ -261,9 +179,6 @@
 - [pattern] Shopify Matrixifyのメタフィールドインポートでは、顧客IDがなくてもEmailで顧客を特定できる。ID追加は後から必要に応じて対応
 - [tip] 顧客メタフィールドのMatrixifyフォーマット: 「ID, Email, Command, Metafield: custom.XXX [型]」で値を指定
 
-## 2026-04-10 16:40 | pietro-onlineshop_ver01
-- 作業: matrixifyのインポートファイル作成をお願いします
-- [pattern] 完了: サンプルファイルにはIDがありましたが、ソースデータにはIDがないためEmail照合で作成しました。MatrixifyはEmailでも顧客を特定できます。インポート時に問題があればIDを追加する方法に切り替えます。
 
 ## 2026-04-10 16:40 | pietro-onlineshop_ver01 [ai]
 - [pattern] Shopify顧客メタフィールド更新では、Email照合でMatrixifyが顧客を識別可能 — IDを生成する手間を削減できる
@@ -338,10 +253,8 @@
 - [gotcha] Shopifyアプリのtomlファイルのclient_idと実際のPartner Dashboard上のアプリIDが一致していないと、デプロイ時に「resource not found」エラーが出る
 
 ## 2026-04-13 19:15 | pietro-app
-- 重要：確認してから進めてください
 
-## 2026-04-13 19:15 | pietro-app
-- [gotcha] - [pattern] 本番デプロイ実行時はエクステンション削除確認が出る場合がある。「Removing extensions can permanently delete app user data」と表示されたら、意図しない削除がないか必ず確認してから進める
+- [gotcha] 本番デプロイ実行時はエクステンション削除確認が出る場合がある。「Removing extensions can permanently delete app user data」と表示されたら、意図しない削除がないか必ず確認してから進める
 
 ## 2026-04-13 19:15 | pietro-app [ai]
 
@@ -349,8 +262,6 @@
 - [pattern] 本番デプロイ実行時はエクステンション削除確認が出る場合がある。「Removing extensions can permanently delete app user data」と表示されたら、意図しない削除がないか必ず確認してから進める
 - [tip] Shopify Partner Dashboardのログイン状態を確認。複数アカウントがある場合は`shopify auth login`でログイン直後、正しい組織が選択されていることを確認
 
-## 2026-04-13 20:01 | SERPENTINA
-- 詳細な調査ができました。次に既存ファイルの重要な部分を直接確認します。
 
 ## 2026-04-13 20:01 | SERPENTINA [ai]
 - [gotcha] Sassビルドでファイル全削除の可能性。CSS直接追記時は git show HEAD で元内容確認→復元してから新スタイル追記を行うこと
@@ -363,7 +274,7 @@
 - [correction] 実装前に作業ブランチを先に用意してから進める。main への誤りコミットはコミット移動などの手作業を増やす。
 
 ## 2026-04-13 20:04 | SERPENTINA
-- [correction] - [gotcha] ビルドエラーでCSS成果物が消失した場合、`git show HEAD:path`で元の内容を復元してから新スタイルを追記する（上書きではなく復元→追記の二段階が重要）
+- [gotcha] ビルドエラーでCSS成果物が消失した場合、`git show HEAD:path`で元の内容を復元してから新スタイルを追記する（上書きではなく復元→追記の二段階が重要）
 
 ## 2026-04-13 20:04 | SERPENTINA [ai]
 - [gotcha] ビルドエラーでCSS成果物が消失した場合、`git show HEAD:path`で元の内容を復元してから新スタイルを追記する（上書きではなく復元→追記の二段階が重要）
@@ -380,7 +291,6 @@
 - [pattern] 重要な機能修正は初期段階で専用ブランチを切り、main へのダイレクトコミットを避ける。巻き戻し時に作業内容が保護され復旧が容易になる
 - [tip] VSCode拡張が `git reset --hard` をブロックした場合、ターミナルから直接実行で回避可能
 
-## 2026-04-13 20:07 | SERPENTINA [ai]
 
 - [gotcha] Shopifyビルドエラー後、アセットファイル（CSS等）が全削除される → git復旧後、末尾に新スタイル追記で対応
 - [gotcha] 作業ブランチ作成後も誤ってmainに直接コミット → コミット前に`git branch`で確認し、フローの習慣化が重要
@@ -391,10 +301,6 @@
 - [pattern] サードパーティスクリプト（アプリ側）がdocumentレベルでリッスンしている場合、テーマ側でイベント伝播を制御。stopImmediatePropagation()で同一イベント内の後続ハンドラを遮断。
 - [tip] ポップアップが一瞬開いて即閉じする場合、同一イベント内でopen/closeが連続実行されていないか確認。イベント伝播制御とハンドラ実行順序を疑う。
 
-## 2026-04-13 20:14 | pietro-onlineshop_ver01
-- 作業: 以下の修正をお願いしたいです。
-- [correction] 作業: 以下の修正をお願いしたいです。
-- 完了: PR を作成しました。
 
 ## 2026-04-13 20:14 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQuery delegated event と document.addEventListener() 混在時、イベント伝播順序が予測困難になり競合が発生。外部ライブラリとテーマ側のイベントハンドラが同じバブルフェーズで干渉する
@@ -403,7 +309,7 @@
 
 
 ## 2026-04-13 20:16 | pietro-onlineshop_ver01
-- [pattern] - [pattern] テーマスクリプト修正後に `shopify theme check` で差分を確認し、修正による新規エラーが無いことを立証。既存問題と新規問題を明確に分離してPR化。
+- [pattern] テーマスクリプト修正後に `shopify theme check` で差分を確認し、修正による新規エラーが無いことを立証。既存問題と新規問題を明確に分離してPR化。
 
 ## 2026-04-13 20:16 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQueryのdelegated eventと外部ライブラリのeventListener が同じバブリング内で競合する場合、`stopImmediatePropagation()` で制御が必要。`stopPropagation()` では兄弟ハンドラーに伝播するため不十分。
@@ -414,9 +320,6 @@
 - [gotcha] jQuery delegated click と addEventListener が混在時、`stopImmediatePropagation()` が必須。`stopPropagation()` では同じ document レベルのリスナーは止まらない。
 - [tip] `stopImmediatePropagation()` は条件分岐（早期 return）前に実行することで、外部リスナーへの伝播を確実に防止できる。
 
-## 2026-04-13 20:22 | SERPENTINA
-- 作業: 以下条件のときに、商品一覧・検索結果・商品ページの商品名の上にラベル表示を行いたいです。
-- 完了: PR を作成しました: [CIN-GROUP-EC/SERPENTINA#5](https://github.com/CIN-GROUP-EC/SERPENTINA/pull/5)
 
 ## 2026-04-13 20:22 | SERPENTINA [ai]
 - [gotcha] CSSビルド成果物（大規模ファイル）で権限エラーにより内容が消失する場合がある。git経由で元の内容を復元してから追記するプロセスを取る
@@ -424,7 +327,6 @@
 - [pattern] Shopifyテーマで複数ファイル修正時は、ビルド実行前に各セクション・スニペットで差分確認を完了させる
 
 
-## 2026-04-13 20:22 | SERPENTINA [ai]
 - [gotcha] ビルドツール（webpack）実行中にCSSソースファイルが全内容消失する可能性がある。ビルドエラー時の状態保存と復旧手順（git復元）を想定すること。
 - [pattern] Shopifyテーマ開発では、大型機能を main に直コミットせず必ず作業ブランチ + PR フロー で進める。設計変更やデザイン調整の追加指摘に対応しやすい。
 - [gotcha] VSCode拡張で `reset --hard` / `push --force-with-lease` などの危険操作がブロックされることがある。必要な場合はターミナルから直接実行する必要がある。
@@ -486,25 +388,18 @@
 - [pattern] サーバーサイド判定でクラス付与を出し分け、JS側の条件分岐を完全に不要化する（状態をクラス有無で表現）
 - [tip] CSS :after装飾要素はクラス単位でdisplay制御すると、HTMLの構造変更なしに見た目の出し分けが簡潔
 
-## 2026-04-13 21:02 | pietro-onlineshop_ver01
-- [correction] コードレビューを確認して必要であれば修正してください
 
 ## 2026-04-13 21:02 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQuery delegated eventとネイティブEventListenerが同一document レベルで競合する場合、`stopPropagation()` では不十分で、`stopImmediatePropagation()` が必須
 - [pattern] 条件付きで要素を非アクティブにする場合、JS後付けチェックより Liquid でクラス自体を出し分けてCSS制御する方が堅牢
 - [gotcha] 親要素のホバー・カーソルスタイルが子要素に継承される場合、`cursor: default; pointer-events: none` で明示的に無効化しないと見た目と挙動が不一致になる
 
-## 2026-04-13 21:04 | pietro-onlineshop_ver01
-- 記憶しました。次回以降、PR作成時は本文末尾に `/gemini review` を必ず含めます。
 
 ## 2026-04-13 21:04 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQuery delegated event + document global listener の同一伝播内での競合 — 同じ`document`レベルの異なるリスナーが同一イベント伝播で動作するとお互いをキャンセルしてしまう。`stopImmediatePropagation()`で強制遮断が必須
 - [pattern] Liquid のサーバーサイド条件判定で HTML 要素のクラス・属性を出し分け — UI 状態に応じてクラスを変えることで JS 側の追加条件判定を不要にでき、ブランチロジックをテンプレートレベルで完結できる
 - [tip] CSS で`cursor`と`pointer-events`を同時に制御 — 見た目（カーソル）と実装（クリック動作）の矛盾は UX 混乱の源。`pointer-events: none`で根本的にクリック無効化
 
-## 2026-04-13 21:05 | pietro-onlineshop_ver01
-- PR #32 に `/gemini review` を投稿しました。次回以降、レビュー修正のプッシュ後は必ず `gh pr comment` で再レビューをトリガーします。
-- [correction] PR #32 に `/gemini review` を投稿しました。次回以降、レビュー修正のプッシュ後は必ず `gh pr comment` で再レビューをトリガーします。
 
 ## 2026-04-13 21:05 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQuery delegated event と addEventListener の競合時は stopPropagation ではなく stopImmediatePropagation を使う（同一 bubble phase での複数リスナーでは前者では遮断不可）
@@ -516,16 +411,12 @@
 - [pattern] メタフィールド判定でサーバーサイド（Liquid）出し分けするとクラス不在のため、後付け JS チェックが不要で堅牢
 - [gotcha] UI 非表示時もホバースタイルは継承されるため、cursor: default; pointer-events: none で明示的に制御が必須
 
-## 2026-04-13 21:12 | pietro-onlineshop_ver01
-- なぜ壊れたか：PR #30 の実装変更が根本原因です。
 
 ## 2026-04-13 21:12 | pietro-onlineshop_ver01 [ai]
 - [pattern] Discount Deck の `handleOutsideClick` 競合回避には `stopImmediatePropagation()` が必須。同じ document レベルでは `stopPropagation()` 無効。
 - [gotcha] サーバーサイド判定（Liquid メタフィールド）でクラス自体を出し分けないと、JS では className 判定してもクリック可能に見える。
 - [tip] クリック不可要素は `cursor: default; pointer-events: none` で視覚的・機能的に無効化を統一する。
 
-## 2026-04-13 21:52 | pietro-onlineshop_ver01
-- [correction] コードレビューを確認して必要なら修正してください
 
 ## 2026-04-13 21:52 | pietro-onlineshop_ver01 [ai]
 
@@ -533,9 +424,6 @@
 - [pattern] クリック無効状態は CSS (pointer-events: none; cursor: default) で表現 — JS の条件判定より宣言的かつ確実。
 - [tip] イベント処理のコメントは「何をするか」だけでなく「なぜそれが必須か」を明記 — 次のエンジニアの誤った最適化を防ぐ。
 
-## 2026-04-13 22:00 | teras-taya
-- 作業: トップページのメインビジュアルに使用する新しいカスタムセクションを作成してください。
-- 完了: 2ファイルを作成しました。
 
 ## 2026-04-13 22:00 | teras-taya [ai]
 - [pattern] Prestige テーマで新規セクション実装時は、外部ライブラリより内蔵 Web Component（slideshow-carousel など）を活用する方が保守性が高い
@@ -567,7 +455,6 @@
 - [pattern] メタフィールド値に応じてサーバーサイド（Liquid）でクラスを出し分け、CSS で `pointer-events: none` + `cursor: default` で操作不可状態を表現する。
 
 ## 2026-04-15 12:44 | teras-taya
-- 問題1の根本原因確定: `nextIndexFor(realCount + 1)` 内で:
 - [correction] メインビジュアルスライダーの挙動を修正してください
 
 ## 2026-04-15 12:44 | teras-taya [ai]
@@ -575,31 +462,21 @@
 - [pattern] スクロール完了後のロジック（次のスライドへの遷移など）は `scrollend` イベント後にシーケンシャルで実行する。非同期と同期の処理順序を明確に分ける。
 - [gotcha] `scroll-snap` の snap point と `overflow: hidden` の clip 領域を組み合わせるときは、末端スライドでのクローン peek が意図通り表示されるか CSS と JS の snap 設定を一貫させて検証が必須。
 
-## 2026-04-15 13:54 | teras-taya
-- [pattern] 2点修正しました:
 
 ## 2026-04-15 13:54 | teras-taya [ai]
 - [gotcha] 関数内の副作用（instantJump）と呼び出し元の処理（select）が重なると、非同期スクロール完了前に次の命令が実行され、タイミング問題でスピード異常が発生する
 - [pattern] スライダーの複数ステップ制御は、ヘルパー関数を純粋（インデックス計算のみ）にして、イベントハンドラ側でシーケンシャル処理（scrollend待機後に次のselect）する
 - [tip] carouselのclone peek見えない問題は、clone遷移の完了漏れが原因の場合が多い。非同期処理のタイミングが正しいか確認する
 
-## 2026-04-15 14:04 | teras-taya
-- [pattern] mainブランチで作業していたためPRは不要な状態です。pull → rebase → pushが完了しました。
-- [pattern] - `git pull --rebase`: remote mainの1コミットをrebaseで取り込み
 
 ## 2026-04-15 14:04 | teras-taya [ai]
 - [gotcha] スクロール操作の副作用を関数内に持たせると、呼び出し側での二重実行になりやすい → 副作用は避け、呼び出し元（イベントハンドラ）で制御すべき
 - [pattern] 非同期スクロール後の次操作は `scrollend` イベント待ちで順序を保証 → instant移動と smooth移動の混在時に必須
 
-## 2026-04-15 14:06 | teras-taya
-- [pattern] 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/teras-taya/sections/cbs-mainvisual.liquid in the IDE. This 
-- 完了: 完了しました。`ca152d3`
 
 ## 2026-04-15 14:06 | teras-taya [ai]
 - [gotcha] 非同期スクロール(instantJump)と戻り値で次のselect()を同時に実行すると、スクロール完了前に次の処理が走り位置計算が狂う。副作用と戻り値の両立設計は避けて、scrollendイベント待機後のシーケンシャル処理で競合を回避する
 
-## 2026-04-15 14:08 | teras-taya
-- [pattern] 完了: - コミット: `ca152d3` (scroll-carousel非依存の再実装)
 
 ## 2026-04-15 14:08 | teras-taya [ai]
 - [gotcha] 関数が副作用を実行しながら戻り値も返し、呼び出し元でその戻り値に基づき追加処理すると非同期競合が発生。`instantJump()`内の`scrollTo()`完了前に`select()`が呼ばれると計算がズレる。
@@ -623,8 +500,6 @@
 - [gotcha] 関数が副作用（instantJump）を実行しつつ戻り値も返し、呼び出し側がさらにアクションを実行すると非同期実行の前に次の処理が走って競合状態になる。副作用は呼び出し側で明示的にシーケンシャル処理する。
 - [pattern] scrollやアニメーション後の処理は scrollend/transitionend イベント待ちをしてからシーケンシャル実行することで、非同期実行による状態不整合を防ぐ。
 
-## 2026-04-15 16:39 | teras-taya
-- 2点の根本原因を見直します。
 
 ## 2026-04-15 16:39 | teras-taya [ai]
 - [gotcha] カルーセルで非同期の scrollTo と同期的な距離計算が混在すると、scrollLeft がまだ更新中の状態で次の移動距離が計算され、速度がおかしく見える
@@ -657,16 +532,12 @@
 - [pattern] カルーセルの無限ループ実装では副作用を関数から分離し、イベントハンドラでシーケンシャルに呼び出す。呼び出し順序が明示的になり、タイミング問題を回避できる。
 - [tip] scroll-snap時のclone peekが見えない場合、carouselのoverflow設定とwrapperのclipping、またsnap-alignがcloneにも適用されているか確認する。
 
-## 2026-04-15 17:23 | teras-taya
-- - [gotcha] Custom Element の `disconnectedCallback` でタイマー（`clearTimeout`）をクリアしないとメモリリーク。`_autoR` などの非同期処理は必ずクリーンアップ
 
 ## 2026-04-15 17:22 | teras-taya [ai]
 - [gotcha] Custom Element の `disconnectedCallback` でタイマー（`clearTimeout`）をクリアしないとメモリリーク。`_autoR` などの非同期処理は必ずクリーンアップ
 - [pattern] `pointermove` など高頻度イベント内で `getComputedStyle`/`offsetWidth` を呼ぶな。イベント開始時に1回計算してキャッシュし再利用
 - [gotcha] ドラッグUI の終了時に `_jumpTo()` → アニメーションすると視覚的ジャンプが見える。状態のみ更新し、アニメーション位置は現在値から継続させる
 
-## 2026-04-15 17:45 | teras-taya
-- [correction] コードレビューを確認してクリティカル部分を修正してください
 
 ## 2026-04-15 17:45 | teras-taya [ai]
 - [gotcha] ドラッグUI で位置確定後にアニメーション再開する際、確定位置から開始すると視覚的にジャンプして見える。ユーザーが離した位置からスムーズに開始すべき（`jumpTo` → `slideTo` の順序は誤り）。
@@ -744,10 +615,7 @@
 - [pattern] DOM読み取り（`offsetWidth`など）は毎フレーム実行するのではなく、`ResizeObserver`等で必要な時点にキャッシュして pure な計算関数で再利用する
 
 ## 2026-04-15 19:01 | teras-taya
-- 作業: https://github.com/CIN-GROUP-EC/teras-taya/pull/4
-- 完了: - A) このPRをそのままレビュー・マージ対応（`/gemini review` コメント投稿など）
 
-## 2026-04-15 19:01 | teras-taya
 - [correction] - B) 上記の潜在的な問題を修正してから完成させる
 - [correction] 同じ行番号で内容が違う。ファイルに複数の `when 'vendor'` ブロックがあるか確認します。
 
@@ -756,9 +624,6 @@
 - [gotcha] ローカルファイルとリモートコミット内容が乖離することがある。行番号が同じでも内容が違う場合は`git diff HEAD`で確認が必須。
 - [pattern] Liquidのメタオブジェクト参照処理は「型定義確認→参照値のnullチェック→`.title`が空時のフォールバック処理」の3段階で設計すること。
 
-## 2026-04-15 19:03 | teras-taya
-- 作業: https://github.com/CIN-GROUP-EC/teras-taya/pull/3
-- 完了: プッシュ済み（commit `95df368`）。ファイルがまた main に切り替わっていますが PR ブランチへの push は完了しています。
 
 ## 2026-04-15 19:03 | teras-taya [ai]
 - [pattern] AbortController で イベントリスナー・タイマー・Observer を一括管理 → `disconnectedCallback` で `abort()` するだけで全登録が自動クリア。重複登録・メモリリークを確実に防ぐ
@@ -783,19 +648,13 @@
 - [pattern] `AbortController` で `connectedCallback/disconnectedCallback` のイベントリスナー登録/削除を一括管理すると DOM 再接続時の二重登録が防止できる
 - [gotcha] `transitionend` が複数アニメーションをリッスンするとバブリングで古いリスナーが誤発火 → generation カウンターまたはターゲットチェック（`e.target === expectedElement`）で validation する
 
-## 2026-04-15 21:38 | teras-taya
-- 重要なファイルの構造を確認します。
 
-## 2026-04-15 21:40 | teras-taya
-- 注意: メタフィールドが未設定の商品では何も表示されません。`custom.category` も未設定の場合はカテゴリーテキストが省略されます。
 
 ## 2026-04-15 21:40 | teras-taya [ai]
 - [gotcha] Shopify テーマ開発で settings_data.json が diff に含まれることがある。コミット前に確認し、不要な場合は unstage すること。
 - [pattern] リスト型メタフィールド（List of products）から複数商品を取得する際、Liquid ループで処理し、各商品のメタフィールド・価格・画像に順序付けアクセス。
 - [pattern] サードパーティーペイドテーマ（Prestige など）への機能追加は既存セクション構造を尊重し、既存 Liquid ファイル内の特定ブロック末尾にレンダー呼び出しを注入するアプローチが効果的。
 
-## 2026-04-15 21:45 | teras-taya
-- 確認事項（⚠️）
 
 ## 2026-04-15 21:45 | teras-taya [ai]
 - [gotcha] Shopify theme の `settings_data.json` は自動同期でコミット差分に含まれやすく、マージ時に `main` と競合。メタフィールド設定追加時は特に注意し、必要に応じて `git checkout main -- config/settings_data.json` で除外。
@@ -805,18 +664,12 @@
 ## 2026-04-15 21:50 | teras-taya
 - [pattern] 修正しました。
 
-## 2026-04-15 21:50 | teras-taya
-- 作業: 学習ログ抽出システムです。以下のClaude Codeセッションから、将来同様の問題で悩んだ時に役立つ学びを抽出してください。
-- 完了: - [pattern] Shopify theme で `settings_data.json` は自動同期により変更される。PR作成時は事前に確認し、必要に応じてマージ時に `main` と同期させる手順を用意。
 
 ## 2026-04-15 21:50 | teras-taya [ai]
 - [gotcha] Shopifyの `complementary_products` メタフィールドに当該商品自身が含まれる場合がある。ループ内で `product.id` との重複チェックでスキップ必須。
 - [pattern] Shopify theme で `settings_data.json` は自動同期により変更される。PR作成時は事前に確認し、必要に応じてマージ時に `main` と同期させる手順を用意。
 - [tip] メタフィールドデータをテンプレートで使う前に、バリデーション・フィルタリングステップを入れるとデータ品質の問題に強くなる。
 
-## 2026-04-15 21:55 | teras-taya
-- 作業: 商品メタフィールド
-- 完了: 修正しました。
 
 ## 2026-04-15 21:55 | teras-taya [ai]
 - [gotcha] Shopifyメタフィールド（List of products）には対象商品自体が含まれていることがある — ループ内で`product.id`との一致判定を入れてスキップ必須
@@ -839,8 +692,6 @@
 - [gotcha] Prestige テーマのセクション余白調整は `--section-vertical-spacing-override` カスタムプロパティを使う。他の名前では効果なし。
 - [pattern] テーマの既存クラスをオーバーライドする際は、まずテーマが使用しているカスタムプロパティ名を確認してから `{%- style -%}` で上書きする。
 
-## 2026-04-15 22:56 | teras-taya
-- - [gotcha] リモートより遅れてるブランチにpushする前に必ず `git pull` で最新化してから push する
 
 ## 2026-04-15 22:56 | teras-taya [ai]
 - [gotcha] Prestigeテーマで section-spacing 上下余白を調整するには、セクション内 `{%- style -%}` で `--section-vertical-spacing-override: Xrem` のカスタムプロパティオーバーライドを設定する必要がある
@@ -848,7 +699,6 @@
 - [gotcha] リモートより遅れてるブランチにpushする前に必ず `git pull` で最新化してから push する
 
 ## 2026-04-15 22:57 | teras-taya
-- 作業: blog-posts-news.liquid
 - [gotcha] 完了: - コミット: `style: NEWSセクションの上下余白を縮小（section-vertical-spacing-override: 3rem）`
 
 ## 2026-04-15 22:57 | teras-taya [ai]
