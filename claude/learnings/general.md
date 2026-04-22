@@ -105,19 +105,10 @@
 - [api] metafield — seen 5 times
 
 ## Recurring Patterns (updated 2026-04-19)
-- [shopify] Liquid — seen 24 times
-- [shopify] Shopify CLI — seen 6 times
-- [api] metafield — seen 5 times
 
 ## Recurring Patterns (updated 2026-04-19)
-- [shopify] Liquid — seen 24 times
-- [shopify] Shopify CLI — seen 6 times
-- [api] metafield — seen 5 times
 
 ## Recurring Patterns (updated 2026-04-19)
-- [shopify] Liquid — seen 24 times
-- [shopify] Shopify CLI — seen 6 times
-- [api] metafield — seen 5 times
 ## Recurring Patterns (updated 2026-04-20)
 - [js] pointermove layout thrashing — seen 37 times
 - [js] transitionend/scrollend event — seen 28 times
@@ -310,7 +301,6 @@
 - [gotcha] ビルドエラーでCSS成果物が消失した場合、`git show HEAD:path`で元の内容を復元してから新スタイルを追記する（上書きではなく復元→追記の二段階が重要）
 
 ## 2026-04-13 20:04 | SERPENTINA [ai]
-- [gotcha] ビルドエラーでCSS成果物が消失した場合、`git show HEAD:path`で元の内容を復元してから新スタイルを追記する（上書きではなく復元→追記の二段階が重要）
 - [pattern] 複数Liquidファイルに同じ判定ロジックが必要な場合、スニペット化による再利用と実装負荷を天秤にかけ、要件外の改善は後回しにする判断が有効
 - [gotcha] Shopifyテーマで`npm run js-release`・`npm run sass-release`後は成果物をすぐに確認する（webpackの不安定性により大規模ファイル消失が発生する可能性）
 
@@ -346,7 +336,6 @@
 
 ## 2026-04-13 20:16 | pietro-onlineshop_ver01 [ai]
 - [gotcha] jQueryのdelegated eventと外部ライブラリのeventListener が同じバブリング内で競合する場合、`stopImmediatePropagation()` で制御が必要。`stopPropagation()` では兄弟ハンドラーに伝播するため不十分。
-- [pattern] テーマスクリプト修正後に `shopify theme check` で差分を確認し、修正による新規エラーが無いことを立証。既存問題と新規問題を明確に分離してPR化。
 
 
 ## 2026-04-13 20:17 | pietro-onlineshop_ver01 [ai]
@@ -744,3 +733,7 @@
 - [pattern] Prestige のセクション余白は `--section-vertical-spacing-override` カスタムプロパティで制御。直接 margin/padding 指定ではなくこのプロパティを上書きする。
 - [gotcha] 複数フィーチャーが混在するブランチから特定の修正のみ main に反映する場合は cherry-pick を使用。全マージすると無関係な機能が含まれるリスク。
 - [tip] Prestige ではセクション内パディングとセクション間ギャップが異なるプロパティで制御される（`--section-vertical-spacing-override` vs `section-stack-gap`）。余白調整時は両方確認が必要。
+
+## 2026-04-22 11:11 | mimc.co.jp-mailmagazine
+- 作業: /Users/P130/Desktop/20260424.pdf
+- 完了: `260424.html` を作成しました。
