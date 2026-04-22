@@ -770,3 +770,8 @@
 - [pattern] 複数ファイルの一括置換（px→em 変換など）が必要な場合、Pythonスクリプトで自動化して効率化
 
 ## 2026-04-22 11:47 | mimc.co.jp-mailmagazine
+
+## 2026-04-22 11:47 | mimc.co.jp-mailmagazine [ai]
+- [pattern] メールマガジンのプレゼント表示は複数商品のサムネイル行ではなく、横幅いっぱいの1枚画像（`0424_present.jpg`）が正解パターン
+- [pattern] メール HTML の縦方向余白（top/bottom）はすべて em で統一；横方向は px のまま。Pythonスクリプトで一括変換可能
+- [pattern] 右向き三角「▶」は HTMLエンティティではなく UTF-8 文字を直書き（`▶ 詳しくはこちら`）
