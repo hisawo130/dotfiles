@@ -505,3 +505,8 @@
 - [tip] 自動修復スクリプトは修復成功時は silent、問題時だけ systemMessage で通知すると UX がよい。ユーザーが「修復された」ことを認識できるが、問題なければノイズが出ない。
 
 ## 2026-04-25 08:30 | dotfiles
+
+## 2026-04-25 08:30 | dotfiles [ai]
+- [gotcha] dotfiles の symlink が断裂していても、ローカルに実ディレクトリがあれば動作は続く。GitHub 同期だけが止まり気づきにくい → SessionStart の自動ヘルスチェック必須
+- [pattern] 診断スクリプト（dotfiles-doctor.py）を SessionStart に組み込むことで、別PC での初回起動時も symlink が自動修復される → 設定共有の信頼性向上
+- [tip] 削除時は即 rm でなく ~/.trash に退避してから再作成することで、誤った破棄から復旧可能にする → CLAUDE.md の block-rm.sh と同じ安全性パターン
