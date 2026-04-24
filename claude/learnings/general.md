@@ -482,3 +482,39 @@
 - [general] git pull / ff-only — seen 5 times
 - [general] SessionStart hook — seen 3 times
 - [general/shopify-app] webhook — seen 3 times
+## 2026-04-24 11:56 | mimc-mailmagazine
+- 5. スペシャルクーポン BOX（4月30日まで）+ 注意事項
+
+## 2026-04-24 22:20 | P130 [ai]
+- [pattern] Remote agentは別コンテキストで実行されるため、メイン会話のコンテキストを消費しない。結果テキストの返却分だけが消費される
+- [pattern] headlessパターンで結果をファイル出力・通知のみにすれば、会話コンテキストへの影響をゼロにできる
+- [tip] remote-control/RemoteTrigger/headless実行で動作が異なるため、コンテキスト圧迫回避が目的なら headless（別プロセス）を優先
+
+## 2026-04-24 22:25 | dotfiles
+- 作業: 自己ブラッシュアップと、複数PC間での設定共有について点検して欲しいです。
+- 完了: git -C ~/dotfiles commit -m "fix: learningsシンボリックリンク修復・ローカル差分マージ"
+
+## 2026-04-24 22:25 | dotfiles
+- [gotcha] ### ❌ 問題: `~/.claude/learnings/` がシンボリックリンクでなくなっている
+
+## 2026-04-24 22:25 | dotfiles [ai]
+- [gotcha] セットアップスクリプトで作成したシンボリックリンクは、git の push/clone 後や同期操作で実ディレクトリに置き換わることがある。`ls -la ~/.claude/learnings` で定期確認が必要
+- [pattern] auto-memory で複数ディレクトリ間の同期が必要な場合、symlink より hardlink（inode同一）が robust。memory/ で実績あり
+- [gotcha] 夜間バッチで自動書き込みされるファイルが symlink 経由の場合、symlink の壊れを検出できない。バッチの最後に「書き込み先が期待通りか」を検証する guard clause が必要
+
+## 2026-04-24 22:36 | dotfiles
+- 今回の根本原因（symlink→実ディレクトリへの変化）を防ぐために `setup.sh` を再実行するか、定期的に symlink チェックを入れると安心です。必要なら追加しますか？
+- [pattern] └─ git pull --rebase (セッションにつき1回のみ)
+- [pattern] → git pull --rebase
+
+## 2026-04-24 22:36 | dotfiles [ai]
+- [gotcha] symlink が実ディレクトリに変わると Stop hook が沈黙に失敗し、セッション学習が dotfiles に入らず複数 PC で同期されない。symlink を定期検証すること
+- [pattern] dotfiles symlink + GitHub → セッション終了 Stop hook で自動 commit/push → 次セッション開始時 pull で即時反映。別PC間同期はセッション境界で完結
+
+## 2026-04-24 22:41 | dotfiles
+- 完了: 修正完了。886行追加（ローカルにあった未同期の学習ログをdotfilesへマージ）しました。
+
+## 2026-04-24 22:41 | dotfiles [ai]
+- [gotcha] セットアップ後の symlink は自動修復がないと漂流する。`~/.claude/learnings/`, `~/.claude/tools/` が実ディレクトリに変化し、SessionStart の stop hook が誤ったパスに書いて GitHub sync がずれていく。
+- [pattern] 複数の診断・修復フロー（セッション開始時、手動診断、setup検査）は単一 Python スクリプトで複数モード提供する設計。20+ 回の bash 連打が `python3 ~/.claude/tools/dotfiles-doctor.py [--hook|--verbose|--check]` の1呼び出しに統一できる。
+- [tip] 自動修復スクリプトは修復成功時は silent、問題時だけ systemMessage で通知すると UX がよい。ユーザーが「修復された」ことを認識できるが、問題なければノイズが出ない。
