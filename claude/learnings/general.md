@@ -894,3 +894,7 @@
 - 今回の根本原因（symlink→実ディレクトリへの変化）を防ぐために `setup.sh` を再実行するか、定期的に symlink チェックを入れると安心です。必要なら追加しますか？
 - [pattern] └─ git pull --rebase (セッションにつき1回のみ)
 - [pattern] → git pull --rebase
+
+## 2026-04-24 22:36 | dotfiles [ai]
+- [gotcha] symlink が実ディレクトリに変わると Stop hook が沈黙に失敗し、セッション学習が dotfiles に入らず複数 PC で同期されない。symlink を定期検証すること
+- [pattern] dotfiles symlink + GitHub → セッション終了 Stop hook で自動 commit/push → 次セッション開始時 pull で即時反映。別PC間同期はセッション境界で完結
