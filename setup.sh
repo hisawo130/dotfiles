@@ -27,10 +27,20 @@ ln -sfn "$DOTFILES/claude/hooks" "$HOME/.claude/hooks"
 ln -sfn "$DOTFILES/claude/references" "$HOME/.claude/references"
 ln -sfn "$DOTFILES/claude/learnings" "$HOME/.claude/learnings"
 ln -sfn "$DOTFILES/claude/memory" "$HOME/.claude/memory"
+ln -sfn "$DOTFILES/claude/tools" "$HOME/.claude/tools"
 mkdir -p "$HOME/.claude/logs"
 chmod +x "$DOTFILES"/claude/hooks/*.sh 2>/dev/null || true
 chmod +x "$DOTFILES"/claude/hooks/lib/*.sh 2>/dev/null || true
-echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,hooks,references,learnings,memory,logs}"
+chmod +x "$DOTFILES"/claude/tools/*.py 2>/dev/null || true
+echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,hooks,references,learnings,memory,tools,logs}"
+
+# --- 健全性チェック（doctor 走らせて即検証） ---
+echo "→ 健全性チェック..."
+if python3 "$DOTFILES/claude/tools/dotfiles-doctor.py" --check; then
+  echo "  ✓ 全 symlink 正常"
+else
+  echo "  ⚠ 問題あり。doctor --verbose で確認してください"
+fi
 
 # --- scripts (claude-run 等) ---
 echo "→ scripts 設定..."

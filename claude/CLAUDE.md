@@ -44,8 +44,15 @@ Available Python tools (`~/.claude/tools/`):
 - `multi-edit.py` — 複数ファイル一括find-and-replace（バックアップ付き）
 - `run-task.py` — アドホックPythonスクリプト実行（timeout + stderr capture）
 - `compress-output.py` — コマンド出力を圧縮（空行除去・重複排除・グルーピング・切り詰め）
+- `dotfiles-doctor.py` — symlink健全性チェック＋自動修復。`--verbose`で詳細、`--check`で診断のみ
 
 When no Python tool exists, use minimal tool calls. Prefer 1 Bash call with a Python one-liner over multiple Read/Edit/Bash round-trips.
+
+## Diagnostic shortcuts
+
+設定や同期状態が怪しい時は、複数コマンドで調査せず先に:
+- `python3 ~/.claude/tools/dotfiles-doctor.py --verbose` — symlink/learnings drift/repo状態を一括確認
+- SessionStart hook で自動修復も走るため、通常は明示的に叩く必要なし
 
 ## Output compression (token budget)
 
