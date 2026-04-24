@@ -889,3 +889,8 @@
 - [gotcha] セットアップスクリプトで作成したシンボリックリンクは、git の push/clone 後や同期操作で実ディレクトリに置き換わることがある。`ls -la ~/.claude/learnings` で定期確認が必要
 - [pattern] auto-memory で複数ディレクトリ間の同期が必要な場合、symlink より hardlink（inode同一）が robust。memory/ で実績あり
 - [gotcha] 夜間バッチで自動書き込みされるファイルが symlink 経由の場合、symlink の壊れを検出できない。バッチの最後に「書き込み先が期待通りか」を検証する guard clause が必要
+
+## 2026-04-24 22:36 | dotfiles
+- 今回の根本原因（symlink→実ディレクトリへの変化）を防ぐために `setup.sh` を再実行するか、定期的に symlink チェックを入れると安心です。必要なら追加しますか？
+- [pattern] └─ git pull --rebase (セッションにつき1回のみ)
+- [pattern] → git pull --rebase
