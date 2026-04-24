@@ -285,10 +285,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 $HOME/.claude/tools/dotfiles-doctor.py --hook"
-          },
-          {
-            "type": "command",
             "command": "_stale=$(find \"$HOME/dotfiles/claude/references\" -name '*.md' -mtime +14 2>/dev/null | while read -r f; do echo \"$(basename \"$f\"): $(stat -f '%Sm' -t '%Y-%m-%d' \"$f\")\"; done); [ -n \"$_stale\" ] && jq -n --arg s \"$_stale\" '{\"systemMessage\":(\"⚠️ 以下のリファレンスが14日以上未更新:\\n\" + $s)}' || true"
           },
           {
@@ -469,7 +465,7 @@
       }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "skipDangerousModePermissionPrompt": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
