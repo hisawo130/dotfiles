@@ -517,5 +517,7 @@
         "shopify-mcp"
       ]
     }
-  }
+  },
+  "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true
 }
