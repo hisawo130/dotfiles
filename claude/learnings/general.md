@@ -626,3 +626,11 @@
 - [general] git pull --ff-only / auto-pull at session start — seen 5 times
 - [security] API token single-display safety — seen 5 times
 - [general] validation before commit — seen 3 times
+## 2026-04-25 10:18 | dotfiles
+- [gotcha] ### 🔴 1. Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
+- [correction] いままでの作業内容を見直して、ブラッシュアップできるところはありますか？
+
+## 2026-04-25 10:18 | dotfiles [ai]
+- [gotcha] Symlink破損するとセッション学習がGitHubに届かなくなる。Stop hookが正しいパスに書き込めず、別PCで反映されない。SessionStart時の自動チェック機構が必須。
+- [pattern] 複数の小さな診断Bash/ls/diffコマンド（20回超）は1つのPython統合ツール（`dotfiles-doctor.py`）で置き換え可能。トラブルシューティングのコンテクスト消費が激減する。
+- [tip] 別PC間の設定同期では、symlink有効性の定期検証習慣が重要。SessionStart自動チェック＋手動確認用コマンド両方があると早期発見できる。
