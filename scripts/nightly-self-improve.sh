@@ -167,6 +167,14 @@ python3 "$POSTPROCESS" "$DIGEST_FILE" "$SHELL_RESULT" 2>&1 \
   && echo "  成長ログ記入完了" \
   || echo "  [WARNING] 後処理エラー"
 
+# ── STEP 2.5: settings.local.json 掃除（月曜のみ・週1）──────────────────────
+if [ "$(date +%u)" = "1" ]; then
+  echo ""
+  echo "── STEP 2.5: settings.local.json 掃除 (週次) ──"
+  python3 "$DOTFILES/claude/tools/cleanup-local-permissions.py" --apply 2>&1 \
+    | sed 's/^/  /' || echo "  [WARNING] 掃除エラー"
+fi
+
 # ── STEP 3: dotfiles に全変更をコミット ──────────────────────────────────────
 echo ""
 echo "── STEP 3: dotfiles コミット ──"
