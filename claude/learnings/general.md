@@ -524,3 +524,5 @@
 - [gotcha] symlink が実ディレクトリに置き換わると、セッション終了時の learnings 保存が別ファイルに行われ、別PC への同期が無声で止まる。SessionStart時に自動修復する仕組み必須
 - [pattern] dotfiles同期は SessionStart で pull、セッション終了時に save-learnings → commit → pull --rebase → push で別PC即時伝播と夜間バッチ整理を両立
 - [tip] CLAUDE.md が参照する複数の symlink（tools/, learnings/, memory/）を一括チェックする診断スクリプトで、問題分析時のコンテクスト消費が20回の個別Bash → 1回の統合呼び出しに圧縮される
+
+## 2026-04-25 09:27 | dotfiles
