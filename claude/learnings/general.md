@@ -517,3 +517,5 @@
 - [gotcha] Symlink が実ディレクトリに化けると、Stop hook が沈黙破壊される（正しいパスに書き込めず、セッション学習がGitHubに届かないまま差分が溜まる）
 - [pattern] dotfiles-doctor.py のような一元化診断スクリプトを SessionStart hook に組込むことで、複数PC間の初期化ズレが自動修復される仕組みが実現できる
 - [tip] Symlink 修復時は `rm` ではなく `~/.trash` に退避してブロックリスト準拠を確保すると、安全かつ repeatable な修復になる
+
+## 2026-04-25 09:18 | dotfiles
