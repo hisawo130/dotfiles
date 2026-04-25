@@ -15,3 +15,8 @@ _flag="$_cache_dir/pulled_${_flag_key}"
 if [ ! -f "$_flag" ]; then
   git -C "$HOME/dotfiles" pull --rebase -q 2>/dev/null && touch "$_flag"
 fi
+
+# 月初に 7 日以上前のフラグを ~/.trash/ へ退避（無限蓄積防止）
+if [ "$(date +%d)" = "01" ]; then
+  find "$_cache_dir" -type f -mtime +7 -exec mv {} "$HOME/.trash/" \; 2>/dev/null || true
+fi

@@ -21,9 +21,9 @@ Usage:
 """
 from __future__ import annotations
 import argparse
+import importlib.util
 import json
 import os
-import re
 import subprocess
 import sys
 from datetime import datetime
@@ -34,10 +34,22 @@ DOTFILES = HOME / "dotfiles"
 CLAUDE = HOME / ".claude"
 TOOLS = DOTFILES / "claude/tools"
 
-# 使い捨て permission と見なす正規表現
-EPHEMERAL_PERM = re.compile(
-    r"(/tmp/|test-hook|test-highrisk|test-post-liquid|test-devnull)"
-)
+
+# cleanup-local-permissions の判定ロジックを共有して二重管理を避ける
+def _load_is_ephemeral():
+    p = TOOLS / "cleanup-local-permissions.py"
+    if not p.exists():
+        return None
+    spec = importlib.util.spec_from_file_location("cleanup_local_permissions", p)
+    mod = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(mod)
+        return mod.is_ephemeral
+    except Exception:
+        return None
+
+
+_is_ephemeral = _load_is_ephemeral()
 
 
 def sh(args: list[str], cwd: Path | None = None, timeout: int = 5) -> str:
@@ -137,7 +149,9 @@ def local_settings_bloat() -> dict:
     except json.JSONDecodeError:
         return {"error": "invalid JSON"}
     allow = d.get("permissions", {}).get("allow", [])
-    ephemeral = [x for x in allow if EPHEMERAL_PERM.search(x)]
+    if _is_ephemeral is None:
+        return {"total": len(allow), "ephemeral": 0, "ephemeral_samples": []}
+    ephemeral = [x for x in allow if _is_ephemeral(x)[0]]
     return {
         "total": len(allow),
         "ephemeral": len(ephemeral),
