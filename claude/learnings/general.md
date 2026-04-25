@@ -510,3 +510,5 @@
 - [gotcha] dotfiles の symlink が断裂していても、ローカルに実ディレクトリがあれば動作は続く。GitHub 同期だけが止まり気づきにくい → SessionStart の自動ヘルスチェック必須
 - [pattern] 診断スクリプト（dotfiles-doctor.py）を SessionStart に組み込むことで、別PC での初回起動時も symlink が自動修復される → 設定共有の信頼性向上
 - [tip] 削除時は即 rm でなく ~/.trash に退避してから再作成することで、誤った破棄から復旧可能にする → CLAUDE.md の block-rm.sh と同じ安全性パターン
+
+## 2026-04-25 09:05 | dotfiles
