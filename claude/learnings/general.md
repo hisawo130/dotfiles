@@ -531,3 +531,7 @@
 - [gotcha] dotfiles symlink は setup 直後に壊れていることに気づきにくい。SessionStart で自動修復を仕込まないと、別PCやリセット後に同期がこっそり止まる
 - [pattern] 診断ツールを最初から用意する — 小さな Bash/ls/diff 20回の連打より、1本の Python スクリプト（doctor.py）が回答を圧縮する
 - [tip] 破壊操作は `~/.trash/` に退避してから実行すると、誤削除時の復旧が容易。block-rm.sh 準拠なら自動的に保護される
+
+## 2026-04-25 10:18 | dotfiles
+- [gotcha] ### 🔴 1. Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
+- [correction] いままでの作業内容を見直して、ブラッシュアップできるところはありますか？
