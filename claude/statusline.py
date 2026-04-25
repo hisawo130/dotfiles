@@ -1,12 +1,24 @@
 #!/usr/bin/env python3
 """Pattern 2: Sparkline gauge - vertical block characters"""
-import json, sys, datetime
+import json, sys, datetime, os, time
 
 data = json.load(sys.stdin)
 
 SPARKS = ' ▁▂▃▄▅▆▇█'
 R = '\033[0m'
 DIM = '\033[2m'
+
+def health_indicator():
+    """orchestrator が SessionStart 時に書いた health.txt を読む（60分まで有効）。"""
+    try:
+        cache = os.path.expanduser('~/.claude/cache/health.txt')
+        if not os.path.exists(cache):
+            return None
+        if time.time() - os.path.getmtime(cache) > 3600:
+            return None
+        return open(cache).read().strip() or None
+    except Exception:
+        return None
 
 def gradient(pct):
     if pct < 50:
@@ -38,6 +50,10 @@ def fmt(label, pct):
 
 model = data.get('model', {}).get('display_name', 'Claude')
 parts = [model]
+
+_h = health_indicator()
+if _h:
+    parts.append(f'{DIM}{_h}{R}')
 
 ctx = data.get('context_window', {}).get('used_percentage')
 if ctx is not None:
