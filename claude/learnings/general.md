@@ -526,3 +526,8 @@
 - [tip] CLAUDE.md が参照する複数の symlink（tools/, learnings/, memory/）を一括チェックする診断スクリプトで、問題分析時のコンテクスト消費が20回の個別Bash → 1回の統合呼び出しに圧縮される
 
 ## 2026-04-25 09:27 | dotfiles
+
+## 2026-04-25 09:27 | dotfiles [ai]
+- [gotcha] dotfiles symlink は setup 直後に壊れていることに気づきにくい。SessionStart で自動修復を仕込まないと、別PCやリセット後に同期がこっそり止まる
+- [pattern] 診断ツールを最初から用意する — 小さな Bash/ls/diff 20回の連打より、1本の Python スクリプト（doctor.py）が回答を圧縮する
+- [tip] 破壊操作は `~/.trash/` に退避してから実行すると、誤削除時の復旧が容易。block-rm.sh 準拠なら自動的に保護される
