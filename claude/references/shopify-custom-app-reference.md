@@ -1,5 +1,5 @@
 # Shopify カスタムアプリ リファレンス
-<!-- API alert (2026-04-20): stable: 2026-04 → 2027-01 -->
+<!-- API alert (2026-04-25): stable: 2026-04 → 2027-01 -->
 
 > 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > 対象: Storefront API / Checkout Extensibility / Shopify Functions / GraphQL Admin API
@@ -7,6 +7,9 @@
 ---
 
 ## 📋 Recent Changelog
+
+### 2026-04-24: [Use MATCHES in ShopifyQL to filter by what customers did](https://changelog.shopify.com/posts/use-matches-in-shopifyql-to-filter-by-what-customers-did)
+ShopifyQL editor now supports a MATCHES operator in WHERE clauses for filtering reports by customer behavior patterns, maintaining consistency with Customer Segmentation logic.
 
 ### 2026-04-17: [Updates to Italy's Sardinian province definitions](https://changelog.shopify.com/posts/italy-s-sardinian-province-definitions-updated)
 Address validation and autocomplete APIs now reflect updated Sardinian province names and new selectable provinces for accurate geographic data.
