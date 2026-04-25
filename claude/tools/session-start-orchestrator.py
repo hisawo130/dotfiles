@@ -9,8 +9,16 @@ session-start-orchestrator — 全 SessionStart フックを並列実行して 1
   - 各フックを ThreadPoolExecutor で並列起動
   - 各 stdout を JSON or プレーンテキストとして解釈
   - すべての systemMessage を 1 つにマージして出力
+  - 例外/タイムアウトを ~/.claude/logs/orchestrator-errors.log に記録（フェイルソフト）
 
-タイムアウトに引っかかったフックは結果を捨てて続行（フェイルソフト）。
+⚠️ 新しい SessionStart フックを追加するとき:
+  settings.json の SessionStart は orchestrator 1 本だけを呼んでいる。
+  新規フックは settings.json ではなく、このファイル下部の HOOKS リストに追加すること。
+  既存の bash フックを呼ぶなら ["bash", "/path/to/hook.sh"] 形式、
+  Python ネイティブにするなら str|None を返す関数をここに書いて HOOKS に登録。
+
+デバッグ:
+  ORCHESTRATOR_DEBUG=1 で stderr に各フックのタイミングを出力
 """
 from __future__ import annotations
 import datetime as _dt
@@ -27,6 +35,21 @@ HOME = Path.home()
 HOOKS_DIR = HOME / ".claude/hooks"
 TOOLS_DIR = HOME / ".claude/tools"
 REFS_DIR = HOME / "dotfiles/claude/references"
+ERROR_LOG = HOME / ".claude/logs/orchestrator-errors.log"
+
+
+def log_error(name: str, kind: str, detail: str) -> None:
+    """フックの失敗を 1 行追記（最大 1MB で自動ローテート）。"""
+    try:
+        ERROR_LOG.parent.mkdir(exist_ok=True)
+        # 1MB 越えたら .old にローテート
+        if ERROR_LOG.exists() and ERROR_LOG.stat().st_size > 1_048_576:
+            ERROR_LOG.replace(ERROR_LOG.with_suffix(".log.old"))
+        with ERROR_LOG.open("a") as f:
+            ts = _dt.datetime.now().isoformat(timespec="seconds")
+            f.write(f"{ts}\t{name}\t{kind}\t{detail[:200]}\n")
+    except Exception:
+        pass  # ログ書込失敗は静黙
 
 
 # ── Native Python hooks (旧 inline shell の移植) ──────────────────────────────
@@ -97,6 +120,7 @@ def run_one(name: str, target: object, stdin_data: str, timeout: float = 5.0) ->
             elapsed = time.monotonic() - started
             return {"name": name, "ms": int(elapsed * 1000), "msg": msg}
         except Exception as e:
+            log_error(name, "exception", str(e))
             return {"name": name, "ms": 0, "msg": None, "err": str(e)[:80]}
 
     # subprocess
@@ -112,6 +136,10 @@ def run_one(name: str, target: object, stdin_data: str, timeout: float = 5.0) ->
         out = r.stdout.strip()
         err = r.stderr.strip()
 
+        # 非 0 終了 + stderr あり = 本物のエラー（何も出力せず exit 0 する正常 hook と区別）
+        if r.returncode != 0 and err:
+            log_error(name, f"exit{r.returncode}", err)
+
         if not out:
             return {"name": name, "ms": int(elapsed * 1000), "msg": None, "err": err}
 
@@ -125,8 +153,10 @@ def run_one(name: str, target: object, stdin_data: str, timeout: float = 5.0) ->
         return {"name": name, "ms": int(elapsed * 1000), "msg": out}
 
     except subprocess.TimeoutExpired:
+        log_error(name, "timeout", f"exceeded {timeout}s")
         return {"name": name, "ms": int(timeout * 1000), "msg": None, "err": "timeout"}
     except Exception as e:
+        log_error(name, "exception", str(e))
         return {"name": name, "ms": 0, "msg": None, "err": str(e)[:80]}
 
 

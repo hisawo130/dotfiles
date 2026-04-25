@@ -167,6 +167,9 @@ def main() -> int:
 
     if args.json:
         print(json.dumps(report, indent=2, default=str))
+        # --check と組み合わせた場合は問題があれば exit 1
+        if args.check and report["problems"]:
+            return 1
         return 0
     if args.verbose:
         print(fmt_verbose(report))

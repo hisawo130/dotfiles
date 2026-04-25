@@ -151,11 +151,29 @@ def apply(r: dict) -> dict:
     removed = len(r["remove"]) + len(r["duplicates"])
     if r["before_count"] == 0:
         return {"applied": False, "reason": "empty"}
-    # 削除率が極端なら abort
-    if removed / max(r["before_count"], 1) > 0.5:
+
+    # セーフティ 1: 重要 prefix が削除候補に混ざっていたら即 abort（regex 暴走への保険）
+    SAFE_PREFIXES = ("WebFetch", "WebSearch", "Skill(", "MCP(")
+    bad = [p for p, _ in r["remove"] if p.startswith(SAFE_PREFIXES)]
+    if bad:
         return {
             "applied": False,
-            "reason": f"removal ratio {removed}/{r['before_count']} > 50%; aborted for safety",
+            "reason": f"refusing to remove protected prefix entries: {bad[:3]}",
+        }
+
+    # セーフティ 2: 削除候補にワイルドカード末尾があれば abort（再利用前提のはず）
+    wild = [p for p, _ in r["remove"] if p.rstrip(")").endswith(":*") or p.endswith("*)")]
+    if wild:
+        return {
+            "applied": False,
+            "reason": f"refusing to remove wildcard permission: {wild[:3]}",
+        }
+
+    # セーフティ 3: 大量削除のみガード（小さい list は通す。20件超かつ 50%以上で停止）
+    if r["before_count"] > 20 and removed / r["before_count"] > 0.5:
+        return {
+            "applied": False,
+            "reason": f"removal ratio {removed}/{r['before_count']} > 50% on large list",
         }
 
     backup_path = backup()

@@ -27,6 +27,11 @@ if [ "$_age" -ge "$_ttl" ]; then
   # リモートの最新を取得（失敗してもスキップ、ネットワークなし環境に配慮）
   git -C "$CWD" fetch --quiet 2>/dev/null || true
   touch "$_flag"
+
+  # 月1で 7 日以上前の cache 残骸を掃除（無限増殖防止）
+  if [ "$(date +%d)" = "01" ]; then
+    find "$_cache_dir" -type f -mtime +7 -exec mv {} "$HOME/.trash/" \; 2>/dev/null || true
+  fi
 fi
 
 # origin/main または origin/master を特定
