@@ -8,6 +8,9 @@
 
 ## 📋 Recent Changelog
 
+### 2026-04-24: [Use MATCHES in ShopifyQL to filter by what customers did](https://changelog.shopify.com/posts/use-matches-in-shopifyql-to-filter-by-what-customers-did)
+ShopifyQL now supports the MATCHES operator in WHERE clauses for filtering by customer behavior patterns, enabling consistent segment logic between Customer Segmentation and Analytics reports.
+
 ### 2026-04-17: [Updates to Italy's Sardinian province definitions](https://changelog.shopify.com/posts/italy-s-sardinian-province-definitions-updated)
 Address validation and autocomplete APIs now reflect updated Sardinian province names and new selectable provinces for accurate geographic data.
 
