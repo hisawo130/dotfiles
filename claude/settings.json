@@ -334,7 +334,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path // \"\"' | { read -r f; [[ \"$f\" == *\"CLAUDE.md\"* ]] && date +%Y-%m-%d > \"$HOME/.claude/logs/claude-md-last-review\" || true; } 2>/dev/null || true"
+            "if": "Edit(*CLAUDE.md)",
+            "command": "date +%Y-%m-%d > \"$HOME/.claude/logs/claude-md-last-review\" 2>/dev/null || true"
           }
         ]
       }
