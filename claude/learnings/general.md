@@ -1,6 +1,6 @@
 # General Learnings
 
-## 2026-04-24 22:36 | dotfiles [ai]
+## 2026-04-25 09:27 | dotfiles [ai]
 - [gotcha] セッション起動時の自動pullは未コミット変更があるとコンフリクト。`--ff-only`を併用し、失敗時は警告して停止する。
 - [pattern] セッション開始フック実装前に、既存フック（pull-dotfiles.sh等）との重複を確認し、統一・整理が必須。
 - [pattern] 複数PC運用では起動時に `git pull --ff-only` を自動実行。SessionStart フックで古い状態での作業開始を防ぐ。
@@ -92,7 +92,31 @@
 - [gotcha] 夜間バッチで自動書き込みされるファイルが symlink 経由の場合、symlink の壊れを検出できない。バッチの最後に「書き込み先が期待通りか」を検証する guard clause が必要
 - [gotcha] symlink が実ディレクトリに変わると Stop hook が沈黙に失敗し、セッション学習が dotfiles に入らず複数 PC で同期されない。symlink を定期検証すること
 - [pattern] dotfiles symlink + GitHub → セッション終了 Stop hook で自動 commit/push → 次セッション開始時 pull で即時反映。別PC間同期はセッション境界で完結
-## 2026-04-24 22:41 | dotfiles
+
+
+- [gotcha] セットアップ後の symlink は自動修復がないと漂流する。`~/.claude/learnings/`, `~/.claude/tools/` が実ディレクトリに変化し、SessionStart の stop hook が誤ったパスに書いて GitHub sync がずれていく。
+- [pattern] 複数の診断・修復フロー（セッション開始時、手動診断、setup検査）は単一 Python スクリプトで複数モード提供する設計。20+ 回の bash 連打が `python3 ~/.claude/tools/dotfiles-doctor.py [--hook|--verbose|--check]` の1呼び出しに統一できる。
+- [tip] 自動修復スクリプトは修復成功時は silent、問題時だけ systemMessage で通知すると UX がよい。ユーザーが「修復された」ことを認識できるが、問題なければノイズが出ない。
+
+- [gotcha] dotfiles の symlink が断裂していても、ローカルに実ディレクトリがあれば動作は続く。GitHub 同期だけが止まり気づきにくい → SessionStart の自動ヘルスチェック必須
+- [pattern] 診断スクリプト（dotfiles-doctor.py）を SessionStart に組み込むことで、別PC での初回起動時も symlink が自動修復される → 設定共有の信頼性向上
+- [tip] 削除時は即 rm でなく ~/.trash に退避してから再作成することで、誤った破棄から復旧可能にする → CLAUDE.md の block-rm.sh と同じ安全性パターン
+
+- [gotcha] Symlink が実ディレクトリに化けると、Stop hook が沈黙破壊される（正しいパスに書き込めず、セッション学習がGitHubに届かないまま差分が溜まる）
+- [pattern] dotfiles-doctor.py のような一元化診断スクリプトを SessionStart hook に組込むことで、複数PC間の初期化ズレが自動修復される仕組みが実現できる
+- [tip] Symlink 修復時は `rm` ではなく `~/.trash` に退避してブロックリスト準拠を確保すると、安全かつ repeatable な修復になる
+
+- [gotcha] symlink が実ディレクトリに置き換わると、セッション終了時の learnings 保存が別ファイルに行われ、別PC への同期が無声で止まる。SessionStart時に自動修復する仕組み必須
+- [pattern] dotfiles同期は SessionStart で pull、セッション終了時に save-learnings → commit → pull --rebase → push で別PC即時伝播と夜間バッチ整理を両立
+- [tip] CLAUDE.md が参照する複数の symlink（tools/, learnings/, memory/）を一括チェックする診断スクリプトで、問題分析時のコンテクスト消費が20回の個別Bash → 1回の統合呼び出しに圧縮される
+
+- [gotcha] dotfiles symlink は setup 直後に壊れていることに気づきにくい。SessionStart で自動修復を仕込まないと、別PCやリセット後に同期がこっそり止まる
+- [pattern] 診断ツールを最初から用意する — 小さな Bash/ls/diff 20回の連打より、1本の Python スクリプト（doctor.py）が回答を圧縮する
+- [tip] 破壊操作は `~/.trash/` に退避してから実行すると、誤削除時の復旧が容易。block-rm.sh 準拠なら自動的に保護される
+
+- [gotcha] ### 🔴 Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
+
+## 2026-04-25 10:18 | dotfiles
 - - [tip] dotfiles など共有リポジトリの同期は startup フック時点で行うと、毎セッション最新コード保証。UserPromptSubmit フックの二重実行は避ける。
 - [pattern] - [gotcha] pull 前に未コミット変更をチェック。ff-only でもコンフリクト時は警告停止し、自動実行で安全性を損なわない。
 - [pattern] 完了しました。変更内容:
@@ -114,6 +138,23 @@
 - [pattern] └─ git pull --rebase (セッションにつき1回のみ)
 - [pattern] → git pull --rebase
 - [correction] 完了: 修正完了。886行追加（ローカルにあった未同期の学習ログをdotfilesへマージ）しました。
+- [gotcha] 完了: git -C ~/dotfiles commit -m "fix: learningsシンボリックリンク修復・ローカル差分マージ"
+
+
+
+- 完了: 修正完了。886行追加（ローカルにあった未同期の学習ログをdotfilesへマージ）しました。
+
+
+
+
+
+- [gotcha] ### 🔴 1. Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
+- [correction] いままでの作業内容を見直して、ブラッシュアップできるところはありますか？
+- [gotcha] 注意: メタフィールドが未設定の商品では何も表示されません。`custom.category` も未設定の場合はカテゴリーテキストが省略されます。
+- [pattern] Prestige のセクション余白は `--section-vertical-spacing-override` カスタムプロパティで制御。直接 margin/padding 指定ではなくこのプロパティを上書きする。
+- [gotcha] 複数フィーチャーが混在するブランチから特定の修正のみ main に反映する場合は cherry-pick を使用。全マージすると無関係な機能が含まれるリスク。
+- [tip] Prestige ではセクション内パディングとセクション間ギャップが異なるプロパティで制御される（`--section-vertical-spacing-override` vs `section-stack-gap`）。余白調整時は両方確認が必要。
+
 ## 2026-04-24 11:56 | mimc-mailmagazine
 - [gotcha] - RANKING（No.1〜5）
 - [open] 要確認: 各商品画像は `0414_01.jpg` 〜 `0414_05.jpg` としています。実際にアップロードされる画像ファイル名と異なる場合は差し替えをお願いします。
@@ -128,6 +169,8 @@
 - [gotcha] - RANKING見出しサブテキスト ✅
 - 完了: 完了しました。全5商品のラベルが「画像の下・商品名の上」に配置されました。
 - 5. スペシャルクーポン BOX（4月30日まで）+ 注意事項
+- [gotcha] 5. スペシャルクーポン BOX（4月30日まで）+ 注意事項
+
 ## 2026-04-09 11:08 | mimc-mailmagazine [ai]
 - [pattern] メールマガジンHTML新規作成時は既存テンプレートと関連配信HTML（前回分など）を確認して構造と画像パスを把握してから実装する
 - [gotcha] 画像ファイル名を仮置きする場合、実装後に実際のアップロード名と照合して差し替えが必要
@@ -157,12 +200,15 @@
 - [pattern] メルマガHTMLコーディング時は複数の既存テンプレート（260401, 260410等）を参照し、再利用可能な画像・構造を特定する。商品SKUでマッピングして流用判定。
 - [gotcha] 同じSKUが異なるメール間で異なる商品説明を持つことがある。画像流用時は必ず内容確認が必要（alt テキストと実際の商品が一致しているか検証）。
 - [tip] メール HTML のラベル・ボタンUIはインラインスタイルで細かく指定（`border`, `padding`, `display: inline-block`）。メールクライアント対応を前提に PDF デザインと正確に合わせる。
+
 ## 2026-04-20 01:31 | imrcry.jp
 - 2. 指示書 (5) の「使用する時の注意点 1-2. ルータへのIPv6アドレス配布方法」は画像と判断しています（該当セクション近傍にHTML本文の該当表記はなし）。画像差替え扱いでよいですか？
 - [correction] 作業: 修正指示書です。
 - 完了: **hisawo130/imrcry.jp#2** を main にマージしました（ブランチは自動削除済み）。
 - [correction] 修正B (5) 使用する時の注意点 → HTML本文に対象なし（画像扱いなら支給待ち）
 - 完了: - [pattern] HTMLテキスト修正と画像差替えを明確に分離し、テキスト修正を先にマージ → 画像受領後に別PR対応で衝突リスク削減
+- [gotcha] 2. 指示書 (5) の「使用する時の注意点 1-2. ルータへのIPv6アドレス配布方法」は画像と判断しています（該当セクション近傍にHTML本文の該当表記はなし）。画像差替え扱いでよいですか？
+
 ## 2026-04-20 01:31 | imrcry.jp [ai]
 - [pattern] 修正指示書を受け取ったら最初に「自分で対応vs外部支給」の判断をし、ユーザーに確認する。作業範囲がはっきりして、スコープ外の期待値ズレを防げる。
 - [gotcha] 指示書に「画像修正」と書いてあってもHTMLに該当テキストがなければ対象外。実ファイル検証なしに判断すると、後で修正対象外と判明する罠。
@@ -188,6 +234,7 @@
 - [gotcha] `~/.claude/tools/multi-edit.py` が存在しない環境では、Pythonワンライナーでのbulk編集で対応（複数ファイル同時修正が必要な場合）
 - [pattern] HTML修正と画像/PDF差替えを分離してPR化すると、新版ファイル支給後も競合しない（別ファイルの上書きなため）
 - [tip] 修正指示書をExcelで読み込み時点で「実装可能（テキスト）/ 支給待ち（画像・PDF）」に分類することで、スコープ確定と納期調整が早期にできる
+
 ## 2026-04-13 11:49 | bouquet [ai]
 - [gotcha] マルチチャネル表記統一では外部媒体（Google Map等）の登録状況を優先に判断し、自社サイトを外部に合わせる方が効率的でリスク低い。
 - [pattern] 複数の正解がある課題は、各案のトレードオフを明確にして提示すると、ユーザーが判断しやすい。
@@ -201,10 +248,12 @@
 - [gotcha] SSR環境でJSレンダリング後のコンテンツが取得困難な場合、web fetch前にコードベース（Vue・JSON設定）から直接URL やデータを抽出する方が効率的。構造化データは code-first で確認。
 - [pattern] Google Map・ビジネスプロフィールから店名情報を取得する際、URLパラメータ（qパラメータなど）に店名がエンコード状態で含まれていることがあり、URLデコード処理で情報抽出可能。
 - [gotcha] 複数の外部媒体（Google Map・HPB・ビジネスプロフィール）は店舗ごとに表記がバラバラで統一されていない可能性が高い。統一ルール決定前に全店舗の外部登録内容を確認し、既存パターンを把握してから方針立案すべき。
+
 ## 2026-04-13 11:49 | bouquet
 - 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/bouquet/pages/gym/gym-akasakamitsuke.vue in the IDE. This m
 - 完了: 作成しました。
 - 完了: Notionを更新しました。
+
 ## 2026-04-14 10:23 | pietro-onlineshop_dev
 - 作業: 本番環境へのデプロイを手伝って欲しいです
 - 完了:    → これらを本番に含めますか？含める場合は `main` にマージしてからデプロイします。
@@ -216,6 +265,8 @@
 - [gotcha] コード上 `input.discount.discountClasses` に `SHIPPING` が含まれないと即 `{operations: []}` を返す設計です。アプリを削除・再作成したことで既存のディスカウントも消えています。
 - [gotcha] discountClasses: [SHIPPING]
 - [gotcha]    - `[gotcha]` — 罠・NG・禁止・バグ・エラーの原因
+- [gotcha] ⚠️ 注意: `shopify auth login` が必要な場合は対話操作が発生します。その場合は `! shopify auth login` をターミナルで実行してください。
+
 ## 2026-04-14 10:23 | pietro-onlineshop_dev [ai]
 - [pattern] Shopifyアプリデプロイ前に、ブランチ先行状態とマージ予定を確認し、リリース範囲を明確化する
 - [gotcha] 本番デプロイ時に`shopify.app.<config>.toml`で環境を指定するステップを忘れやすい—手順チェックリストに含める
@@ -274,9 +325,11 @@
 - [pattern] Shopify アプリ本番デプロイは config link（client_id 同期）→ コミット → develop/main マージ → deploy の順序で実行する。
 - [gotcha] Shopify パートナーダッシュボードでアプリを削除すると新しい `client_id` が生成されるため、`shopify app config link` で config ファイルを再紐付けする必要がある。
 - [gotcha] アプリの削除・再作成により Shopify Admin 側のディスカウント設定も消えるため、Function が GraphQL 入力を受け取れず動作停止する。Admin 画面でディスカウントを再作成する必要がある。
+
 ## 2026-04-14 09:32 | pietro-app
 - [pattern] `main` へのマージ・プッシュが完了しました。最後に `shopify app deploy` を実行します。
 - 完了: `main` へのマージ・プッシュが完了しました。最後に `shopify app deploy` を実行します。
+
 ## 2026-04-14 09:32 | pietro-app [ai]
 - [gotcha] Shopify アプリを Partner Dashboard で削除した場合、新しい client_id が生成される。設定ファイルを `shopify app config link` で再紐づけしないとデプロイ失敗。
 - [pattern] デプロイ前に main と develop の先行状況を確認し、どのコミットをリリースするか明確にしておくと、ロールバック判断やミス防止が容易になる。
@@ -284,35 +337,68 @@
 - [gotcha] Shopifyアプリを削除・再作成すると client_id が変わる。デプロイ前に `shopify app config link` で新アプリに紐づけ直して client_id を更新する必要がある。
 - [pattern] `shopify auth login` や `shopify app deploy` など対話操作が必要なコマンドはClaude Codeから実行できない。ユーザーにターミナルで直接実行するよう指示する。
 - [tip] 本番デプロイ前に develop と main の差分を列挙し（コミット数・内容），リリース範囲を明示的に確認して認識を合わせる。
+
 ## 2026-04-14 11:53 | pietro-onlineshop_ver01
 - ### 1. `stopImmediatePropagation()` will NOT break other document handlers ⚠️ Medium confidence
 - ### 2. Race condition before `discountDeckInstance` init — popup may silently fail to open ⚠️ High confidence (gotcha)
 - ### 4. Metafield `!= blank` check is unreliable for empty arrays/lists ⚠️ High confidence (gotcha)
 
-## 2026-04-15 21:50 | teras-taya [ai]
-- [gotcha] Shopifyの `complementary_products` メタフィールドに当該商品自身が含まれる場合がある。ループ内で `product.id` との重複チェックでスキップ必須。
-- [pattern] Shopify theme で `settings_data.json` は自動同期により変更される。PR作成時は事前に確認し、必要に応じてマージ時に `main` と同期させる手順を用意。
-- [tip] メタフィールドデータをテンプレートで使う前に、バリデーション・フィルタリングステップを入れるとデータ品質の問題に強くなる。
-## 2026-04-24 22:36 | dotfiles [ai]
-## 2026-04-24 22:41 | dotfiles
-- [gotcha] 完了: git -C ~/dotfiles commit -m "fix: learningsシンボリックリンク修復・ローカル差分マージ"
-## 2026-04-24 11:56 | mimc-mailmagazine
-- [gotcha] 5. スペシャルクーポン BOX（4月30日まで）+ 注意事項
-## 2026-04-09 11:08 | mimc-mailmagazine [ai]
-## 2026-04-20 01:31 | imrcry.jp
-- [gotcha] 2. 指示書 (5) の「使用する時の注意点 1-2. ルータへのIPv6アドレス配布方法」は画像と判断しています（該当セクション近傍にHTML本文の該当表記はなし）。画像差替え扱いでよいですか？
-## 2026-04-20 01:31 | imrcry.jp [ai]
-## 2026-04-13 11:49 | bouquet [ai]
-## 2026-04-13 11:49 | bouquet
-## 2026-04-14 10:23 | pietro-onlineshop_dev
-- [gotcha] ⚠️ 注意: `shopify auth login` が必要な場合は対話操作が発生します。その場合は `! shopify auth login` をターミナルで実行してください。
-## 2026-04-14 10:23 | pietro-onlineshop_dev [ai]
-## 2026-04-14 09:32 | pietro-app
-## 2026-04-14 09:32 | pietro-app [ai]
-## 2026-04-14 11:53 | pietro-onlineshop_ver01
 - [gotcha] ### 1. `stopImmediatePropagation()` will NOT break other document handlers ⚠️ Medium confidence
 - [gotcha] ### 2. Race condition before `discountDeckInstance` init — popup may silently fail to open ⚠️ High confidence (gotcha)
 - [gotcha] ### 4. Metafield `!= blank` check is unreliable for empty arrays/lists ⚠️ High confidence (gotcha)
+
+## 2026-04-20 13:58 | teras-taya [ai]
+- [gotcha] Shopifyの `complementary_products` メタフィールドに当該商品自身が含まれる場合がある。ループ内で `product.id` との重複チェックでスキップ必須。
+- [pattern] Shopify theme で `settings_data.json` は自動同期により変更される。PR作成時は事前に確認し、必要に応じてマージ時に `main` と同期させる手順を用意。
+- [tip] メタフィールドデータをテンプレートで使う前に、バリデーション・フィルタリングステップを入れるとデータ品質の問題に強くなる。
+- [gotcha] Prestige の `visibility: hidden` は peek 実装を構造的に不可能にする。opacity ベースのスライダーでは隣接スライド表示不可。実装前に CSS 制約を確認
+- [pattern] peek 機能は scroll-carousel（スクロール型）で実装可能。opacity フェード型は非表示スライド完全に隠すため不適切
+- [tip] サードパーティテーマの警告（`custom.overlay` など）は既存グループ名で問題なし。Prestige の命名規則を尊重してスキーマ追加
+- [gotcha] Prestige の slideshow-carousel は CSS `position: absolute; visibility: hidden` で非アクティブスライドを隠すため、opacity フェードベースでは隣スライドの peek 実装は構造的に不可能。
+- [pattern] Peek とループの実装には scroll-carousel + CSS scroll-snap + padding-inline を使用。クローンスライド追加で無限ループを効率的に実現。
+- [tip] 有料テーマ使用時は既存スライド実装の CSS 設計を最初に調査してから対応方針を決める。制約を理解することで最適な解決策を判断できる。
+- [gotcha] Prestige の `slideshow-carousel` は非アクティブスライドを `position: absolute; visibility: hidden` で隠すため peek（隣スライドのチラ見え）は構造的に不可能 → `scroll-carousel` + CSS scroll-snap への切り替えが必須
+- [pattern] scroll-carousel で loop を実現するには最終スライドの clone を先頭に、最初のスライドの clone を末尾に追加し、`scrollend` イベントでクローン着地時にリアルスライドへ `instant` ジャンプ
+- [gotcha] `<img>` 要素のブラウザネイティブドラッグは JS の drag ハンドラより発火優先度が高い → CSS `pointer-events: none` で抑制必要
+- [gotcha] Prestige テーマの CSS `.slideshow__slide:not(.is-selected) { position: absolute; visibility: hidden }` は opacity フェードの peek を構造的に不可能にする。別セクション実装（scroll-snap ベース）で代替を検討
+- [pattern] Swiper なし環境で carousel loop を実装するには、最終スライドを先頭に、最初のスライドを末尾に複製し、`scrollend` で実スライドへ `instant` ジャンプすることで視覚的な切れ目をなくせる
+- [tip] scroll carousel で画像ドラッグ選択を防ぐには `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` の CSS で、ブラウザネイティブドラッグハンドラを封じる
+- [gotcha] Prestige の slideshow-carousel は CSS で非アクティブスライドを `visibility: hidden` で隠すため、隣スライドのチラ見え（peek）は構造的に不可能。scroll-carousel への切り替えが必要。
+- [pattern] scroll-snap ベースのスライダーで最後/最初のスライドをクローンして先頭/末尾に追加し、scrollend でリアルスライドへ instant ジャンプさせることでループを自然に実現。
+- [tip] 画像ドラッグ選択防止には `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` を組み合わせる。pointer-events は親要素へのイベントをバブルさせるのでリンク機能が保たれる。
+- [gotcha] Prestige の `slideshow-carousel` は非アクティブスライドを `position: absolute; visibility: hidden` で隠すため、隣スライドのpeeking は構造的に不可能。スクロールベース実装への変更が必須。
+- [pattern] スクロール型カルーセルの無限ループ実装：最初と最後のスライドを clone して配列前後に挿入し、`scrollend` イベントで clone 到達時に対応する実スライドへ瞬時ジャンプさせると、視覚的に切れ目なくループできる。
+- [gotcha] 画像要素のブラウザネイティブドラッグが drag ハンドラより先に発火するため、`-webkit-user-drag: none` + `pointer-events: none` で抑制が必要。クリックは親要素にバブルするため機能は維持される。
+- [gotcha] Prestige の `slideshow__slide:not(.is-selected) { position: absolute; visibility: hidden }` は非アクティブスライドを完全に隠すため、peek は`scroll-carousel` など別のコンポーネントに切り替えが必須。同じ方式では構造的に不可能。
+- [gotcha] スライダー内の `<img>` ドラッグはネイティブブラウザドラッグが drag ハンドラより優先。`-webkit-user-drag: none`, `user-select: none`, `pointer-events: none` で CSS 抑制が必要。
+- [pattern] 最終スライド clone を先頭、最初スライド clone を末尾に配置し、`scrollend` で実スライドへ瞬時ジャンプすることで Swiper.js なしの無限ループが実現可能。
+- [gotcha] Prestige の opacity-fade carousel は非表示スライド に `position: absolute; visibility: hidden` を適用するため、隣スライドのチラ見え（peek）は構造的に不可能。scroll-snap ベースキャリーセルで再実装が必須。
+- [pattern] CSS scroll-snap carousel でループを実装する際、先頭・末尾にクローンスライドを追加し、scrollend イベントで着地位置を検出してリアルスライドへ instant ジャンプする手法が有効（参考：Pietro テーマの Swiper.js `loop: true` と同等の効果）。
+- [gotcha] スクロールキャリーセル内の画像ドラッグが div の drag ハンドラに割り込む場合、`-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` の組み合わせでネイティブドラッグを抑制し、スクロール優先度を確保する。
+- [gotcha] Prestige の `slideshow-carousel` は CSS で非アクティブスライドを `position: absolute; visibility: hidden` で隠すため、peek（隣スライドのチラ見え）は構造的に不可能。このケースでは `scroll-carousel`（scroll-snap ベース）への切り替えが必要。
+- [pattern] 無限ループを実装する際、最初のスライドを末尾に、最後のスライドを先頭に clone 配置し、scrollend でリアルスライドへ瞬時ジャンプさせるアプローチで、フレームワークなしでも視覚的に途切れない loop を実現可能。
+- [gotcha] `scroll-carousel` 上の画像ドラッグで、ブラウザネイティブドラッグが drag ハンドラより優先実行されるため、`pointer-events: none` + `-webkit-user-drag: none` + `user-select: none` の 3 つを組み合わせて抑制する必要がある。
+- [gotcha] Prestige の CSS `.slideshow__slide:not(.is-selected) { visibility: hidden }` により opacity フェード時の peek は構造的に不可。テーマ CSS 制約を最初に確認してから設計すること
+- [pattern] スライド複製ループ：最終スライド clone を先頭、最初スライド clone を末尾に追加し、`is-initial` で初期位置固定、scrollend で `instant` ジャンプ。視覚的に切れ目なし
+- [pattern] Prestige のような paid theme では既存セクション名を変更せず、機能追加は新規セクション追加で対応するのが正解
+- [gotcha] Prestige の `slideshow-carousel` は非選択スライドを `position: absolute; visibility: hidden` で隠すため、peek は CSS 構造上不可能。`scroll-carousel`（scroll-snap）に切り替えが必須。
+- [pattern] CSS scroll-snap のループ実装：最終・最初スライドをクローン追加、`scrollend` でクローン着地時にリアルスライドへ `instant` ジャンプ。視覚的に切れ目なし。
+- [tip] スクロール時の画像ドラッグ選択を防ぐ：`-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` 組み合わせ。リンクスライドはバブルで機能維持。
+- [gotcha] Prestige の `slideshow-carousel` は非選択スライドを `position: absolute; visibility: hidden` で隠すため peek は構造的に不可。`scroll-carousel`（scroll-snap ベース）への切り替えが必須。
+- [pattern] スクロールカルーセルの infinite loop: 最終スライドの clone を先頭に、最初のスライドの clone を末尾に追加し、`scrollend` で実スライドへ瞬時ジャンプで視覚的に切れ目なし。
+- [gotcha] img ネイティブドラッグを防ぐには `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` で複合抑制。これなしだと scroll ハンドラより優先される。
+- [tip] Shopify CLIセッション切れ時は `shopify auth login --store <store>.myshopify.com` または `--device-code` でセッション復旧可能
+- [pattern] `shopify theme push --only layout/theme.liquid` で特定ファイルのみプッシュ可能。settings_data.json など不要な変更の混入を防ぐ
+- [gotcha] Shopify CLI セッション切れ時、`shopify theme push` は `shopify auth login --store <store>` で再認証が必要。インタラクティブログインの場合はブラウザのコード入力も求められる
+- [pattern] `settings_data.json` に変更がない場合、`shopify theme push --only <file>` で特定ファイルのみプッシュして不要な data.json 変更を回避
+- [tip] Shopify CLI の認証が必要な操作は IDE ツール統合より、ターミナルで直接実行する方が確実（ブラウザ認証やコード入力が必要な場合）
+- [pattern] Shopify Liquid のレスポンシブリンク対応：PC 用/モバイル用で別々の `<a>` 要素を用意し、`md:hidden`/`md-max:hidden` で表示制御すると、異なるリンク先でも保守性が高い
+- [tip] Shopify テーマ push 前に `git diff config/settings_data.json` で意図しない設定変更がないか必ず確認してから実行
+- [pattern] Shopify Liquidで異なる表示分岐する要素が異なるリンク先を必要とする場合、Tailwindクラス（`md-max:hidden` など）で分岐した各要素を別々の `<a>` タグでラップする実装パターン
+- [gotcha] `shopify theme push` 前に `config/settings_data.json` の diff を確認し、意図しない自動生成変更を含めていないか警告する
+- [gotcha] Shopify CLI実行時は事前にストアドメインを確認。複数ストア運用時は `shopify theme list` で現在のコンテキストを確認必須
+- [pattern] Liquid条件付きレスポンシブ（`md-max:hidden` / `md:hidden`）でモバイル/PC版を分離し、異なるリンク先を指定可能
+- [tip] プッシュ前に `git diff --name-only` で変更ファイルを確認し、settings_data.json の不意な変更を検出
 
 ## 2026-04-14 18:45 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Liquid の `!= blank` は JSON 文字列 `"[]"` を空でなく判定。メタフィールド型を Shopify 管理画面で確認し、必要に応じて明示的な空文字列チェックを実装する
@@ -392,64 +478,17 @@
 - [gotcha] クリッカブルな`<span>`に`role="button"` + `aria-label`がないと、スクリーンリーダーユーザーに操作を認識されない。Shopifyテーマではアクセシビリティが後付けされやすい。
 - [gotcha] ポーリング完了時に console.warn だけでは、ユーザーに失敗が通知されない。UI フィードバック（トーストなど）を実装しないと UX が悪化する可能性がある。
 - [pattern] ポーリング実装では、再入場防止フラグ + maxWait + インターバル 100ms の組み合わせが堅牢。5秒タイムアウトは実用的な目安。
-## 2026-04-20 13:58 | teras-taya [ai]
-- [gotcha] Prestige の `visibility: hidden` は peek 実装を構造的に不可能にする。opacity ベースのスライダーでは隣接スライド表示不可。実装前に CSS 制約を確認
-- [pattern] peek 機能は scroll-carousel（スクロール型）で実装可能。opacity フェード型は非表示スライド完全に隠すため不適切
-- [tip] サードパーティテーマの警告（`custom.overlay` など）は既存グループ名で問題なし。Prestige の命名規則を尊重してスキーマ追加
-- [gotcha] Prestige の slideshow-carousel は CSS `position: absolute; visibility: hidden` で非アクティブスライドを隠すため、opacity フェードベースでは隣スライドの peek 実装は構造的に不可能。
-- [pattern] Peek とループの実装には scroll-carousel + CSS scroll-snap + padding-inline を使用。クローンスライド追加で無限ループを効率的に実現。
-- [tip] 有料テーマ使用時は既存スライド実装の CSS 設計を最初に調査してから対応方針を決める。制約を理解することで最適な解決策を判断できる。
-- [gotcha] Prestige の `slideshow-carousel` は非アクティブスライドを `position: absolute; visibility: hidden` で隠すため peek（隣スライドのチラ見え）は構造的に不可能 → `scroll-carousel` + CSS scroll-snap への切り替えが必須
-- [pattern] scroll-carousel で loop を実現するには最終スライドの clone を先頭に、最初のスライドの clone を末尾に追加し、`scrollend` イベントでクローン着地時にリアルスライドへ `instant` ジャンプ
-- [gotcha] `<img>` 要素のブラウザネイティブドラッグは JS の drag ハンドラより発火優先度が高い → CSS `pointer-events: none` で抑制必要
-- [gotcha] Prestige テーマの CSS `.slideshow__slide:not(.is-selected) { position: absolute; visibility: hidden }` は opacity フェードの peek を構造的に不可能にする。別セクション実装（scroll-snap ベース）で代替を検討
-- [pattern] Swiper なし環境で carousel loop を実装するには、最終スライドを先頭に、最初のスライドを末尾に複製し、`scrollend` で実スライドへ `instant` ジャンプすることで視覚的な切れ目をなくせる
-- [tip] scroll carousel で画像ドラッグ選択を防ぐには `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` の CSS で、ブラウザネイティブドラッグハンドラを封じる
-- [gotcha] Prestige の slideshow-carousel は CSS で非アクティブスライドを `visibility: hidden` で隠すため、隣スライドのチラ見え（peek）は構造的に不可能。scroll-carousel への切り替えが必要。
-- [pattern] scroll-snap ベースのスライダーで最後/最初のスライドをクローンして先頭/末尾に追加し、scrollend でリアルスライドへ instant ジャンプさせることでループを自然に実現。
-- [tip] 画像ドラッグ選択防止には `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` を組み合わせる。pointer-events は親要素へのイベントをバブルさせるのでリンク機能が保たれる。
-- [gotcha] Prestige の `slideshow-carousel` は非アクティブスライドを `position: absolute; visibility: hidden` で隠すため、隣スライドのpeeking は構造的に不可能。スクロールベース実装への変更が必須。
-- [pattern] スクロール型カルーセルの無限ループ実装：最初と最後のスライドを clone して配列前後に挿入し、`scrollend` イベントで clone 到達時に対応する実スライドへ瞬時ジャンプさせると、視覚的に切れ目なくループできる。
-- [gotcha] 画像要素のブラウザネイティブドラッグが drag ハンドラより先に発火するため、`-webkit-user-drag: none` + `pointer-events: none` で抑制が必要。クリックは親要素にバブルするため機能は維持される。
-- [gotcha] Prestige の `slideshow__slide:not(.is-selected) { position: absolute; visibility: hidden }` は非アクティブスライドを完全に隠すため、peek は`scroll-carousel` など別のコンポーネントに切り替えが必須。同じ方式では構造的に不可能。
-- [gotcha] スライダー内の `<img>` ドラッグはネイティブブラウザドラッグが drag ハンドラより優先。`-webkit-user-drag: none`, `user-select: none`, `pointer-events: none` で CSS 抑制が必要。
-- [pattern] 最終スライド clone を先頭、最初スライド clone を末尾に配置し、`scrollend` で実スライドへ瞬時ジャンプすることで Swiper.js なしの無限ループが実現可能。
-- [gotcha] Prestige の opacity-fade carousel は非表示スライド に `position: absolute; visibility: hidden` を適用するため、隣スライドのチラ見え（peek）は構造的に不可能。scroll-snap ベースキャリーセルで再実装が必須。
-- [pattern] CSS scroll-snap carousel でループを実装する際、先頭・末尾にクローンスライドを追加し、scrollend イベントで着地位置を検出してリアルスライドへ instant ジャンプする手法が有効（参考：Pietro テーマの Swiper.js `loop: true` と同等の効果）。
-- [gotcha] スクロールキャリーセル内の画像ドラッグが div の drag ハンドラに割り込む場合、`-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` の組み合わせでネイティブドラッグを抑制し、スクロール優先度を確保する。
-- [gotcha] Prestige の `slideshow-carousel` は CSS で非アクティブスライドを `position: absolute; visibility: hidden` で隠すため、peek（隣スライドのチラ見え）は構造的に不可能。このケースでは `scroll-carousel`（scroll-snap ベース）への切り替えが必要。
-- [pattern] 無限ループを実装する際、最初のスライドを末尾に、最後のスライドを先頭に clone 配置し、scrollend でリアルスライドへ瞬時ジャンプさせるアプローチで、フレームワークなしでも視覚的に途切れない loop を実現可能。
-- [gotcha] `scroll-carousel` 上の画像ドラッグで、ブラウザネイティブドラッグが drag ハンドラより優先実行されるため、`pointer-events: none` + `-webkit-user-drag: none` + `user-select: none` の 3 つを組み合わせて抑制する必要がある。
-- [gotcha] Prestige の CSS `.slideshow__slide:not(.is-selected) { visibility: hidden }` により opacity フェード時の peek は構造的に不可。テーマ CSS 制約を最初に確認してから設計すること
-- [pattern] スライド複製ループ：最終スライド clone を先頭、最初スライド clone を末尾に追加し、`is-initial` で初期位置固定、scrollend で `instant` ジャンプ。視覚的に切れ目なし
-- [pattern] Prestige のような paid theme では既存セクション名を変更せず、機能追加は新規セクション追加で対応するのが正解
-- [gotcha] Prestige の `slideshow-carousel` は非選択スライドを `position: absolute; visibility: hidden` で隠すため、peek は CSS 構造上不可能。`scroll-carousel`（scroll-snap）に切り替えが必須。
-- [pattern] CSS scroll-snap のループ実装：最終・最初スライドをクローン追加、`scrollend` でクローン着地時にリアルスライドへ `instant` ジャンプ。視覚的に切れ目なし。
-- [tip] スクロール時の画像ドラッグ選択を防ぐ：`-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` 組み合わせ。リンクスライドはバブルで機能維持。
-- [gotcha] Prestige の `slideshow-carousel` は非選択スライドを `position: absolute; visibility: hidden` で隠すため peek は構造的に不可。`scroll-carousel`（scroll-snap ベース）への切り替えが必須。
-- [pattern] スクロールカルーセルの infinite loop: 最終スライドの clone を先頭に、最初のスライドの clone を末尾に追加し、`scrollend` で実スライドへ瞬時ジャンプで視覚的に切れ目なし。
-- [gotcha] img ネイティブドラッグを防ぐには `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` で複合抑制。これなしだと scroll ハンドラより優先される。
-- [tip] Shopify CLIセッション切れ時は `shopify auth login --store <store>.myshopify.com` または `--device-code` でセッション復旧可能
-- [pattern] `shopify theme push --only layout/theme.liquid` で特定ファイルのみプッシュ可能。settings_data.json など不要な変更の混入を防ぐ
-- [gotcha] Shopify CLI セッション切れ時、`shopify theme push` は `shopify auth login --store <store>` で再認証が必要。インタラクティブログインの場合はブラウザのコード入力も求められる
-- [pattern] `settings_data.json` に変更がない場合、`shopify theme push --only <file>` で特定ファイルのみプッシュして不要な data.json 変更を回避
-- [tip] Shopify CLI の認証が必要な操作は IDE ツール統合より、ターミナルで直接実行する方が確実（ブラウザ認証やコード入力が必要な場合）
-- [pattern] Shopify Liquid のレスポンシブリンク対応：PC 用/モバイル用で別々の `<a>` 要素を用意し、`md:hidden`/`md-max:hidden` で表示制御すると、異なるリンク先でも保守性が高い
-- [tip] Shopify テーマ push 前に `git diff config/settings_data.json` で意図しない設定変更がないか必ず確認してから実行
-- [pattern] Shopify Liquidで異なる表示分岐する要素が異なるリンク先を必要とする場合、Tailwindクラス（`md-max:hidden` など）で分岐した各要素を別々の `<a>` タグでラップする実装パターン
-- [gotcha] `shopify theme push` 前に `config/settings_data.json` の diff を確認し、意図しない自動生成変更を含めていないか警告する
-- [gotcha] Shopify CLI実行時は事前にストアドメインを確認。複数ストア運用時は `shopify theme list` で現在のコンテキストを確認必須
-- [pattern] Liquid条件付きレスポンシブ（`md-max:hidden` / `md:hidden`）でモバイル/PC版を分離し、異なるリンク先を指定可能
-- [tip] プッシュ前に `git diff --name-only` で変更ファイルを確認し、settings_data.json の不意な変更を検出
 ## 2026-04-20 13:50 | teras-taya
 - peek が出なかった根本原因:
 - [gotcha] - コード: `DJCD-WNGJ`
 - [correction] ストア間違えています。今のリポジトリを確認して。
-## 2026-04-20 13:58 | P130
+## 2026-04-27 13:25 | P130
 - [correction] を明示的にしてあなたがプッシュするリポジトリを間違えないようにするにはどうすればいい？
 - 結論: ストアドメイン自体は公開情報なのでリスクは低いですが、`.envrc` に何を書くかで扱いが変わります。以下、実務上の注意点。
 - [gotcha] 結論: ストアドメイン自体は公開情報なのでリスクは低いですが、`.envrc` に何を書くかで扱いが変わります。以下、実務上の注意点。
-## 2026-04-24 22:20 | P130 [ai]
+- [pattern] ローカル6コミット（セッション学びログ）vs リモート45コミット（nightly-monitor等）の分岐です。両側とも別ファイルへの書き込みなので `git pull --rebase` で解消できます。実行してよいですか？
+
+## 2026-04-27 13:25 | P130 [ai]
 - [gotcha] shopify auth logout/login を毎回自動化するとCLIキャッシュが壊れて遅くなる。認証切り替えより対象store固定と検証を優先すること。
 - [pattern] Shopifyリポジトリの間違えプッシュ防止：direnv+SHOPIFY_FLAG_STORE固定 → pre-pushフック検証 → シェル関数確認の多層防御パターン。
 - [tip] .envrc は .gitignore で除外し .envrc.example をコミット。store情報漏洩防止とチーム内柔軟性の両立。
@@ -459,6 +498,15 @@
 - [pattern] Remote agentは別コンテキストで実行されるため、メイン会話のコンテキストを消費しない。結果テキストの返却分だけが消費される
 - [pattern] headlessパターンで結果をファイル出力・通知のみにすれば、会話コンテキストへの影響をゼロにできる
 - [tip] remote-control/RemoteTrigger/headless実行で動作が異なるため、コンテキスト圧迫回避が目的なら headless（別プロセス）を優先
+
+- [gotcha] `git push` 前にリモート分岐の大きなズレを検出したら即座に `git fetch` + rebase/merge 判断が必須。先行/遅延が大きい状態での push は拒否される。
+- [pattern] dotfiles や リモート関連の git 操作は `status` → `diff` → 分岐確認を順序固定で実施。untracked や分岐状態の見落とし防止。
+- [gotcha] スキル実行で sync コマンド提示後、リモート分岐が大きい例外系は手動確認が必要。スキルは基本フローのみ、conflict/fetch失敗時は自動実行不可。
+
+- [gotcha] ローカルが origin より先行していても、リモートに新しいコミットがあれば push は拒否される。分岐状態を事前に確認して rebase or force-with-lease を判断すべき。
+- [pattern] マージコンフリクトで両側が有効な値の場合、片側を選ぶのではなく両方保持する設計も検討する（claude/settings.json のように）。
+- [tip] 未ステージ変更がある状態での rebase は stash で保護し、rebase 後に pop して変更喪失を防ぐ。
+
 ## 2026-04-20 14:00 | ANIECA_ver02
 - 🛍️ Shopify Theme | ... | ⚠️ SHOPIFY_FLAG_STORE未設定
 - [gotcha] 🛍️ Shopify Theme | ... | ⚠️ SHOPIFY_FLAG_STORE未設定
@@ -472,6 +520,8 @@
 - > 注意: Shopify の Customer Segment API は比較的新しい。セグメント条件（`customer_tags CONTAINS 'userrank-gold'` 等）でディスカウントを制限できるか動作確認が必要。
 - [correction] 4. **ディスカウントの割引率** ― ランクごとに異なる？
 - 調査完了。Shopify APIで判明した重要な事実を整理します。
+- [gotcha] > 注意: Shopify の Customer Segment API は比較的新しい。セグメント条件（`customer_tags CONTAINS 'userrank-gold'` 等）でディスカウントを制限できるか動作確認が必要。
+
 ## 2026-04-21 13:25 | Beauty-Select [ai]
 - [pattern] Shopifyで月次ランク更新やディスカウント発行などの定期バッチ処理が必要な場合、GitHub Actions + Admin GraphQL API + Bulk Operations APIの組み合わせが標準。Shopify単体では実装不可。
 - [gotcha] 顧客スケール（数百人 vs 数万人）でAPI選択が大きく変わる。実装前にスケール規模を確認しないと工数見積もりが2倍以上ズレる可能性がある。
@@ -485,12 +535,15 @@
 - [gotcha] Shopify のセグメント query 言語の `amount_spent` は全期間合計のみで「過去1年」指定不可。「過去1年購入額」ベースのランク計算は Admin API で注文を日付フィルタして集計するスクリプトが必須。
 - [pattern] `account.liquid` はセクションシステム非対応。スニペット + `{% render %}` で実装し、テーマ設定を `settings_schema.json` で UI 化すると、月次のコード更新を非開発者が管理画面で対応可能。
 - [tip] Shopify ディスカウント API の `segmentCreate` + `discountCodeBasicCreate` で顧客セグメント指定のコード発行が標準機能。セグメント制限も API から自動制御でき、後付けルール不要。
+
 ## 2026-04-21 14:32 | Pinup-Closet_ver01
 - ### 🔴 Critical Issues
 - [gotcha] HTML IDにスペースは無効で、`getElementById` はスペース区切りの複合IDにマッチしない。devtoolsで確認した値は `class="fsb sr summary"` というクラス名を誤読した可能性が高く、Strategy 1 は全ページで必ず失敗する。
 - ⚠️ Needs work — Critical 2件、Important 4件を対応してからマージ推奨。
 - 完了: - [pattern] ロケール文字列・CSSクラス・IDの削除・変更前に全プロジェクト検索で他テンプレートへの影響を確認。複数箇所に依存していないか確認してからマージ。
 - [pattern] 完了しました。
+- [gotcha] ⚠️ Needs work — Critical 2件、Important 4件を対応してからマージ推奨。
+
 ## 2026-04-21 14:32 | Pinup-Closet_ver01 [ai]
 - [gotcha] HTML IDはスペース不可。`getElementById` で見つからない場合、devtoolsで見えるのはクラス名の可能性がある。セレクターなら `.class1.class2` または `[class*="keyword"]` を使用。
 - [gotcha] DOM操作で属性をセット後にエラーが発生すると、属性だけ残って状態が不整合になる。`setAttribute` は操作成功後に実行し、try-catchで初期状態に戻す。
@@ -499,187 +552,77 @@
 - [pattern] DOM修正時、修正成功フラグ（`data-*` 属性等）は操作後に付与する。操作失敗時にフラグだけ残るとリトライが機能しなくなる。
 - [gotcha] Shopify Dawn テーマの既存クラス（`title-wrapper-with-link` 等）をリネームすると定義済みスタイルが失われる。リネーム不要なら並存させるべき。
 
-## Recurring Patterns (updated 2026-04-24)
-- [general/shopify] Python script delegation — seen 38 times
-- [cross] token budget / compress — seen 35 times
-- [general/shopify] commit format — seen 27 times
-- [cross] Shopify Liquid — seen 26 times
-- [general/shopify] dotfiles sync — seen 25 times
-- [general/shopify] error handling — seen 19 times
-- [general] git pull / ff-only — seen 5 times
-- [general] SessionStart hook — seen 3 times
-- [general/shopify-app] webhook — seen 3 times
-## 2026-04-24 11:56 | mimc-mailmagazine
-
-## 2026-04-24 22:20 | P130 [ai]
-
-## 2026-04-24 22:25 | dotfiles
-
-## 2026-04-24 22:25 | dotfiles
-
-## 2026-04-24 22:25 | dotfiles [ai]
-
-## 2026-04-24 22:36 | dotfiles
-
-## 2026-04-24 22:36 | dotfiles [ai]
-
-## 2026-04-24 22:41 | dotfiles
-- 完了: 修正完了。886行追加（ローカルにあった未同期の学習ログをdotfilesへマージ）しました。
-
-## 2026-04-24 22:41 | dotfiles [ai]
-- [gotcha] セットアップ後の symlink は自動修復がないと漂流する。`~/.claude/learnings/`, `~/.claude/tools/` が実ディレクトリに変化し、SessionStart の stop hook が誤ったパスに書いて GitHub sync がずれていく。
-- [pattern] 複数の診断・修復フロー（セッション開始時、手動診断、setup検査）は単一 Python スクリプトで複数モード提供する設計。20+ 回の bash 連打が `python3 ~/.claude/tools/dotfiles-doctor.py [--hook|--verbose|--check]` の1呼び出しに統一できる。
-- [tip] 自動修復スクリプトは修復成功時は silent、問題時だけ systemMessage で通知すると UX がよい。ユーザーが「修復された」ことを認識できるが、問題なければノイズが出ない。
-
-## 2026-04-25 08:30 | dotfiles
-
-## 2026-04-25 08:30 | dotfiles [ai]
-- [gotcha] dotfiles の symlink が断裂していても、ローカルに実ディレクトリがあれば動作は続く。GitHub 同期だけが止まり気づきにくい → SessionStart の自動ヘルスチェック必須
-- [pattern] 診断スクリプト（dotfiles-doctor.py）を SessionStart に組み込むことで、別PC での初回起動時も symlink が自動修復される → 設定共有の信頼性向上
-- [tip] 削除時は即 rm でなく ~/.trash に退避してから再作成することで、誤った破棄から復旧可能にする → CLAUDE.md の block-rm.sh と同じ安全性パターン
-
-## 2026-04-25 09:05 | dotfiles
-
-## 2026-04-25 09:05 | dotfiles [ai]
-- [gotcha] Symlink が実ディレクトリに化けると、Stop hook が沈黙破壊される（正しいパスに書き込めず、セッション学習がGitHubに届かないまま差分が溜まる）
-- [pattern] dotfiles-doctor.py のような一元化診断スクリプトを SessionStart hook に組込むことで、複数PC間の初期化ズレが自動修復される仕組みが実現できる
-- [tip] Symlink 修復時は `rm` ではなく `~/.trash` に退避してブロックリスト準拠を確保すると、安全かつ repeatable な修復になる
-
-## 2026-04-25 09:18 | dotfiles
-
-## 2026-04-25 09:18 | dotfiles [ai]
-- [gotcha] symlink が実ディレクトリに置き換わると、セッション終了時の learnings 保存が別ファイルに行われ、別PC への同期が無声で止まる。SessionStart時に自動修復する仕組み必須
-- [pattern] dotfiles同期は SessionStart で pull、セッション終了時に save-learnings → commit → pull --rebase → push で別PC即時伝播と夜間バッチ整理を両立
-- [tip] CLAUDE.md が参照する複数の symlink（tools/, learnings/, memory/）を一括チェックする診断スクリプトで、問題分析時のコンテクスト消費が20回の個別Bash → 1回の統合呼び出しに圧縮される
-
-## 2026-04-25 09:27 | dotfiles
-
-## 2026-04-25 09:27 | dotfiles [ai]
-- [gotcha] dotfiles symlink は setup 直後に壊れていることに気づきにくい。SessionStart で自動修復を仕込まないと、別PCやリセット後に同期がこっそり止まる
-- [pattern] 診断ツールを最初から用意する — 小さな Bash/ls/diff 20回の連打より、1本の Python スクリプト（doctor.py）が回答を圧縮する
-- [tip] 破壊操作は `~/.trash/` に退避してから実行すると、誤削除時の復旧が容易。block-rm.sh 準拠なら自動的に保護される
-
-## 2026-04-25 10:18 | dotfiles
-- [gotcha] ### 🔴 1. Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
-- [correction] いままでの作業内容を見直して、ブラッシュアップできるところはありますか？
-- [gotcha] 注意: メタフィールドが未設定の商品では何も表示されません。`custom.category` も未設定の場合はカテゴリーテキストが省略されます。
-- [pattern] Prestige のセクション余白は `--section-vertical-spacing-override` カスタムプロパティで制御。直接 margin/padding 指定ではなくこのプロパティを上書きする。
-- [gotcha] 複数フィーチャーが混在するブランチから特定の修正のみ main に反映する場合は cherry-pick を使用。全マージすると無関係な機能が含まれるリスク。
-- [tip] Prestige ではセクション内パディングとセクション間ギャップが異なるプロパティで制御される（`--section-vertical-spacing-override` vs `section-stack-gap`）。余白調整時は両方確認が必要。
-## 2026-04-21 13:21 | Beauty-Select
-- [gotcha] > 注意: Shopify の Customer Segment API は比較的新しい。セグメント条件（`customer_tags CONTAINS 'userrank-gold'` 等）でディスカウントを制限できるか動作確認が必要。
-## 2026-04-21 13:25 | Beauty-Select [ai]
-## 2026-04-21 14:32 | Pinup-Closet_ver01
-- [gotcha] ⚠️ Needs work — Critical 2件、Important 4件を対応してからマージ推奨。
-## 2026-04-21 14:32 | Pinup-Closet_ver01 [ai]
-
-## Recurring Patterns (updated 2026-04-26)
-- [shopify] Liquid template / metafield usage — seen 33+ times
-- [general] Python script delegation (preprocess→Claude→postprocess) — seen 72 times
-- [general] git commit / push workflows — seen 56 times
-- [shopify] CSS selector specificity / style leak — seen 51 times
-- [shopify] JavaScript event handler / delegation — seen 35 times
-- [general] SessionStart / Stop hook automation — seen 24 times
-- [shopify] Swiper slider loop configuration — seen 21 times
-- [shopify] Metafield list type output — seen 19 times
-- [shopify] img_url deprecated → image_url — seen 5 times
-- [shopify/ecforce] Platform differences (Liquid syntax) — seen 112 times
-- [security] API token single-display safety — seen 5 times
-
-
-## 2026-04-25 | dotfiles [ai]
-- [gotcha] ### 🔴 Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
-
-
-## 2026-04-22 11:18 | mimc.co.jp-mailmagazine
+## 2026-04-27 13:18 | mimc.co.jp-mailmagazine
 - 完了: 修正しました。変更内容：
 
-## 2026-04-22 11:18 | mimc.co.jp-mailmagazine [ai]
+
+- [gotcha] - [gotcha] CAMPAIGNボックス内の要素構成（画像の配置位置や数）はスクリーンショット確認なしに決定してはいけない。ユーザーのビジュアルフィードバックで修正
+
+
+
+
+- - クーポンBOX（コード＋注意事項）→ お買い物はこちら
+- - クーポンBOX（コード＋お買い物はこちらボタン）→ 注意事項
+
+## 2026-04-27 13:18 | mimc.co.jp-mailmagazine [ai]
 - [pattern] メール HTML は複雑なテーブルレイアウトより `<p>` タグのシンプル縦並びが、メールクライアント互換性と修正効率の面で優れている。
 - [tip] PDF 仕様書とスクリーンショットを並べ比較すると、期間表記・特典表示・画像配置の細かい違いが効率よく発見でき、実装前検証として有効。
 - [pattern] キャンペーンボックス内のプレゼント表示は、複数商品サムネイル行より全幅画像 1 枚の方が、訴求力と収まりが良い。
 
-## 2026-04-22 11:27 | mimc.co.jp-mailmagazine
-
-## 2026-04-22 11:27 | mimc.co.jp-mailmagazine
-- [gotcha] - [gotcha] CAMPAIGNボックス内の要素構成（画像の配置位置や数）はスクリーンショット確認なしに決定してはいけない。ユーザーのビジュアルフィードバックで修正
-
-## 2026-04-22 11:27 | mimc.co.jp-mailmagazine [ai]
 - [pattern] メールHTML の縦方向余白は em、横方向は px で統一。相対単位がメールクライアント対応性に優れている
 - [gotcha] CAMPAIGNボックス内の要素構成（画像の配置位置や数）はスクリーンショット確認なしに決定してはいけない。ユーザーのビジュアルフィードバックで修正
 - [pattern] 複数ファイルの一括置換（px→em 変換など）が必要な場合、Pythonスクリプトで自動化して効率化
 
-## 2026-04-22 11:47 | mimc.co.jp-mailmagazine
-
-## 2026-04-22 11:47 | mimc.co.jp-mailmagazine [ai]
 - [pattern] メールマガジンのプレゼント表示は複数商品のサムネイル行ではなく、横幅いっぱいの1枚画像（`0424_present.jpg`）が正解パターン
 - [pattern] メール HTML の縦方向余白（top/bottom）はすべて em で統一；横方向は px のまま。Pythonスクリプトで一括変換可能
 - [pattern] 右向き三角「▶」は HTMLエンティティではなく UTF-8 文字を直書き（`▶ 詳しくはこちら`）
 
-## 2026-04-22 11:49 | mimc.co.jp-mailmagazine
-
-## 2026-04-22 11:49 | mimc.co.jp-mailmagazine [ai]
 - [pattern] メールマガジン制作時は縦方向の余白（margin-top/bottom）をemで統一し、横方向はpxで統一。メールクライアント環境での表示安定性を確保。
 - [tip] メール環境での矢印記号は文字直書き`▶`より数値参照`&#9658;`が安全。Outlookを含めた広い互換性が必要な場合は数値参照推奨。
 - [pattern] メールマガジンの期間・特典表示はテーブル要素ではなくp要素の段落で実装。テーブル構造はメールクライアント依存で崩れやすい。
 
-## 2026-04-22 11:58 | mimc.co.jp-mailmagazine
-
-## 2026-04-22 11:58 | mimc.co.jp-mailmagazine [ai]
 - [correction] メールHTMLの右向き三角は▶直書きではなく`&#9658;`（数値参照）で実装 — 環境依存リスク対策
 - [pattern] メルマガHTMLの縦方向余白（padding/margin-top/bottom）はすべてemで統一すると、フォントサイズ基準で相対的に保守性向上
 - [pattern] 複数商品表示は画像と説明を左右交互で縦並びレイアウトすると視覚的な動きが出て効果的
 
-## 2026-04-22 12:11 | mimc.co.jp-mailmagazine
-- - クーポンBOX（コード＋注意事項）→ お買い物はこちら
-- - クーポンBOX（コード＋お買い物はこちらボタン）→ 注意事項
-
-## 2026-04-27 13:18 | mimc.co.jp-mailmagazine
-
-## 2026-04-27 13:18 | mimc.co.jp-mailmagazine [ai]
 - [gotcha] メールHTMLで右向き三角を直書き（`▶`）すると環境依存リスク。`&#9658;` HTMLエンティティで統一すべき
 - [pattern] Pythonで縦方向余白を一括変換：正規表現で縦方向`px`→`em`に、横方向は変更なし
 - [tip] メール設定テンプレートはYAMLより`tomllib`（Python 3.13標準）TOML形式が簡潔で追加パッケージ不要
 
-## 2026-04-27 13:23 | P130 [ai]
-- [gotcha] `git push` 前にリモート分岐の大きなズレを検出したら即座に `git fetch` + rebase/merge 判断が必須。先行/遅延が大きい状態での push は拒否される。
-- [pattern] dotfiles や リモート関連の git 操作は `status` → `diff` → 分岐確認を順序固定で実施。untracked や分岐状態の見落とし防止。
-- [gotcha] スキル実行で sync コマンド提示後、リモート分岐が大きい例外系は手動確認が必要。スキルは基本フローのみ、conflict/fetch失敗時は自動実行不可。
-
-## 2026-04-27 13:25 | P130
-- [pattern] ローカル6コミット（セッション学びログ）vs リモート45コミット（nightly-monitor等）の分岐です。両側とも別ファイルへの書き込みなので `git pull --rebase` で解消できます。実行してよいですか？
-
-## 2026-04-27 13:25 | P130 [ai]
-- [gotcha] ローカルが origin より先行していても、リモートに新しいコミットがあれば push は拒否される。分岐状態を事前に確認して rebase or force-with-lease を判断すべき。
-- [pattern] マージコンフリクトで両側が有効な値の場合、片側を選ぶのではなく両方保持する設計も検討する（claude/settings.json のように）。
-- [tip] 未ステージ変更がある状態での rebase は stash で保護し、rebase 後に pop して変更喪失を防ぐ。
-
-## 2026-04-27 20:10 | ohayoreuteri_theme
+## 2026-04-27 20:17 | ohayoreuteri_theme
 - - [gotcha] ecforceテンプレートは行番号ベース指定が脆弱。行数変更で指定位置がずれる可能性。実装前に該当行を必ず確認
 
-## 2026-04-27 20:10 | ohayoreuteri_theme [ai]
-- [pattern] ecforce定期便テンプレートはshow/edit両方存在。片方の変更時は関連ページの整合性を確認（show側でクーポン非表示でもedit側入力フォームが残る場合など）
-- [pattern] テーブル列非表示は戻す可能性で選択：不要ならHTML/Liquidから削除、戻す可能性あればLiquidコメント化
-- [gotcha] ecforceテンプレートは行番号ベース指定が脆弱。行数変更で指定位置がずれる可能性。実装前に該当行を必ず確認
-
-## 2026-04-27 20:12 | ohayoreuteri_theme [ai]
-- [gotcha] ecforceテーマでUI要素を非表示にする際は、同じ機能が複数画面（show/edit等）に存在するか確認し、運用方針を決めてから実装すること
-- [pattern] 仕様が曖昧な場合は複数の実装案（削除/CSS非表示/Liquidコメント）を先に提示してからユーザーの意図を確認する
-
-## 2026-04-27 20:13 | ohayoreuteri_theme
 - 作業: マイページ＞定期便情報＞詳細を見る＞お支払い情報…に表示されている
 - 完了: 完了しました。
 
 ## 2026-04-27 20:13 | ohayoreuteri_theme [ai]
+- [pattern] ecforce定期便テンプレートはshow/edit両方存在。片方の変更時は関連ページの整合性を確認（show側でクーポン非表示でもedit側入力フォームが残る場合など）
+- [pattern] テーブル列非表示は戻す可能性で選択：不要ならHTML/Liquidから削除、戻す可能性あればLiquidコメント化
+- [gotcha] ecforceテンプレートは行番号ベース指定が脆弱。行数変更で指定位置がずれる可能性。実装前に該当行を必ず確認
+
+- [gotcha] ecforceテーマでUI要素を非表示にする際は、同じ機能が複数画面（show/edit等）に存在するか確認し、運用方針を決めてから実装すること
+- [pattern] 仕様が曖昧な場合は複数の実装案（削除/CSS非表示/Liquidコメント）を先に提示してからユーザーの意図を確認する
+
 - [pattern] ecforceテーマの非表示機能は複数案（削除/CSS/コメント）を提示し、ユーザーに選択させるのが効果的。Liquidテンプレートではコメントアウトが可逆的で復活しやすい。
 - [gotcha] show/edit など関連ページが複数ある場合、修正対象を明確にする。ユーザーが「詳細画面のみか、編集機能も一緒か」を判断する段階を挟まないと、後で仕様ズレが生じやすい。
 - [tip] `{% comment %}...{% endcomment %}` でコメントアウトすれば、DOMに残らず、将来の復活や検証も簡単。削除との中間案として有用。
 
-## 2026-04-27 20:13 | ohayoreuteri_theme
-
-## 2026-04-27 20:13 | ohayoreuteri_theme [ai]
 - [gotcha] ecforceの定期便テンプレートは表示画面（show）と編集画面（edit）が分離。一方だけ非表示にすると、編集画面からは操作可能という不整合が発生。要件時に確認必須
 - [pattern] テーブル列の一時的非表示はLiquidコメント（{% comment %}...{% endcomment %}）推奨。完全削除より変更可逆性が高く、復活が簡単
 - [tip] ecforceテーブル列非表示時は見出し（th）と値セル（td）の両方をコメント化。片方だけだと列幅がずれる
 
-## 2026-04-27 20:17 | ohayoreuteri_theme
+## Recurring Patterns (updated 2026-04-27)
+- [general] Python preprocess→Claude→postprocess delegation — seen 106 times
+- [general] token budget / compress / max-turns reduction — seen 58 times
+- [shopify/ecforce] Platform differences (Liquid syntax) — seen 112 times
+- [shopify] CSS selector specificity / style leak — seen 51 times
+- [shopify] JavaScript event handler / delegation — seen 35 times
+- [general] git commit / push workflows — seen 56 times
+- [shopify] Liquid template / metafield usage — seen 33+ times
+- [general] SessionStart / Stop hook automation — seen 24 times
+- [shopify] Swiper slider loop configuration — seen 21 times
+- [shopify] Metafield list type output — seen 19 times
+- [shopify] img_url deprecated → image_url — seen 5 times
+- [general] git pull --ff-only / auto-pull at session start — seen 5 times
+- [security] API token single-display safety — seen 5 times
+- [general] validation before commit — seen 3 times
