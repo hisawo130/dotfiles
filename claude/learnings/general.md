@@ -936,3 +936,8 @@
 - [gotcha] メールHTMLで右向き三角を直書き（`▶`）すると環境依存リスク。`&#9658;` HTMLエンティティで統一すべき
 - [pattern] Pythonで縦方向余白を一括変換：正規表現で縦方向`px`→`em`に、横方向は変更なし
 - [tip] メール設定テンプレートはYAMLより`tomllib`（Python 3.13標準）TOML形式が簡潔で追加パッケージ不要
+
+## 2026-04-27 13:23 | P130 [ai]
+- [gotcha] `git push` 前にリモート分岐の大きなズレを検出したら即座に `git fetch` + rebase/merge 判断が必須。先行/遅延が大きい状態での push は拒否される。
+- [pattern] dotfiles や リモート関連の git 操作は `status` → `diff` → 分岐確認を順序固定で実施。untracked や分岐状態の見落とし防止。
+- [gotcha] スキル実行で sync コマンド提示後、リモート分岐が大きい例外系は手動確認が必要。スキルは基本フローのみ、conflict/fetch失敗時は自動実行不可。
