@@ -489,5 +489,8 @@
       ]
     }
   },
-  "model": "opus"
+  "model": "opus",
+  "editorMode": "vim",
+  "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true
 }
