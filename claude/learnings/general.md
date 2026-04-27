@@ -931,3 +931,8 @@
 - - クーポンBOX（コード＋お買い物はこちらボタン）→ 注意事項
 
 ## 2026-04-27 13:18 | mimc.co.jp-mailmagazine
+
+## 2026-04-27 13:18 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] メールHTMLで右向き三角を直書き（`▶`）すると環境依存リスク。`&#9658;` HTMLエンティティで統一すべき
+- [pattern] Pythonで縦方向余白を一括変換：正規表現で縦方向`px`→`em`に、横方向は変更なし
+- [tip] メール設定テンプレートはYAMLより`tomllib`（Python 3.13標準）TOML形式が簡潔で追加パッケージ不要
