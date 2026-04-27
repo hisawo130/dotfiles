@@ -653,3 +653,6 @@
 - [gotcha] ローカルが origin より先行していても、リモートに新しいコミットがあれば push は拒否される。分岐状態を事前に確認して rebase or force-with-lease を判断すべき。
 - [pattern] マージコンフリクトで両側が有効な値の場合、片側を選ぶのではなく両方保持する設計も検討する（claude/settings.json のように）。
 - [tip] 未ステージ変更がある状態での rebase は stash で保護し、rebase 後に pop して変更喪失を防ぐ。
+
+## 2026-04-27 20:10 | ohayoreuteri_theme
+- - [gotcha] ecforceテンプレートは行番号ベース指定が脆弱。行数変更で指定位置がずれる可能性。実装前に該当行を必ず確認
