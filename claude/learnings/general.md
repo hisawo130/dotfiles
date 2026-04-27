@@ -298,3 +298,8 @@
 ## 2026-05-14 16:34 | GitHub
 - 作業: <command-message>doctor</command-message>
 - 完了: - リモートの先行コミット（`improve-autonomous-learning`、`notebooklm-integration-check`ブランチ追加）をrebaseでマージしてpush
+## 2026-04-27 20:17 | ohayoreuteri_theme
+
+## 2026-04-27 20:17 | ohayoreuteri_theme [ai]
+- [pattern] ecforceの定期便機能では show/edit ページが独立した フロー。詳細表示と編集フォームの表示・非表示を切り分けて検討する。
+- [pattern] Liquidテンプレートで列を一時的に非表示にする場合、{% comment %} でコメント化すると復活が容易。短期的な仕様変更に有効。
