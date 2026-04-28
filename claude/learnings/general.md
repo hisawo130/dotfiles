@@ -651,3 +651,8 @@
 - [pattern] APIキー管理は3つのケースに分類：①dotfiles同期（Git運用、キー不要）②GitHub Actions（Secrets使用）③interactive CLI（OAuth認証）で、状況に応じて使い分け
 - [pattern] `claude auth login` でブラウザOAuth認証すれば、APIキー手動入力ゼロで setup.sh を完結可能
 - [pattern] macOS Keychain に APIキー保存 → iCloud自動同期で、新Macのセットアップ時に再入力不要
+
+## 2026-04-28 09:46 | dotfiles
+- 内容を読みました。重要な概念を整理します。
+- コアの原則: プロンプトの作者は自分の文章を客観的に読めない。必ず bias-free な別エージェントに実行させて評価する。
+- [gotcha] 1. スキルを書いたら必ずサブエージェントで実行テスト — 自己再読は bias が入るので NG
