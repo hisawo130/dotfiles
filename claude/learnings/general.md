@@ -627,8 +627,6 @@
 - [security] API token single-display safety — seen 5 times
 - [general] validation before commit — seen 3 times
 ## 2026-04-25 10:18 | dotfiles
-- [gotcha] ### 🔴 1. Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
-- [correction] いままでの作業内容を見直して、ブラッシュアップできるところはありますか？
 
 ## 2026-04-25 10:18 | dotfiles [ai]
 - [gotcha] Symlink破損するとセッション学習がGitHubに届かなくなる。Stop hookが正しいパスに書き込めず、別PCで反映されない。SessionStart時の自動チェック機構が必須。
@@ -644,3 +642,7 @@
 - [pattern] macOS Keychain で API キー管理：1回保存で iCloud 経由で複数 Mac に自動同期、新環境初期化時のキー入力不要
 - [pattern] Keychain → ~/.secrets フォールバック：存在確認→対話入力の段階的フロー、既存環境との後方互換性を両立
 - [tip] GitHub Actions/ヘッドレス環境では GitHub Secrets 経由で環境変数注入、API キーをリポジトリに入れない
+
+## 2026-04-28 09:26 | dotfiles
+- 作業: ANTHROPIC_API_KEY を使わずに同期設定できますか？githubのdotfilesやgithub actionsを使うなど。
+- 完了: - **`settings.json`**: マージコンフリクト解消（`editorMode`/`remoteControlAtStartup`/`agentPushNotifEnabled` を保持）
