@@ -765,3 +765,8 @@
 
 ## 2026-04-28 16:17 | pietro-onlineshop_ver01
 - [correction] タブレット、SP版でバッジの表示が崩れてしまいました。修正して下さい。
+
+## 2026-04-28 16:17 | pietro-onlineshop_ver01 [ai]
+- [gotcha] Shopify CDN CSS の基準値（例：`min-width: 1367px`）を最初に確認しないと、後で px→vw 変換が何度も発生。計算基準を先に定める
+- [pattern] リスポンシブ値を `clamp(min, vw, max)` から純 `vw` に統一すると、計算・保守がシンプル化。PC/SP 両対応時は特に有効
+- [gotcha] HTML 内 `<style>` タグで CDN CSS をオーバーライドする場合、specificity と計算精度が直結。近似値ではなく確実な値を使う必要がある
