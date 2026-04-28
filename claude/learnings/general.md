@@ -722,3 +722,6 @@
 - [gotcha] `shopify theme push`実行前に認証有効期限を確認。切れていたら`shopify auth login`で先に再認証する
 
 ## 2026-04-28 14:03 | pietro-onlineshop_ver01
+
+## 2026-04-28 14:04 | pietro-onlineshop_ver01
+- 完了: - [tip] Shopify CLI認証トークン切れ時は、ターミナルで直接`shopify theme push`実行→ブラウザで表示されるコード入力、または`shopify auth login`で先に認証を完了させてから再実行
