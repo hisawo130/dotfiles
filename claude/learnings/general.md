@@ -713,3 +713,5 @@
 ## 2026-04-28 13:41 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマで外部CDN配信CSSは直接編集不可。Liquid内の`{% stylesheet %}`タグでCSSをオーバーライドするか、HTMLの構造変更で対応する
 - [pattern] PDFデザインとコード差分分析は、構造（HTML順序）とスタイル（CSS）に分けて判断することで、実装方針を明確化できる
+
+## 2026-04-28 13:49 | pietro-onlineshop_ver01
