@@ -23,8 +23,8 @@ fi
 export PATH="$HOME/.local/bin:$PATH"
 
 # =============================================================================
-# Secrets — NOT stored in dotfiles
-# Create ~/.secrets and add: export ANTHROPIC_API_KEY="sk-ant-..."
+# Secrets — NOT stored in dotfiles (Claude は claude auth login で認証)
+# ~/.secrets: export SHOPIFY_CLI_PARTNERS_TOKEN="" 等
 # =============================================================================
 [[ -f ~/.secrets ]] && source ~/.secrets
 

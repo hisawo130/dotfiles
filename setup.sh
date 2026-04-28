@@ -85,18 +85,29 @@ echo "→ シークレット設定..."
 if [[ ! -f "$HOME/.secrets" ]]; then
   cat > "$HOME/.secrets" <<'EOF'
 # ローカルシークレット — このファイルは絶対にコミットしない
-# export ANTHROPIC_API_KEY=""
 # export SHOPIFY_CLI_PARTNERS_TOKEN=""
 EOF
   chmod 600 "$HOME/.secrets"
-  echo "  作成: ~/.secrets (APIキーを追記してください)"
+  echo "  作成: ~/.secrets"
 else
   echo "  スキップ: ~/.secrets は既存"
+fi
+
+# --- Claude 認証 ---
+echo "→ Claude 認証確認..."
+if command -v claude &>/dev/null; then
+  if claude auth status &>/dev/null; then
+    echo "  ✓ 認証済み"
+  else
+    echo "  ブラウザで認証します..."
+    claude auth login
+  fi
+else
+  echo "  ⚠ claude コマンドが見つかりません。インストール後に: claude auth login"
 fi
 
 echo "✅ セットアップ完了！"
 echo ""
 echo "⚠️  手動対応が必要な項目:"
-echo "   1. ~/.secrets に ANTHROPIC_API_KEY 等を追記"
-echo "   2. 新しいシェルを開く: exec zsh"
-echo "   3. PATHに ~/.local/bin が含まれているか確認: echo \$PATH | grep .local"
+echo "   1. 新しいシェルを開く: exec zsh"
+echo "   2. PATHに ~/.local/bin が含まれているか確認: echo \$PATH | grep .local"

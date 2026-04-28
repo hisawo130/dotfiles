@@ -487,13 +487,8 @@
         "shopify-mcp"
       ]
     }
-<<<<<<< HEAD
   },
-  "model": "opus",
   "editorMode": "vim",
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true
-=======
-  }
->>>>>>> de39d45 (chore: セッション終了時の自動同期)
 }
