@@ -762,3 +762,6 @@
 - [gotcha] CDN配信CSSは直接編集できないため、Liquidの`{% stylesheet %}`タグでオーバーライドCSSを追記してスタイル調整する
 - [pattern] Shopifyテーマでフォントサイズ・marginをレスポンシブ対応させる場合、CDN基準画幅（例：1367px）を参照してvw比率を逆算し`clamp(min, Xvw, max)`で統一すると一貫性が保たれる
 - [pattern] margin指定は`margin: value`ではなく`margin: value 0`のように方向を明示すると、後のオーバーライドやデバッグ時に意図が明確になる
+
+## 2026-04-28 16:17 | pietro-onlineshop_ver01
+- [correction] タブレット、SP版でバッジの表示が崩れてしまいました。修正して下さい。
