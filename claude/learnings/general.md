@@ -755,3 +755,5 @@
 - [gotcha] Shopifyテーマで外部CDN配信CSSがある場合、Liquidファイル内の`<style>`タグでオーバーライドする。直接的なCSS編集では反映されない。
 - [pattern] レスポンシブ調整時は`px`ベースから`vw`/`clamp()`ベースに統一することで、ブレークポイント間の一貫性と保守性が向上。シンプルな`vw`のみで足りれば`clamp()`は不要。
 - [tip] Shopify CLI認証が切れた場合、`shopify auth login`で事前ログインしてからテーマコマンド実行すると、ブラウザ認証プロンプトが消える。
+
+## 2026-04-28 16:14 | pietro-onlineshop_ver01
