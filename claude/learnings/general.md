@@ -634,3 +634,8 @@
 - [gotcha] Symlink破損するとセッション学習がGitHubに届かなくなる。Stop hookが正しいパスに書き込めず、別PCで反映されない。SessionStart時の自動チェック機構が必須。
 - [pattern] 複数の小さな診断Bash/ls/diffコマンド（20回超）は1つのPython統合ツール（`dotfiles-doctor.py`）で置き換え可能。トラブルシューティングのコンテクスト消費が激減する。
 - [tip] 別PC間の設定同期では、symlink有効性の定期検証習慣が重要。SessionStart自動チェック＋手動確認用コマンド両方があると早期発見できる。
+
+## 2026-04-28 09:24 | P130 [ai]
+- [gotcha] ヘッドレス環境（GitHub Actions）でのClaude CLI認証は$ANTHROPIC_API_KEYが必須。OAuthブラウザ認証は不可。
+- [pattern] APIキーはdotfilesや設定スクリプトに含めず、.zshrc/OSキーチェーン/GitHub Secretsに個別設定。
+- [tip] dotfiles同期は認証不要（git認証利用）、自動化パイプラインはsecrets経由、インタラクティブCLIはOAuth利用で使い分け。
