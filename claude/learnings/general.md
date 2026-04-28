@@ -730,3 +730,7 @@
 - [gotcha] Shopifyテーマでは外部CDN配信のCSSは直接編集できない。Liquidファイル内の`<style>`タグで上書きスタイルを定義するか、HTMLの構造を変更して対応する
 - [pattern] PDFデザイン仕様と現状の差分がHTML要素の順序の場合、CSSの`flex-direction`での視覚的順序変更より、HTMLの要素順序そのものを変更する方が保守性が高い
 - [tip] Shopify CLI認証トークン切れ時は、ターミナルで直接`shopify theme push`実行→ブラウザで表示されるコード入力、または`shopify auth login`で先に認証を完了させてから再実行
+
+## 2026-04-28 15:26 | pietro-onlineshop_ver01
+- [pattern] コミットは完了しました。プッシュはターミナルで実行してください：
+- [correction] - フォントサイズが異なるところがあります。デザインに合わせて下さい。
