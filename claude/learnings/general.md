@@ -750,3 +750,8 @@
 - [tip] フォントサイズを`clamp(min, Xvw, max)`形式で統一すると、レスポンシブ対応が一貫性を持ち、ブレークポイント別のスケーリングが容易になる。
 
 ## 2026-04-28 16:10 | pietro-onlineshop_ver01
+
+## 2026-04-28 16:10 | pietro-onlineshop_ver01 [ai]
+- [gotcha] Shopifyテーマで外部CDN配信CSSがある場合、Liquidファイル内の`<style>`タグでオーバーライドする。直接的なCSS編集では反映されない。
+- [pattern] レスポンシブ調整時は`px`ベースから`vw`/`clamp()`ベースに統一することで、ブレークポイント間の一貫性と保守性が向上。シンプルな`vw`のみで足りれば`clamp()`は不要。
+- [tip] Shopify CLI認証が切れた場合、`shopify auth login`で事前ログインしてからテーマコマンド実行すると、ブラウザ認証プロンプトが消える。
