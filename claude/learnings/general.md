@@ -646,3 +646,8 @@
 ## 2026-04-28 09:26 | dotfiles
 - 作業: ANTHROPIC_API_KEY を使わずに同期設定できますか？githubのdotfilesやgithub actionsを使うなど。
 - 完了: - **`settings.json`**: マージコンフリクト解消（`editorMode`/`remoteControlAtStartup`/`agentPushNotifEnabled` を保持）
+
+## 2026-04-28 09:26 | dotfiles [ai]
+- [pattern] APIキー管理は3つのケースに分類：①dotfiles同期（Git運用、キー不要）②GitHub Actions（Secrets使用）③interactive CLI（OAuth認証）で、状況に応じて使い分け
+- [pattern] `claude auth login` でブラウザOAuth認証すれば、APIキー手動入力ゼロで setup.sh を完結可能
+- [pattern] macOS Keychain に APIキー保存 → iCloud自動同期で、新Macのセットアップ時に再入力不要
