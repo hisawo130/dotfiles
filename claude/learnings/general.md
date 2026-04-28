@@ -639,3 +639,8 @@
 - [gotcha] ヘッドレス環境（GitHub Actions）でのClaude CLI認証は$ANTHROPIC_API_KEYが必須。OAuthブラウザ認証は不可。
 - [pattern] APIキーはdotfilesや設定スクリプトに含めず、.zshrc/OSキーチェーン/GitHub Secretsに個別設定。
 - [tip] dotfiles同期は認証不要（git認証利用）、自動化パイプラインはsecrets経由、インタラクティブCLIはOAuth利用で使い分け。
+
+## 2026-04-28 09:24 | P130 [ai]
+- [pattern] macOS Keychain で API キー管理：1回保存で iCloud 経由で複数 Mac に自動同期、新環境初期化時のキー入力不要
+- [pattern] Keychain → ~/.secrets フォールバック：存在確認→対話入力の段階的フロー、既存環境との後方互換性を両立
+- [tip] GitHub Actions/ヘッドレス環境では GitHub Secrets 経由で環境変数注入、API キーをリポジトリに入れない
