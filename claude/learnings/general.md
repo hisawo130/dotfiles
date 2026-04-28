@@ -715,3 +715,8 @@
 - [pattern] PDFデザインとコード差分分析は、構造（HTML順序）とスタイル（CSS）に分けて判断することで、実装方針を明確化できる
 
 ## 2026-04-28 13:49 | pietro-onlineshop_ver01
+
+## 2026-04-28 13:49 | pietro-onlineshop_ver01 [ai]
+- [gotcha] CDN配信のCSSは直接編集不可。Liquidファイル内の`{% stylesheet %}`タグでオーバーライドするか、HTMLの構造変更で対応する
+- [pattern] UI仕様が不明な場合（例：「eギフトの贈り方はこちら」リンク先）、最小限のHTML（リンクなし静的テキスト）から実装して、後から追加修正の方が効率
+- [gotcha] `shopify theme push`実行前に認証有効期限を確認。切れていたら`shopify auth login`で先に再認証する
