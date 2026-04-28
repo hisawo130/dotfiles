@@ -707,3 +707,5 @@
 - [gotcha] Shopifyテーマ開発でCDN配信のCSSは直接編集できない。Liquidの`<style>`タグやHTML構造の工夫でオーバーライドするか対応すること。
 - [pattern] HTMLの要素順序変更で外部CDN依存のCSS差分を回避できる。CSSスコープが限定的なときの有効な戦略。
 - [tip] 静的UI（リンク不要）の実装時は、HTMLで構造を整えCSSでスタイリングすれば、後の機能追加時に容易に拡張可能。
+
+## 2026-04-28 13:41 | pietro-onlineshop_ver01
