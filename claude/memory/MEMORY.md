@@ -10,6 +10,7 @@
 - [feedback_platform_routing.md](feedback_platform_routing.md) — ecforce/Shopify参照を絶対に混在させない。記法差異チェックリスト付き
 - [feedback_matrixify_docs.md](feedback_matrixify_docs.md) — Matrixifyタスク開始前に必ず公式ドキュメントをWebFetchで取得すること
 - [feedback_autorun_tests.md](feedback_autorun_tests.md) — テスト実行・テスト結果に基づく改修は承認不要で自動実行
+- [feedback_empirical_prompt_tuning.md](feedback_empirical_prompt_tuning.md) — スキル改善はバイアスフリーサブエージェントで実行評価。1テーマずつ修正、tool_uses偏差で自己完結度チェック
 
 ## Project
 - [project_browser_mcp.md](project_browser_mcp.md) — browser MCP選定: 現在は@playwright/mcp、移行候補はbrowser-use CLI
