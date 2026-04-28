@@ -649,3 +649,10 @@
 - [gotcha] Shopify CDN CSS の基準値（例：`min-width: 1367px`）を最初に確認しないと、後で px→vw 変換が何度も発生。計算基準を先に定める
 - [pattern] リスポンシブ値を `clamp(min, vw, max)` から純 `vw` に統一すると、計算・保守がシンプル化。PC/SP 両対応時は特に有効
 - [gotcha] HTML 内 `<style>` タグで CDN CSS をオーバーライドする場合、specificity と計算精度が直結。近似値ではなく確実な値を使う必要がある
+
+## 2026-04-28 16:18 | pietro-onlineshop_ver01
+
+## 2026-04-28 16:18 | pietro-onlineshop_ver01 [ai]
+- [gotcha] Shopify Theme で CDN CSS とLiquid内 `<style>` が混在する場合、CDNの基準ブレークポイント（ここでは1367px）の値を確認してからオーバーライドCSS戦略を立てないと、ブレーク境界で微妙にズレる
+- [pattern] レスポンシブフォントサイズ調整は「基準ブレーク内のpx値 → vw比率に逆算 → clamp統一」の3段階で進めると、複数ブレークポイント間の破綻が少ない
+- [tip] px/vw/clamp混在の調整は後から統一するより、最初から単位戦略を決めると手戻りが減る
