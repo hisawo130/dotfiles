@@ -757,3 +757,8 @@
 - [tip] Shopify CLI認証が切れた場合、`shopify auth login`で事前ログインしてからテーマコマンド実行すると、ブラウザ認証プロンプトが消える。
 
 ## 2026-04-28 16:14 | pietro-onlineshop_ver01
+
+## 2026-04-28 16:14 | pietro-onlineshop_ver01 [ai]
+- [gotcha] CDN配信CSSは直接編集できないため、Liquidの`{% stylesheet %}`タグでオーバーライドCSSを追記してスタイル調整する
+- [pattern] Shopifyテーマでフォントサイズ・marginをレスポンシブ対応させる場合、CDN基準画幅（例：1367px）を参照してvw比率を逆算し`clamp(min, Xvw, max)`で統一すると一貫性が保たれる
+- [pattern] margin指定は`margin: value`ではなく`margin: value 0`のように方向を明示すると、後のオーバーライドやデバッグ時に意図が明確になる
