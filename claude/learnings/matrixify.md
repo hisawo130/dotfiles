@@ -2,7 +2,6 @@
 <!-- domain: matrixify — CSV/Excelインポート・エクスポート・Shopifyデータ移行 -->
 
 ## 2026-03-31 | 一括フルフィルメント＋出荷通知
-
 - [gotcha] Matrixifyで**未発送注文にフルフィルメントを新規作成**するには `Line: Type = Fulfillment Line` が必須列。この列がないと `Command: UPDATE` が通り `Import Comment: "UPDATE: Found by ID/Name"` と表示されても、フルフィルメントは作成されずステータスも変わらない。
 
 - [pattern] 一括フルフィルメント＋出荷通知の正しい最小カラム構成:

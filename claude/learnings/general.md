@@ -6,84 +6,17 @@
 - [pattern] 複数PC運用では起動時に `git pull --ff-only` を自動実行。SessionStart フックで古い状態での作業開始を防ぐ。
 - [pattern] 大量ファイル処理のバッチ処理は、クライアント前処理（Python要約生成）→Claude軽量処理（JSON digest受け取り）→後処理スクリプト（ファイル書込）の3段階に分割するとトークン削減と再現性が両立
 - [gotcha] 定期実行バッチ（cron）では「データ集計・パトロール・パターンマッチ」などPythonで完結できる処理をClaudeに通さない設計が必須。生ファイル一括読み込みはスケールしない
-- [tip] JSON digest形式での前後処理分離は、Claude側プロンプトも簡潔に保ち「判断・観察」のみに専念させるため、定期実行タスクには特に有効
-- [pattern] Claude→Python切り分け：期限パトロール・集計など定型処理はPythonで完結させ、ClaudeはJSON digestのみ→トークン大幅削減
-- [pattern] Preprocess→Claude→Postprocess：生ファイルIOはスクリプト側に専任し、Claudeは要約JSON入出力のみ→max-turns削減も実現
 - [gotcha] プロンプト最適化だけではトークン削減の限界あり、Claudeの作業範囲をアーキテクチャレベルで縮小する方が効果的
-- [pattern] バッチ処理のトークン消費が大きい場合、前処理（ファイル読み込み）→ Claudeダイジェスト処理 → 後処理（ファイル書き込み）に分離。Claude は JSON摘要のみ扱い、生ファイル I/O をスクリプトに完全に委譲。max-turns も 30→5 に短縮可能。
 - [gotcha] cronジョブのスケジューリング時、「要件策定時点で」ユーザー使用時間帯・ルール期限（5h/7d）との重複確認を済ませ、設定後の事後確認に頼らない。
 - [tip] バッチ処理設計で「判定ロジックが純粋（正規表現・集計等）な処理」と「理由説明が必要な処理」を明確に分離。前者は Python で完結、後者のみ Claude に渡す。
-- [pattern] 大量ファイル読み込みはPython前処理で要約化し、ClaudeはJSON I/Oのみに限定。トークン消費を90%削減できる。
 - [pattern] レートリミットリセット時刻（5h=AM8:00、7d=月曜）を意識し、自動処理をリセット後に実行。週末を除外(cron `1-5`)することで月曜開始時の消費を0に近づける。
-- [tip] 複数ファイルの batch 処理は Python スクリプト 1本 + preprocess/postprocess で責務を分離。Claudeは JSON ダイジェストの高度な判断のみ担当。
-- [pattern] 大規模なメンテナンスタスク（複数ファイル読み書き）はPythonで前処理・後処理に分離、Claudeは要約入力→JSON出力のみにするとトークン消費が大幅削減される
-- [pattern] cron スケジュール設計時は5h/7dレートリミットリセット時刻と利用時間帯の重なりを避け、平日のみ実行（`0 3 * * 1-5`）にするとリセット時点で使用量0%になる
 - [gotcha] cron設定を変更してもシステムに反映されるまで手動確認が必要（`crontab -l`で登録状況確認してから初回実行テスト）
-- [pattern] トークン削減: Claude→生ファイル読み込みの代わりに、Python前処理で要約JSON生成 → Claude→JSON入出力のみ → Python後処理で書き込み。Read/Edit/Writeコール削減。
-- [pattern] 定期実行タスクのスケジュール最適化: レートリミットリセット時刻（5h/7d）を考慮し、weekday-only cronで実行（月〜金AM3:00）。前日の消費を翌営業日開始時点で最小化。
 - [gotcha] cronの一元化: 複数PCでローカル登録は管理コスト高。GitHub Actionsで一元化すれば、PCのオン/オフに左右されず確実に実行可能だが、APIキー・CI設定が必要。
-- [pattern] Claudeのトークン消費削減には、生ファイル読み込み（複数Read/Edit）をPythonスクリプト前処理に移行。JSONダイジェストのみ渡し、JSON出力受け取りで完結させる
 - [gotcha] 「ユーザー使用時間帯を避ける」と「レートリミット消費タイミング」は別概念。スケジュール時刻は使用時間帯以外ならOK。レートリミットはAPI仕様であり、スケジュール対象ではない
-- [tip] 複数PCのcron一元化はローカル登録ではなくGitHub Actionsで。PCの稼働状態に依存せず確実に実行できる
-- [pattern] トークン消費を減らすなら、Claude はダイジェスト（JSON要約）のみ受け取り、ファイル読み込み・書き込みは前処理・後処理のPythonスクリプトに全て委譲するアーキテクチャにする。Read/Edit/Writeコールがほぼ0になり、プロンプト自体も短縮可能
-- [gotcha] 複数PC環境でのcron管理：各PCで手動登録が必要で同期されない。一元化したいなら GitHub Actions の schedule トリガーで実行し、API キーを Secrets に登録することで、PC依存を排除できる
-- [pattern] 大量のファイル読み書きが必要な場合、Claude→Python→Claudeの3層アーキテクチャを使用。前処理（preprocess.py）が生ファイルをJSON要約に圧縮し、Claudeが生ファイルを読まないようにすることでトークン消費を劇的に削減。
-- [tip] cronスケジュール `0 3 * * 1-5` で曜日指定（月〜金のみ実行）にすると、Rate limit 7d windowをリセット前に避けられる。毎日実行だと土日の消費が無駄になるため、使用時間帯（AM9-PM21）の前にリセットを完成させるなら曜日制限が効果的。
 - [gotcha] GitHub ActionsでAnthropicを使う場合、リポジトリSecretsに `ANTHROPIC_API_KEY` を登録しないと実行時に失敗する。ローカルのシェル変数との区別が必要。
-- [pattern] Claudeとスクリプトの分業：ファイル読み込み・整形はPython preprocess/postprocessで纏め、ClaudeはコンパクトなJSON digestのみ処理 → トークン削減、max-turns短縮
-- [gotcha] 複数PC環境ではローカルcronは管理コストが高い。GitHub Actionsで一元化して各PCの状態に依存させない
 - [tip] レートリミット対策：5h/7dリセット後に処理が完了するよう、AM3:00実行+平日のみスケジュール → 使用開始時に消費量0%を確保
-- [pattern] トークン削減：ファイル読み込み→集計→書き込みをPythonで完結し、ClaudeはJSON要約を受け取るだけ。生ファイルはRead/Edit/Writeコールゼロに削減
 - [gotcha] GitHubActions YAMLで複数行文字列（ヒアドキュメント）を埋め込むとパーサー衝突。プロンプト生成は別Pythonスクリプトに切り出す
-- [pattern] レートリミット管理：nightly taskを月〜金のみ実行(cron: `0 3 * * 1-5`)すると、土日ノータッチで月曜AM9:00時点の7d消費が最小化される
-- [pattern] Claudeプロンプトでファイル読み込みの最小化 — 生ファイルを直接読まず、Pythonで事前集計・JSON要約を生成してから渡す。トークン消費が大幅削減される。
-- [gotcha] YAMLヒアドキュメント（`<<'PYEOF'`）はGitHub Actionsパーサーと衝突 — ワークフロー内でのPython埋め込みは別ファイル切り出しが必須。
-- [pattern] cron スケジュール `0 3 * * 1-5`（月〜金AM3:00のみ）で5h/7dレート制限を最適化 — AM8:00/月曜AM9:00開始時に消費を最小化できる。
-- [pattern] Claudeが繰り返しファイル読み書きする大規模自動化は、preprocess（JSON化）→ Claude（JSON処理）→postprocess（一括書き込み）に分割するとトークン大幅削減できる
-- [gotcha] GitHub ActionsのYAML内で`<<'PYEOF'`などヒアドキュメントを使うとパーサーエラーになる；プロンプト生成は別スクリプトに切り出す
-- [tip] cronスケジュール`0 3 * * 1-5`（月～金のみ）で、5h・7dレートリミットリセット時点の消費を最適化；複数PCはGitHub Actions一元化で対応
-- [pattern] Claudeの大規模ファイル処理はPreprocess/Postprocess分離で効率化 — 生ファイル読込を避け、JSONダイジェスト→JSON応答の1ラウンドに集約でトークン消費を30→5ターンに削減
-- [gotcha] シェルスクリプト内で`sed`を使ったマルチラインJSON置換はYAML/パーサーエラーを招く → Pythonスクリプトに切り出して生成するべき
-- [tip] GitHub Actions cron日本時間指定は`schedule: '0 18 * * 1-5'`（UTC）で平日AM3:00 JST実行可 — ローカルcronより一元化・信頼性が高い
-- [pattern] プリプロセス/ポストプロセス分離でトークン削減 — Claudeが生ファイルを読まない仕組みに変更し、preprocess.pyでJSON要約化→Claude JSON処理→postprocess.pyで一括書き込み、max-turnsも30→5に削減
-- [gotcha] ワークフロー内のヒアドキュメント+sedはYAML衝突 — `<<'PYEOF'` などの複多行テキストはYAMLパーサーの解釈エラーの原因、スクリプトは別ファイルに切り出すべき
-- [tip] レートリミット（5h/7d）を考慮したcronスケジュール — 5hはAM3:00実行→AM8:00リセット→AM9:00開始時0%、7dは土日除外（月〜金のみ）で月曜開始時に最小化
-- [pattern] JSONダイジェスト方式でClaudeのトークン消費を削減。生ファイル読み込みの代わりにpreprocess.pyで要約化したJSON（メモリ件数、メトリクス集計など）をClaudeに渡す方式で、Read/Edit/Writeツールコール数を大幅削減できる
-- [gotcha] シェル内のヒアドキュメント（`<<'PYEOF'`）はYAMLパーサーと衝突する。ワークフロー内でプロンプト生成する場合は、テキスト置換ではなくPythonスクリプトを別ファイルに切り出すべき
-- [tip] cronスケジュールを平日指定（`0 3 * * 1-5`）にすると、7dレートリミットリセットのタイミングで週末の消費を避けられ、月曜開始時に0%から開始できる
-- [pattern] Claude処理のトークン削減：生ファイル読み込みを前処理Pythonに移行（JSON要約化），Claude出力をJSON短形式に限定，後処理Pythonで一括書き込み。max-turns大幅削減でき，APIコスト最適化に有効。
-- [pattern] APIレートリミット最適化：リセット時刻（5h: +08:00 JST, 7d: 月曜）を逆算し，スケジュール（月〜金AM3:00 JST）を設計することで，毎日の使用開始時を0%から開始可能。
-- [gotcha] GitHub ActionsのYAMLでJSON生成：ヒアドキュメント（`<<'EOF'`）がYAMLパーサーと衝突。複雑な文字列生成はPython別ファイルに切り出し，YAMLからはそのスクリプト呼び出しに統一すべき。
-- [pattern] Claude実行のトークン削減：生ファイルをClaudeに読ませず、前処理スクリプトで要約JSONを生成し、ClaudeはJSON入力/出力のみに限定。Task 5/6などは純粋Python処理で完結。max-turns 30→5、toolコール0化を実現
-- [gotcha] cronスケジュール式で平日のみ指定時は `*` でなく `1-5` と明記。`0 3 * * *`（毎日）と `0 3 * * 1-5`（月〜金）は見た目似ているが挙動が異なる。
-- [gotcha] GitHub ActionsのYAML内で複数行ヒアドキュメント（`<<'EOF'`）を直接埋め込むとYAMLパーサーがエラー。プロンプト生成は別スクリプト `.py` に切り出すべき。
-- [pattern] トークン削減の本質は「Claude がファイルを読まない」こと。プリプロセス（JSON digest生成）→ Claude が JSON 出力 → ポストプロセス（一括書き込み）で Read/Edit/Write コール 0 化。
-- [pattern] YAML ヒアドキュメント（`<<'PYEOF'`）内で複数行 JSON 生成は YAML パーサーと衝突。プロンプト生成を別ファイル化、または Python 内で直接構築する方が安定。
-- [tip] 複数 PC の cron 管理は GitHub Actions に一元化が吉。ローカル登録の手間削減＆PC 依存排除。API キーを Secrets 登録するだけで確実に実行。
-- [pattern] 大量の小ファイル読み書きが必要な場合、preprocess.py で全データを JSON に集約 → Claude は JSON ダイジェストのみ処理 → postprocess.py が結果を一括書き込み。Read/Edit/Write ツールコールをほぼゼロに削減し max-turns を 30→5 に短縮。
-- [gotcha] YAML workflow ファイルに `<<'PYEOF'` ヒアドキュメントを直接埋め込むと構文衝突。複雑なスクリプト生成は別 Python ファイルに切り出して呼び出すこと。
-- [pattern] 複数 PC での自動実行は GitHub Actions で一元化（ローカル cron は不要）。ワークフロー `schedule` + `workflow_dispatch` で、単一の真実のソース + 手動実行も実現。
-- [pattern] Claude側はJSONダイジェストのみ受け取り、ファイル読み込み・書き込みをpre/postprocess Pythonスクリプトに委ねることで、Read/Edit/Writeコール0に削減。トークン大幅削減。
-- [gotcha] YAML ワークフロー内で複数行ヒアドキュメント（`<<'PYEOF'`）を直接埋め込むとパーサーエラー。プロンプト生成スクリプトは別ファイルに切り出すべき。
-- [pattern] 複数 PC のローカルcronより GitHub Actions で一元化すると、PC稼働状態に依存せず確実に実行可能。スケジュール制御（土日除外など）も一箇所で管理できる。
-- [pattern] 大量ファイル読み込みでClaudeトークン消費が課題な場合、前処理スクリプト→JSONダイジェスト→Claude→後処理スクリプト の3層構造でClaudeへの生ファイル読み込みを排除すると効果的。
-- [gotcha] YAML ワークフロー内で複数行ヒアドキュメント（`<<'EOF'`）を展開するとパーサー衝突する。環境変数代入または別ファイル切り出しで回避。
-- [tip] 複数PC のcron管理を統一する場合、GitHub Actions の`schedule`トリガーで一元化し、スケジュール式（`0 3 * * 1-5`）で曜日制限すると保守が簡単。
-- [gotcha] YAMLでヒアドキュメント内にPython/shellスクリプトを埋め込むとYAMLパーサーと衝突してエラー。複数行スクリプトは別ファイル化して参照させる。
-- [pattern] 大規模Claude処理はpreprocess（Python集計）→ Claude（JSON digest受け取り）→ postprocess（ファイル書き込み）で分割。生ファイルのRead/Edit削減でトークン大幅節約。
-- [gotcha] GitHub ActionsのCI環境ではローカル環境変数は未設定。Anthropic APIキーは必ずリポジトリSecretsに登録して `${{ secrets.ANTHROPIC_API_KEY }}` で参照する。
-- [pattern] Claude定期処理をトークン効率化する場合、前処理スクリプト（要約生成）と後処理スクリプト（ファイル書き込み）に分離し、Claude呼び出しをJSON入出力に絞る
-- [gotcha] GitHub ActionsでClaude APIを使う場合、Secretsに`ANTHROPIC_API_KEY`が登録されていないとクレジット確認ステップで失敗
-- [pattern] 複数PCで同じ定期タスク実行が必要な場合、ローカルcronよりGitHub Actionsで一元化する（PC状態に依存しない自動実行）
-- [pattern] Claude APIトークン削減：生ファイル読み込みをPython前処理に移し、ClaudeはコンパクトなJSONダイジェストのみ受け取り、JSON出力で返すアーキテクチャにより、トークン消費をほぼゼロに削減できた。大量ファイル処理タスクに応用可能。
-- [gotcha] YAMLヒアドキュメント衝突：ワークフローファイル内で`<<'PYEOF'`などヒアドキュメントを直接記述するとYAMLパーサーが混乱する。複雑なスクリプト生成はPythonスクリプトファイルに切り出して呼び出すべき。
-- [tip] APIレート制限最適化：クレジットリセット時刻(AM8:00)より前にタスク実行(AM3:00)すれば利用開始時(AM9:00)でリセット完了。土日除外で累積消費最小化。
-- [pattern] 大量ファイル処理・トークン最適化：生ファイルをClaudeに読ませず、前処理スクリプトで要約JSONを生成 → Claude（JSON digest受取）→ 後処理スクリプトで一括書き込み。max-turnsも削減。
-- [gotcha] シェルスクリプトでClaudeプロンプト生成時、ヒアドキュメント + YAMLが衝突。GitHub Actionsではプロンプトテンプレートを外部Pythonスクリプトに切り出すべき。
 - [tip] レートリミット最適化：nightly taskを土日除外（月〜金のみ）+ 実行時刻をリセット後に設定。5h/7dウィンドウ開始時に消費を0%状態に保持。
-- [pattern] 大規模プロンプトのトークン最適化 — 前処理スクリプト(preprocess.py)でファイル読み込み・要約、ClaudeはJSONダイジェストのみ受け取る方式でmax-turnsを30→5に削減
-- [gotcha] GitHub ActionsのYAMLで`<<'PYEOF'`ヒアドキュメント使用時、YAMLパーサーと衝突する — スクリプト内容は別ファイル（.sh/.py）に切り出すべき
-- [tip] 複数PCのcron一元化ならGitHub Actions + Secretsを使用 — ローカルcronは廃止、Actions実行日時を月〜金に限定してレートリミットを最適化
 - [pattern] Shopify Dev MCPは認証不要で即座に使用可。Admin MCPはアクセストークン・ストアURLが環境変数必須。まずDev MCPから開始する方が段階的で効率的。
 - [gotcha] dotfiles更新時は既存のrebase等状態を先に完了させてから新しい変更をコミット。git状態確認→変更待避→rebase完了→追加コミット の順序が重要。
 - [pattern] MCPやpermissions等の配列設定は全置換せず、既存内容を保持したまま新要素を統合・追加するapproach。
@@ -92,7 +25,6 @@
 - [gotcha] 夜間バッチで自動書き込みされるファイルが symlink 経由の場合、symlink の壊れを検出できない。バッチの最後に「書き込み先が期待通りか」を検証する guard clause が必要
 - [gotcha] symlink が実ディレクトリに変わると Stop hook が沈黙に失敗し、セッション学習が dotfiles に入らず複数 PC で同期されない。symlink を定期検証すること
 - [pattern] dotfiles symlink + GitHub → セッション終了 Stop hook で自動 commit/push → 次セッション開始時 pull で即時反映。別PC間同期はセッション境界で完結
-
 
 - [gotcha] セットアップ後の symlink は自動修復がないと漂流する。`~/.claude/learnings/`, `~/.claude/tools/` が実ディレクトリに変化し、SessionStart の stop hook が誤ったパスに書いて GitHub sync がずれていく。
 - [pattern] 複数の診断・修復フロー（セッション開始時、手動診断、setup検査）は単一 Python スクリプトで複数モード提供する設計。20+ 回の bash 連打が `python3 ~/.claude/tools/dotfiles-doctor.py [--hook|--verbose|--check]` の1呼び出しに統一できる。
@@ -114,62 +46,18 @@
 - [pattern] 診断ツールを最初から用意する — 小さな Bash/ls/diff 20回の連打より、1本の Python スクリプト（doctor.py）が回答を圧縮する
 - [tip] 破壊操作は `~/.trash/` に退避してから実行すると、誤削除時の復旧が容易。block-rm.sh 準拠なら自動的に保護される
 
-- [gotcha] ### 🔴 Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
-
 ## 2026-04-25 10:18 | dotfiles
-- - [tip] dotfiles など共有リポジトリの同期は startup フック時点で行うと、毎セッション最新コード保証。UserPromptSubmit フックの二重実行は避ける。
-- [pattern] - [gotcha] pull 前に未コミット変更をチェック。ff-only でもコンフリクト時は警告停止し、自動実行で安全性を損なわない。
-- [pattern] 完了しました。変更内容:
-- [pattern] 作業: 毎晩のあなたのブラッシュアップですが、いかにトークンを使用せず、シェルやスクリプトを作成して、起動させるだけの状態になるように、毎晩見直して欲しいです。
-- 完了: 完了しました。変更内容:
-- [gotcha] - レートリミット消費を避ける → nightly reviewをレートリミットリセット後に実行したい？
-- - [tip] レートリミット（5h/7d）を避けるなら、実行スケジュール `0 3 * * 1-5`（月〜金のみ）にして週末を除外。5h リセット（AM8:00）より前に実行でき、7d は土日の消費がないため月曜朝時点で0%から開始できる
-- [gotcha] **WRONG** (replaces existing permissions):
+- [gotcha] pull 前に未コミット変更をチェック。ff-only でもコンフリクト時は警告停止し、自動実行で安全性を損なわない。
 - [open] 1. Stop フックでlearningsのタグ品質チェック — セッション終了時に `[open]` が残っている項目をサマリー表示（未解決の課題を見逃さない）
-- [open] `[open]` 未解決項目のチェックの話ですね。
-- [pattern] Discord webhook URLを教えてください。GitHub ActionsのSecretsに `DISCORD_WEBHOOK_URL` として登録する必要があります。
-- [pattern] Discord webhook URL を教えてもらえれば、`! gh secret set DISCORD_WEBHOOK_URL` で登録できます。
-- 作業: あなたがshopify 改修で使えそうなプラグインやMCPなどしらべてみて
-- 完了: 設定を追加しました。次に dotfiles を同期します。
-- 作業: 自己ブラッシュアップと、複数PC間での設定共有について点検して欲しいです。
-- 完了: git -C ~/dotfiles commit -m "fix: learningsシンボリックリンク修復・ローカル差分マージ"
-- [gotcha] ### ❌ 問題: `~/.claude/learnings/` がシンボリックリンクでなくなっている
-- 今回の根本原因（symlink→実ディレクトリへの変化）を防ぐために `setup.sh` を再実行するか、定期的に symlink チェックを入れると安心です。必要なら追加しますか？
-- [pattern] └─ git pull --rebase (セッションにつき1回のみ)
-- [pattern] → git pull --rebase
-- [correction] 完了: 修正完了。886行追加（ローカルにあった未同期の学習ログをdotfilesへマージ）しました。
-- [gotcha] 完了: git -C ~/dotfiles commit -m "fix: learningsシンボリックリンク修復・ローカル差分マージ"
 
-
-
-- 完了: 修正完了。886行追加（ローカルにあった未同期の学習ログをdotfilesへマージ）しました。
-
-
-
-
-
-- [gotcha] ### 🔴 1. Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
-- [correction] いままでの作業内容を見直して、ブラッシュアップできるところはありますか？
 - [gotcha] 注意: メタフィールドが未設定の商品では何も表示されません。`custom.category` も未設定の場合はカテゴリーテキストが省略されます。
 - [pattern] Prestige のセクション余白は `--section-vertical-spacing-override` カスタムプロパティで制御。直接 margin/padding 指定ではなくこのプロパティを上書きする。
 - [gotcha] 複数フィーチャーが混在するブランチから特定の修正のみ main に反映する場合は cherry-pick を使用。全マージすると無関係な機能が含まれるリスク。
 - [tip] Prestige ではセクション内パディングとセクション間ギャップが異なるプロパティで制御される（`--section-vertical-spacing-override` vs `section-stack-gap`）。余白調整時は両方確認が必要。
 
 ## 2026-04-24 11:56 | mimc-mailmagazine
-- [gotcha] - RANKING（No.1〜5）
 - [open] 要確認: 各商品画像は `0414_01.jpg` 〜 `0414_05.jpg` としています。実際にアップロードされる画像ファイル名と異なる場合は差し替えをお願いします。
-- [gotcha] - **RANKING**（No.1〜5）
 - [open] - No.4 ナチュラルトリートメントアップチャージ: SKUの対応が不確かで要確認
-- 完了: `260414.html` を作成しました。
-- [pattern] No.1〜5すべてのラベルをボーダー付き `<span>` スタイルに修正しました。
-- [correction] 以下のコードを参考にして修正してください
-- [pattern] 完了しました。全5商品のラベルが「画像の下・商品名の上」に配置されました。
-- [pattern] スクリプトが正しく動作しませんでした。直接Editで修正します。
-- [gotcha] 6箇所変わりましたが、CAMPAINGボックスの「特設サイトはこちら」も含まれている可能性があります。確認して戻します。
-- [gotcha] - RANKING見出しサブテキスト ✅
-- 完了: 完了しました。全5商品のラベルが「画像の下・商品名の上」に配置されました。
-- 5. スペシャルクーポン BOX（4月30日まで）+ 注意事項
-- [gotcha] 5. スペシャルクーポン BOX（4月30日まで）+ 注意事項
 
 ## 2026-04-09 11:08 | mimc-mailmagazine [ai]
 - [pattern] メールマガジンHTML新規作成時は既存テンプレートと関連配信HTML（前回分など）を確認して構造と画像パスを把握してから実装する
@@ -202,11 +90,7 @@
 - [tip] メール HTML のラベル・ボタンUIはインラインスタイルで細かく指定（`border`, `padding`, `display: inline-block`）。メールクライアント対応を前提に PDF デザインと正確に合わせる。
 
 ## 2026-04-20 01:31 | imrcry.jp
-- 2. 指示書 (5) の「使用する時の注意点 1-2. ルータへのIPv6アドレス配布方法」は画像と判断しています（該当セクション近傍にHTML本文の該当表記はなし）。画像差替え扱いでよいですか？
-- [correction] 作業: 修正指示書です。
-- 完了: **hisawo130/imrcry.jp#2** を main にマージしました（ブランチは自動削除済み）。
 - [correction] 修正B (5) 使用する時の注意点 → HTML本文に対象なし（画像扱いなら支給待ち）
-- 完了: - [pattern] HTMLテキスト修正と画像差替えを明確に分離し、テキスト修正を先にマージ → 画像受領後に別PR対応で衝突リスク削減
 - [gotcha] 2. 指示書 (5) の「使用する時の注意点 1-2. ルータへのIPv6アドレス配布方法」は画像と判断しています（該当セクション近傍にHTML本文の該当表記はなし）。画像差替え扱いでよいですか？
 
 ## 2026-04-20 01:31 | imrcry.jp [ai]
@@ -249,23 +133,9 @@
 - [pattern] Google Map・ビジネスプロフィールから店名情報を取得する際、URLパラメータ（qパラメータなど）に店名がエンコード状態で含まれていることがあり、URLデコード処理で情報抽出可能。
 - [gotcha] 複数の外部媒体（Google Map・HPB・ビジネスプロフィール）は店舗ごとに表記がバラバラで統一されていない可能性が高い。統一ルール決定前に全店舗の外部登録内容を確認し、既存パターンを把握してから方針立案すべき。
 
-## 2026-04-13 11:49 | bouquet
-- 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/bouquet/pages/gym/gym-akasakamitsuke.vue in the IDE. This m
-- 完了: 作成しました。
-- 完了: Notionを更新しました。
-
 ## 2026-04-14 10:23 | pietro-onlineshop_dev
-- 作業: 本番環境へのデプロイを手伝って欲しいです
-- 完了:    → これらを本番に含めますか？含める場合は `main` にマージしてからデプロイします。
-- 完了: 1. **`cdx/temperature-profile-totals` の3コミット**（温度帯送料判定テスト等）は今回の本番に含めますか？含める場合は先に `develop` へマージが必要です。
-- 作業: 学習ログ抽出システムです。以下のClaude Codeセッションから、将来同様の問題で悩んだ時に役立つ学びを抽出してください。
-- 完了: - [pattern] Shopifyアプリデプロイ前に、ブランチ先行状態とマージ予定を確認し、リリース範囲を明確化する
-- ⚠️ 注意: `shopify auth login` が必要な場合は対話操作が発生します。その場合は `! shopify auth login` をターミナルで実行してください。
-- 完了: 2. `develop` を `main` にマージ
 - [gotcha] コード上 `input.discount.discountClasses` に `SHIPPING` が含まれないと即 `{operations: []}` を返す設計です。アプリを削除・再作成したことで既存のディスカウントも消えています。
-- [gotcha] discountClasses: [SHIPPING]
 - [gotcha]    - `[gotcha]` — 罠・NG・禁止・バグ・エラーの原因
-- [gotcha] ⚠️ 注意: `shopify auth login` が必要な場合は対話操作が発生します。その場合は `! shopify auth login` をターミナルで実行してください。
 
 ## 2026-04-14 10:23 | pietro-onlineshop_dev [ai]
 - [pattern] Shopifyアプリデプロイ前に、ブランチ先行状態とマージ予定を確認し、リリース範囲を明確化する
@@ -328,7 +198,6 @@
 
 ## 2026-04-14 09:32 | pietro-app
 - [pattern] `main` へのマージ・プッシュが完了しました。最後に `shopify app deploy` を実行します。
-- 完了: `main` へのマージ・プッシュが完了しました。最後に `shopify app deploy` を実行します。
 
 ## 2026-04-14 09:32 | pietro-app [ai]
 - [gotcha] Shopify アプリを Partner Dashboard で削除した場合、新しい client_id が生成される。設定ファイルを `shopify app config link` で再紐づけしないとデプロイ失敗。
@@ -339,9 +208,9 @@
 - [tip] 本番デプロイ前に develop と main の差分を列挙し（コミット数・内容），リリース範囲を明示的に確認して認識を合わせる。
 
 ## 2026-04-14 11:53 | pietro-onlineshop_ver01
-- ### 1. `stopImmediatePropagation()` will NOT break other document handlers ⚠️ Medium confidence
-- ### 2. Race condition before `discountDeckInstance` init — popup may silently fail to open ⚠️ High confidence (gotcha)
-- ### 4. Metafield `!= blank` check is unreliable for empty arrays/lists ⚠️ High confidence (gotcha)
+- [gotcha] ### 1. `stopImmediatePropagation()` will NOT break other document handlers ⚠️ Medium confidence
+- [gotcha] ### 2. Race condition before `discountDeckInstance` init — popup may silently fail to open ⚠️ High confidence (gotcha)
+- [gotcha] ### 4. Metafield `!= blank` check is unreliable for empty arrays/lists ⚠️ High confidence (gotcha)
 
 - [gotcha] ### 1. `stopImmediatePropagation()` will NOT break other document handlers ⚠️ Medium confidence
 - [gotcha] ### 2. Race condition before `discountDeckInstance` init — popup may silently fail to open ⚠️ High confidence (gotcha)
@@ -360,33 +229,15 @@
 - [gotcha] Prestige の `slideshow-carousel` は非アクティブスライドを `position: absolute; visibility: hidden` で隠すため peek（隣スライドのチラ見え）は構造的に不可能 → `scroll-carousel` + CSS scroll-snap への切り替えが必須
 - [pattern] scroll-carousel で loop を実現するには最終スライドの clone を先頭に、最初のスライドの clone を末尾に追加し、`scrollend` イベントでクローン着地時にリアルスライドへ `instant` ジャンプ
 - [gotcha] `<img>` 要素のブラウザネイティブドラッグは JS の drag ハンドラより発火優先度が高い → CSS `pointer-events: none` で抑制必要
-- [gotcha] Prestige テーマの CSS `.slideshow__slide:not(.is-selected) { position: absolute; visibility: hidden }` は opacity フェードの peek を構造的に不可能にする。別セクション実装（scroll-snap ベース）で代替を検討
 - [pattern] Swiper なし環境で carousel loop を実装するには、最終スライドを先頭に、最初のスライドを末尾に複製し、`scrollend` で実スライドへ `instant` ジャンプすることで視覚的な切れ目をなくせる
 - [tip] scroll carousel で画像ドラッグ選択を防ぐには `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` の CSS で、ブラウザネイティブドラッグハンドラを封じる
-- [gotcha] Prestige の slideshow-carousel は CSS で非アクティブスライドを `visibility: hidden` で隠すため、隣スライドのチラ見え（peek）は構造的に不可能。scroll-carousel への切り替えが必要。
 - [pattern] scroll-snap ベースのスライダーで最後/最初のスライドをクローンして先頭/末尾に追加し、scrollend でリアルスライドへ instant ジャンプさせることでループを自然に実現。
-- [tip] 画像ドラッグ選択防止には `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` を組み合わせる。pointer-events は親要素へのイベントをバブルさせるのでリンク機能が保たれる。
-- [gotcha] Prestige の `slideshow-carousel` は非アクティブスライドを `position: absolute; visibility: hidden` で隠すため、隣スライドのpeeking は構造的に不可能。スクロールベース実装への変更が必須。
 - [pattern] スクロール型カルーセルの無限ループ実装：最初と最後のスライドを clone して配列前後に挿入し、`scrollend` イベントで clone 到達時に対応する実スライドへ瞬時ジャンプさせると、視覚的に切れ目なくループできる。
-- [gotcha] 画像要素のブラウザネイティブドラッグが drag ハンドラより先に発火するため、`-webkit-user-drag: none` + `pointer-events: none` で抑制が必要。クリックは親要素にバブルするため機能は維持される。
-- [gotcha] Prestige の `slideshow__slide:not(.is-selected) { position: absolute; visibility: hidden }` は非アクティブスライドを完全に隠すため、peek は`scroll-carousel` など別のコンポーネントに切り替えが必須。同じ方式では構造的に不可能。
-- [gotcha] スライダー内の `<img>` ドラッグはネイティブブラウザドラッグが drag ハンドラより優先。`-webkit-user-drag: none`, `user-select: none`, `pointer-events: none` で CSS 抑制が必要。
 - [pattern] 最終スライド clone を先頭、最初スライド clone を末尾に配置し、`scrollend` で実スライドへ瞬時ジャンプすることで Swiper.js なしの無限ループが実現可能。
-- [gotcha] Prestige の opacity-fade carousel は非表示スライド に `position: absolute; visibility: hidden` を適用するため、隣スライドのチラ見え（peek）は構造的に不可能。scroll-snap ベースキャリーセルで再実装が必須。
 - [pattern] CSS scroll-snap carousel でループを実装する際、先頭・末尾にクローンスライドを追加し、scrollend イベントで着地位置を検出してリアルスライドへ instant ジャンプする手法が有効（参考：Pietro テーマの Swiper.js `loop: true` と同等の効果）。
-- [gotcha] スクロールキャリーセル内の画像ドラッグが div の drag ハンドラに割り込む場合、`-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` の組み合わせでネイティブドラッグを抑制し、スクロール優先度を確保する。
-- [gotcha] Prestige の `slideshow-carousel` は CSS で非アクティブスライドを `position: absolute; visibility: hidden` で隠すため、peek（隣スライドのチラ見え）は構造的に不可能。このケースでは `scroll-carousel`（scroll-snap ベース）への切り替えが必要。
 - [pattern] 無限ループを実装する際、最初のスライドを末尾に、最後のスライドを先頭に clone 配置し、scrollend でリアルスライドへ瞬時ジャンプさせるアプローチで、フレームワークなしでも視覚的に途切れない loop を実現可能。
-- [gotcha] `scroll-carousel` 上の画像ドラッグで、ブラウザネイティブドラッグが drag ハンドラより優先実行されるため、`pointer-events: none` + `-webkit-user-drag: none` + `user-select: none` の 3 つを組み合わせて抑制する必要がある。
-- [gotcha] Prestige の CSS `.slideshow__slide:not(.is-selected) { visibility: hidden }` により opacity フェード時の peek は構造的に不可。テーマ CSS 制約を最初に確認してから設計すること
-- [pattern] スライド複製ループ：最終スライド clone を先頭、最初スライド clone を末尾に追加し、`is-initial` で初期位置固定、scrollend で `instant` ジャンプ。視覚的に切れ目なし
 - [pattern] Prestige のような paid theme では既存セクション名を変更せず、機能追加は新規セクション追加で対応するのが正解
-- [gotcha] Prestige の `slideshow-carousel` は非選択スライドを `position: absolute; visibility: hidden` で隠すため、peek は CSS 構造上不可能。`scroll-carousel`（scroll-snap）に切り替えが必須。
 - [pattern] CSS scroll-snap のループ実装：最終・最初スライドをクローン追加、`scrollend` でクローン着地時にリアルスライドへ `instant` ジャンプ。視覚的に切れ目なし。
-- [tip] スクロール時の画像ドラッグ選択を防ぐ：`-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` 組み合わせ。リンクスライドはバブルで機能維持。
-- [gotcha] Prestige の `slideshow-carousel` は非選択スライドを `position: absolute; visibility: hidden` で隠すため peek は構造的に不可。`scroll-carousel`（scroll-snap ベース）への切り替えが必須。
-- [pattern] スクロールカルーセルの infinite loop: 最終スライドの clone を先頭に、最初のスライドの clone を末尾に追加し、`scrollend` で実スライドへ瞬時ジャンプで視覚的に切れ目なし。
-- [gotcha] img ネイティブドラッグを防ぐには `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` で複合抑制。これなしだと scroll ハンドラより優先される。
 - [tip] Shopify CLIセッション切れ時は `shopify auth login --store <store>.myshopify.com` または `--device-code` でセッション復旧可能
 - [pattern] `shopify theme push --only layout/theme.liquid` で特定ファイルのみプッシュ可能。settings_data.json など不要な変更の混入を防ぐ
 - [gotcha] Shopify CLI セッション切れ時、`shopify theme push` は `shopify auth login --store <store>` で再認証が必要。インタラクティブログインの場合はブラウザのコード入力も求められる
@@ -478,15 +329,12 @@
 - [gotcha] クリッカブルな`<span>`に`role="button"` + `aria-label`がないと、スクリーンリーダーユーザーに操作を認識されない。Shopifyテーマではアクセシビリティが後付けされやすい。
 - [gotcha] ポーリング完了時に console.warn だけでは、ユーザーに失敗が通知されない。UI フィードバック（トーストなど）を実装しないと UX が悪化する可能性がある。
 - [pattern] ポーリング実装では、再入場防止フラグ + maxWait + インターバル 100ms の組み合わせが堅牢。5秒タイムアウトは実用的な目安。
+
 ## 2026-04-20 13:50 | teras-taya
-- peek が出なかった根本原因:
-- [gotcha] - コード: `DJCD-WNGJ`
 - [correction] ストア間違えています。今のリポジトリを確認して。
+
 ## 2026-04-27 13:25 | P130
-- [correction] を明示的にしてあなたがプッシュするリポジトリを間違えないようにするにはどうすればいい？
-- 結論: ストアドメイン自体は公開情報なのでリスクは低いですが、`.envrc` に何を書くかで扱いが変わります。以下、実務上の注意点。
 - [gotcha] 結論: ストアドメイン自体は公開情報なのでリスクは低いですが、`.envrc` に何を書くかで扱いが変わります。以下、実務上の注意点。
-- [pattern] ローカル6コミット（セッション学びログ）vs リモート45コミット（nightly-monitor等）の分岐です。両側とも別ファイルへの書き込みなので `git pull --rebase` で解消できます。実行してよいですか？
 
 ## 2026-04-27 13:25 | P130 [ai]
 - [gotcha] shopify auth logout/login を毎回自動化するとCLIキャッシュが壊れて遅くなる。認証切り替えより対象store固定と検証を優先すること。
@@ -508,7 +356,7 @@
 - [tip] 未ステージ変更がある状態での rebase は stash で保護し、rebase 後に pop して変更喪失を防ぐ。
 
 ## 2026-04-20 14:00 | ANIECA_ver02
-- 🛍️ Shopify Theme | ... | ⚠️ SHOPIFY_FLAG_STORE未設定
+- [gotcha] 🛍️ Shopify Theme | ... | ⚠️ SHOPIFY_FLAG_STORE未設定
 - [gotcha] 🛍️ Shopify Theme | ... | ⚠️ SHOPIFY_FLAG_STORE未設定
 
 ## 2026-04-20 14:00 | ANIECA_ver02 [ai]
@@ -518,8 +366,6 @@
 
 ## 2026-04-21 13:21 | Beauty-Select
 - > 注意: Shopify の Customer Segment API は比較的新しい。セグメント条件（`customer_tags CONTAINS 'userrank-gold'` 等）でディスカウントを制限できるか動作確認が必要。
-- [correction] 4. **ディスカウントの割引率** ― ランクごとに異なる？
-- 調査完了。Shopify APIで判明した重要な事実を整理します。
 - [gotcha] > 注意: Shopify の Customer Segment API は比較的新しい。セグメント条件（`customer_tags CONTAINS 'userrank-gold'` 等）でディスカウントを制限できるか動作確認が必要。
 
 ## 2026-04-21 13:25 | Beauty-Select [ai]
@@ -539,9 +385,6 @@
 ## 2026-04-21 14:32 | Pinup-Closet_ver01
 - ### 🔴 Critical Issues
 - [gotcha] HTML IDにスペースは無効で、`getElementById` はスペース区切りの複合IDにマッチしない。devtoolsで確認した値は `class="fsb sr summary"` というクラス名を誤読した可能性が高く、Strategy 1 は全ページで必ず失敗する。
-- ⚠️ Needs work — Critical 2件、Important 4件を対応してからマージ推奨。
-- 完了: - [pattern] ロケール文字列・CSSクラス・IDの削除・変更前に全プロジェクト検索で他テンプレートへの影響を確認。複数箇所に依存していないか確認してからマージ。
-- [pattern] 完了しました。
 - [gotcha] ⚠️ Needs work — Critical 2件、Important 4件を対応してからマージ推奨。
 
 ## 2026-04-21 14:32 | Pinup-Closet_ver01 [ai]
@@ -553,16 +396,7 @@
 - [gotcha] Shopify Dawn テーマの既存クラス（`title-wrapper-with-link` 等）をリネームすると定義済みスタイルが失われる。リネーム不要なら並存させるべき。
 
 ## 2026-04-27 13:18 | mimc.co.jp-mailmagazine
-- 完了: 修正しました。変更内容：
-
-
 - [gotcha] - [gotcha] CAMPAIGNボックス内の要素構成（画像の配置位置や数）はスクリーンショット確認なしに決定してはいけない。ユーザーのビジュアルフィードバックで修正
-
-
-
-
-- - クーポンBOX（コード＋注意事項）→ お買い物はこちら
-- - クーポンBOX（コード＋お買い物はこちらボタン）→ 注意事項
 
 ## 2026-04-27 13:18 | mimc.co.jp-mailmagazine [ai]
 - [pattern] メール HTML は複雑なテーブルレイアウトより `<p>` タグのシンプル縦並びが、メールクライアント互換性と修正効率の面で優れている。
@@ -589,12 +423,6 @@
 - [pattern] Pythonで縦方向余白を一括変換：正規表現で縦方向`px`→`em`に、横方向は変更なし
 - [tip] メール設定テンプレートはYAMLより`tomllib`（Python 3.13標準）TOML形式が簡潔で追加パッケージ不要
 
-## 2026-04-27 20:17 | ohayoreuteri_theme
-- - [gotcha] ecforceテンプレートは行番号ベース指定が脆弱。行数変更で指定位置がずれる可能性。実装前に該当行を必ず確認
-
-- 作業: マイページ＞定期便情報＞詳細を見る＞お支払い情報…に表示されている
-- 完了: 完了しました。
-
 ## 2026-04-27 20:13 | ohayoreuteri_theme [ai]
 - [pattern] ecforce定期便テンプレートはshow/edit両方存在。片方の変更時は関連ページの整合性を確認（show側でクーポン非表示でもedit側入力フォームが残る場合など）
 - [pattern] テーブル列非表示は戻す可能性で選択：不要ならHTML/Liquidから削除、戻す可能性あればLiquidコメント化
@@ -611,23 +439,6 @@
 - [pattern] テーブル列の一時的非表示はLiquidコメント（{% comment %}...{% endcomment %}）推奨。完全削除より変更可逆性が高く、復活が簡単
 - [tip] ecforceテーブル列非表示時は見出し（th）と値セル（td）の両方をコメント化。片方だけだと列幅がずれる
 
-## Recurring Patterns (updated 2026-04-27)
-- [general] Python preprocess→Claude→postprocess delegation — seen 106 times
-- [general] token budget / compress / max-turns reduction — seen 58 times
-- [shopify/ecforce] Platform differences (Liquid syntax) — seen 112 times
-- [shopify] CSS selector specificity / style leak — seen 51 times
-- [shopify] JavaScript event handler / delegation — seen 35 times
-- [general] git commit / push workflows — seen 56 times
-- [shopify] Liquid template / metafield usage — seen 33+ times
-- [general] SessionStart / Stop hook automation — seen 24 times
-- [shopify] Swiper slider loop configuration — seen 21 times
-- [shopify] Metafield list type output — seen 19 times
-- [shopify] img_url deprecated → image_url — seen 5 times
-- [general] git pull --ff-only / auto-pull at session start — seen 5 times
-- [security] API token single-display safety — seen 5 times
-- [general] validation before commit — seen 3 times
-## 2026-04-25 10:18 | dotfiles
-
 ## 2026-04-25 10:18 | dotfiles [ai]
 - [gotcha] Symlink破損するとセッション学習がGitHubに届かなくなる。Stop hookが正しいパスに書き込めず、別PCで反映されない。SessionStart時の自動チェック機構が必須。
 - [pattern] 複数の小さな診断Bash/ls/diffコマンド（20回超）は1つのPython統合ツール（`dotfiles-doctor.py`）で置き換え可能。トラブルシューティングのコンテクスト消費が激減する。
@@ -643,18 +454,12 @@
 - [pattern] Keychain → ~/.secrets フォールバック：存在確認→対話入力の段階的フロー、既存環境との後方互換性を両立
 - [tip] GitHub Actions/ヘッドレス環境では GitHub Secrets 経由で環境変数注入、API キーをリポジトリに入れない
 
-## 2026-04-28 09:26 | dotfiles
-- 作業: ANTHROPIC_API_KEY を使わずに同期設定できますか？githubのdotfilesやgithub actionsを使うなど。
-- 完了: - **`settings.json`**: マージコンフリクト解消（`editorMode`/`remoteControlAtStartup`/`agentPushNotifEnabled` を保持）
-
 ## 2026-04-28 09:26 | dotfiles [ai]
 - [pattern] APIキー管理は3つのケースに分類：①dotfiles同期（Git運用、キー不要）②GitHub Actions（Secrets使用）③interactive CLI（OAuth認証）で、状況に応じて使い分け
 - [pattern] `claude auth login` でブラウザOAuth認証すれば、APIキー手動入力ゼロで setup.sh を完結可能
 - [pattern] macOS Keychain に APIキー保存 → iCloud自動同期で、新Macのセットアップ時に再入力不要
 
 ## 2026-04-28 09:46 | dotfiles
-- 内容を読みました。重要な概念を整理します。
-- コアの原則: プロンプトの作者は自分の文章を客観的に読めない。必ず bias-free な別エージェントに実行させて評価する。
 - [gotcha] 1. スキルを書いたら必ずサブエージェントで実行テスト — 自己再読は bias が入るので NG
 
 ## 2026-04-28 09:46 | dotfiles
@@ -672,59 +477,34 @@
 - [gotcha] メール HTML のファイルパスに `__`（ダブルアンダースコア）や特殊記号があるとメールクライアント対応で崩れるリスク → パス確認は必須チェック項目
 - [correction] メルマガ HTML 完成後は「ブラウザプレビュー + メールクライアント実表示確認」が必須（CLAUDE.md に明記）だが、タスク報告時に確認状況を明示すること
 
-## 2026-04-28 10:00 | mimc-mailmagazine
-- 作業: /Users/P130/Desktop/20260505.pdf
-- 完了: `260505.html` を作成しました。
-
-## 2026-04-28 10:01 | mimc-mailmagazine
-- - [gotcha] メルマガHTMLのコーディングリクエスト時、PDFファイル指定があいまいな場合（`20260505.pdf`、`0505.pdf`、ファイル名の有無など）は、実装を始める前に必ずファイル存在確認してから進める
-
 ## 2026-04-28 10:00 | mimc-mailmagazine [ai]
 - [gotcha] メルマガHTMLのコーディングリクエスト時、PDFファイル指定があいまいな場合（`20260505.pdf`、`0505.pdf`、ファイル名の有無など）は、実装を始める前に必ずファイル存在確認してから進める
 - [pattern] メルマガHTML完成後、差し替えが必要な素材（KV画像、RECOMMEND画像、URL等）をテーブル形式で一覧化すると、ユーザーの確認・差し替え作業が効率化される
 - [tip] 前の配信素材を流用する場合（例：CAMPAIGN内のプレゼント画像）は「同じキャンペーン期間のため0424_present.jpgを流用しています」と明記しておくと、ユーザーが差し替え判断しやすい
-
-## 2026-04-28 10:13 | mimc-mailmagazine
-- 作業: /Users/P130/Desktop/20260430.pdf
-- 完了: `260430.html` を作成しました。
 
 ## 2026-04-28 10:13 | mimc-mailmagazine [ai]
 - [pattern] メルマガHTML作成時は直近の成功ファイル（260424.html など）をテンプレートベースとして参照・流用し、セクション構成・スタイル・リンク構造を継承する
 - [gotcha] 新規配信分のメルマガは画像ファイルの差し替え（0430_kv.jpg など）が必須確認項目。ダブルアンダースコアパス（`img_top__st.jpg`）はメールクライアント対応時に注意
 - [pattern] テンプレート流用時は UTM パラメータを配信日（YYMMDD）に一律更新することで追跡精度を確保し、置換処理は機械的に実行可能
 
-## 2026-04-28 10:37 | mimc-mailmagazine
-
 ## 2026-04-28 10:37 | mimc-mailmagazine [ai]
 - [pattern] メールHTML新規作成時は直近テンプレートのセクションパターン（Ranking、RECOMMENDなど）を参照し、デザイン一貫性を保つ
 - [gotcha] メールHTMLのURL・プロダクトコードは推測値を避け、既存テンプレートで確認済みの値を引用する
 - [tip] ファイル参照時に「見つかりません」と報告する際は、候補ファイル名を複数挙げるとユーザーの確認効率が上がる
-
-## 2026-04-28 13:37 | pietro-onlineshop_ver01
-- - ✓箇条書き2行 → 説明文 → `▼eギフトにてご注文の場合は…`注意書き → お届け方法UIボックス の順に変更
 
 ## 2026-04-28 13:37 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマ開発でCDN配信のCSSは直接編集できない。Liquidの`<style>`タグやHTML構造の工夫でオーバーライドするか対応すること。
 - [pattern] HTMLの要素順序変更で外部CDN依存のCSS差分を回避できる。CSSスコープが限定的なときの有効な戦略。
 - [tip] 静的UI（リンク不要）の実装時は、HTMLで構造を整えCSSでスタイリングすれば、後の機能追加時に容易に拡張可能。
 
-## 2026-04-28 13:41 | pietro-onlineshop_ver01
-
 ## 2026-04-28 13:41 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマで外部CDN配信CSSは直接編集不可。Liquid内の`{% stylesheet %}`タグでCSSをオーバーライドするか、HTMLの構造変更で対応する
 - [pattern] PDFデザインとコード差分分析は、構造（HTML順序）とスタイル（CSS）に分けて判断することで、実装方針を明確化できる
-
-## 2026-04-28 13:49 | pietro-onlineshop_ver01
 
 ## 2026-04-28 13:49 | pietro-onlineshop_ver01 [ai]
 - [gotcha] CDN配信のCSSは直接編集不可。Liquidファイル内の`{% stylesheet %}`タグでオーバーライドするか、HTMLの構造変更で対応する
 - [pattern] UI仕様が不明な場合（例：「eギフトの贈り方はこちら」リンク先）、最小限のHTML（リンクなし静的テキスト）から実装して、後から追加修正の方が効率
 - [gotcha] `shopify theme push`実行前に認証有効期限を確認。切れていたら`shopify auth login`で先に再認証する
-
-## 2026-04-28 14:03 | pietro-onlineshop_ver01
-
-## 2026-04-28 14:04 | pietro-onlineshop_ver01
-- 完了: - [tip] Shopify CLI認証トークン切れ時は、ターミナルで直接`shopify theme push`実行→ブラウザで表示されるコード入力、または`shopify auth login`で先に認証を完了させてから再実行
 
 ## 2026-04-28 14:03 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマでは外部CDN配信のCSSは直接編集できない。Liquidファイル内の`<style>`タグで上書きスタイルを定義するか、HTMLの構造を変更して対応する
@@ -732,31 +512,21 @@
 - [tip] Shopify CLI認証トークン切れ時は、ターミナルで直接`shopify theme push`実行→ブラウザで表示されるコード入力、または`shopify auth login`で先に認証を完了させてから再実行
 
 ## 2026-04-28 15:26 | pietro-onlineshop_ver01
-- [pattern] コミットは完了しました。プッシュはターミナルで実行してください：
 - [correction] - フォントサイズが異なるところがあります。デザインに合わせて下さい。
-
-## 2026-04-28 15:27 | pietro-onlineshop_ver01
-- 完了: - [pattern] PDFデザイン仕様確認時に「行間」「フォントサイズ」「マージン」を数値化し、既存CSS値と並べて比較する。目視だけでなく数値化することで調整箇所が明確になり、修正回数が減る。
 
 ## 2026-04-28 15:26 | pietro-onlineshop_ver01 [ai]
 - [pattern] CDN配信されたCSSの上書きはLiquidファイル内の`<style>`タグで行う。別ファイルやインラインスタイルではなく、セクション/スニペット内でカプセル化するとメンテナンス性が高い。
 - [pattern] PDFデザイン仕様確認時に「行間」「フォントサイズ」「マージン」を数値化し、既存CSS値と並べて比較する。目視だけでなく数値化することで調整箇所が明確になり、修正回数が減る。
-
-## 2026-04-28 16:07 | pietro-onlineshop_ver01
 
 ## 2026-04-28 16:07 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマ内のCSSがCDN配信されている場合、直接編集できないため、Liquidファイルの`<style>`タグでオーバーライドCSSを書く必要がある。
 - [pattern] PDFデザインと現在のコードを詳細に比較してから実装を開始すると、実装漏れや優先順位の誤りを防げる。
 - [tip] フォントサイズを`clamp(min, Xvw, max)`形式で統一すると、レスポンシブ対応が一貫性を持ち、ブレークポイント別のスケーリングが容易になる。
 
-## 2026-04-28 16:10 | pietro-onlineshop_ver01
-
 ## 2026-04-28 16:10 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマで外部CDN配信CSSがある場合、Liquidファイル内の`<style>`タグでオーバーライドする。直接的なCSS編集では反映されない。
 - [pattern] レスポンシブ調整時は`px`ベースから`vw`/`clamp()`ベースに統一することで、ブレークポイント間の一貫性と保守性が向上。シンプルな`vw`のみで足りれば`clamp()`は不要。
 - [tip] Shopify CLI認証が切れた場合、`shopify auth login`で事前ログインしてからテーマコマンド実行すると、ブラウザ認証プロンプトが消える。
-
-## 2026-04-28 16:14 | pietro-onlineshop_ver01
 
 ## 2026-04-28 16:14 | pietro-onlineshop_ver01 [ai]
 - [gotcha] CDN配信CSSは直接編集できないため、Liquidの`{% stylesheet %}`タグでオーバーライドCSSを追記してスタイル調整する
@@ -771,4 +541,17 @@
 - [pattern] リスポンシブ値を `clamp(min, vw, max)` から純 `vw` に統一すると、計算・保守がシンプル化。PC/SP 両対応時は特に有効
 - [gotcha] HTML 内 `<style>` タグで CDN CSS をオーバーライドする場合、specificity と計算精度が直結。近似値ではなく確実な値を使う必要がある
 
-## 2026-04-28 16:18 | pietro-onlineshop_ver01
+## Recurring Patterns (updated 2026-04-29)
+- [shopify] Shopify app delete/recreate: client_id must be relinked — seen 27 times
+- [shopify] stopImmediatePropagation vs stopPropagation — seen 17 times
+- [shopify] Liquid metafield blank check limitations — seen 15 times
+- [shopify] span role=button requires aria-label + keyboard handler — seen 14 times
+- [general] メルマガHTML: SKU画像対応確認が必須 — seen 13 times
+- [shopify] Scroll carousel infinite loop via clone + scrollend instant jump — seen 9 times
+- [shopify] Shopify CLI auth expiry: shopify auth login — seen 7 times
+- [shopify] settings_data.json must not be committed — seen 6 times
+- [general] dotfiles symlink drift: SessionStart auto-repair required — seen 6 times
+- [general] Rate limit: weekday-only AM3 cron — seen 5 times
+- [shopify] Prestige slideshow: visibility:hidden prevents peek — seen 3 times
+- [shopify] CSS selector specificity / style leak — seen 3 times
+- [general] メルマガHTML縦余白em、横余白px統一 — seen 3 times

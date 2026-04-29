@@ -1,14 +1,10 @@
 # Shopify Learnings
 <!-- domain: shopify — テーマ・セクション・Liquid・Dawn・OS2.0 -->
 
-## 2026-03-17 | god-suns_ver01
-- [pattern] 完了: コミット `a3d02e5` — `fix: label版ポインターが画像の下に隠れる問題を修正`
-
 ## 2026-03-25 | idol-anime.com
 - [correction] 表示崩れはcss/jsを確認して修正 — PC/SP画像切替時のアスペクト比崩れを修正 `d6b0d21`
 
 ## 2026-04-14 | pietro-onlineshop_ver01 — イベント競合・CSS漏れ・Liquid メタフィールド
-
 - [gotcha] `customer.metafields['ns']['key']` はすでに値を返す。`.value` を重ねると `nil` になりチケットありでも `blank` 判定になる。OS2.0では `.value` 不要
 - [gotcha] `<span>` 内に `<span class="title">` をネストすると、`.item span` のような祖先セレクタが内側 span にも適用される（padding/border/::after が二重に付く）。直接子セレクタ `.item > span` に絞ること
 - [pattern] メニューリストで `<a>` 以外の要素（span等）をクリッカブルにする際は `.item > a, .item > span` の直接子セレクタを使い、内側 span へのスタイル漏れを防ぐ
@@ -17,7 +13,6 @@
 - [correction] `<div>` inside `<span>` は HTML スペック違反。`<span>` に変えるときは内側要素が既存 CSS の span ルールにマッチしないか必ず確認する
 
 ## 2026-04-02 | pietro-onlineshop_ver01 — Swiper 11 + チラ見せループ対応
-
 - [gotcha] Swiper 11で `loopedSlides` は廃止済み。指定しても無視される
 - [gotcha] Swiper 11の `loop: true` は `slidesPerView * 2` 超のスライドが必要。不足時は `loopAddBlankSlides: true`（デフォルト）で空白スライドを自動追加 → これが空白の原因
 - [pattern] スライド枚数が少ない場合の確実な対処法: LiquidでDOMスライドを複製（2〜3枚なら `render_passes = 2`）して物理スライド数を増やす。`loopAddBlankSlides: false` と組み合わせる
