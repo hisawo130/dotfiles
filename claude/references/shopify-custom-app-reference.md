@@ -8,6 +8,12 @@
 
 ## 📋 Recent Changelog
 
+### 2026-04-28: [Data-driven insights now appear on your analytics dashboard](https://changelog.shopify.com/posts/data-driven-insights-now-appear-on-your-analytics-dashboard)
+Analytics dashboard now displays AI-generated insights analyzing sales and fulfillment data. Developers can leverage Sidekick integration for follow-up queries on business trends.
+
+### 2026-04-27: [Set and track targets in Shopify Analytics](https://changelog.shopify.com/posts/set-and-track-targets-in-shopify-analytics)
+New target-setting feature in Analytics API allows filtering by metrics, channels, and time periods. Developers can integrate target tracking into analytics apps and dashboards.
+
 ### 2026-04-24: [Use MATCHES in ShopifyQL to filter by what customers did](https://changelog.shopify.com/posts/use-matches-in-shopifyql-to-filter-by-what-customers-did)
 ShopifyQL now supports the MATCHES operator in WHERE clauses for filtering by customer behavior patterns, enabling consistent segment logic between Customer Segmentation and Analytics reports.
 
