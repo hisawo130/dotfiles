@@ -323,3 +323,6 @@
 
 ## 2026-04-30 11:28 | pietro-onlineshop_ver01 [ai]
 - [gotcha] `shopify store auth` はローカルサーバーをポート 13387 で起動するため、既に使用中だと失敗→ `lsof -ti:13387 | xargs kill -9` で解放が必須
+
+## 2026-04-30 11:29 | pietro-onlineshop_ver01
+- [pattern] `read_apps` は標準のOAuthスコープとして存在しないため、このアプローチは機能しません。
