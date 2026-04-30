@@ -334,3 +334,6 @@
 
 ## 2026-04-30 16:55 | mimc.co.jp-mailmagazine
 - [open] 要確認事項:
+
+## 2026-04-30 16:55 | mimc.co.jp-mailmagazine
+- [correction] 3. **画像パス** — `2026/0508_kv.jpg`、`0508_01.jpg`〜`0508_04.jpg` を想定。実際のファイル名が異なる場合は修正します
