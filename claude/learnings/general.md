@@ -357,3 +357,6 @@
 
 ## 2026-04-30 17:00 | mimc.co.jp-mailmagazine
 - [pattern] 黒背景・白文字に修正しました。
+
+## 2026-04-30 17:01 | mimc.co.jp-mailmagazine
+- - [correction] ユーザーからの修正指示（色違い等）に対しては即座に対応。メール HTML は環境依存の表示差異が大きいため、確認反復が重要
