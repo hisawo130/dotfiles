@@ -303,3 +303,6 @@
 ## 2026-04-27 20:17 | ohayoreuteri_theme [ai]
 - [pattern] ecforceの定期便機能では show/edit ページが独立した フロー。詳細表示と編集フォームの表示・非表示を切り分けて検討する。
 - [pattern] Liquidテンプレートで列を一時的に非表示にする場合、{% comment %} でコメント化すると復活が容易。短期的な仕様変更に有効。
+
+## 2026-04-30 11:23 | pietro-onlineshop_ver01
+- > 注意: WPD App は `snippets/wcp_cart.liquid` でドメイン変数として参照されているだけで、実際にカートで使われているかはフロー次第です。確認が必要であれば調べます。
