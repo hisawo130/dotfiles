@@ -320,3 +320,6 @@
 - [pattern] Shopify Admin APIの`appInstallations`クエリで`shopify store auth` → `shopify store execute`でインストール済みアプリ一覧を取得可能。id、title、handle、launchUrl、accessScopesなどが取得できる
 - [gotcha] `.shopify/project.json`にストアドメインが設定されていない場合、`shopify store auth --store <domain>.myshopify.com` で手動指定してから実行コマンドを実行する必要がある
 - [tip] テーマファイル内の参照（Liquid/JS grep検索）とAdmin API確認を組み合わせると、実装されているアプリと実際にインストール済みのアプリの両方を把握できる
+
+## 2026-04-30 11:28 | pietro-onlineshop_ver01 [ai]
+- [gotcha] `shopify store auth` はローカルサーバーをポート 13387 で起動するため、既に使用中だと失敗→ `lsof -ti:13387 | xargs kill -9` で解放が必須
