@@ -380,3 +380,7 @@
 - [gotcha] 空の `<p>` タグはメールクライアントで高さが崩れる可能性。セパレーターが必要な場合は `&nbsp;` か `<hr>` を使うべき
 - [gotcha] `<td>` に `margin` を指定してもメールクライアントで無視される。メールHTMLではパディングと高さで余白を制御する
 - [pattern] キャンペーンメールの全リンクに `utm_source=mailmagazine&utm_medium=email&utm_campaign=YYMMDD` を統一付与すると分析精度が向上
+
+## 2026-04-30 19:31 | mimc.co.jp-mailmagazine
+- 作業: ## Code Review Request
+- 完了: mnb セクションで `<div>` を使用していますが、260505.html でも同様のパターンを使用しています。Outlook 2007-2019 では `<div>` のマージン・パディングが信頼できない場合があります。ただし、260505.html との一貫性を考慮すると、現時点での変更は
