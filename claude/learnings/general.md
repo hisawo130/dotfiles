@@ -306,3 +306,7 @@
 
 ## 2026-04-30 11:23 | pietro-onlineshop_ver01
 - > 注意: WPD App は `snippets/wcp_cart.liquid` でドメイン変数として参照されているだけで、実際にカートで使われているかはフロー次第です。確認が必要であれば調べます。
+
+## 2026-04-30 11:25 | pietro-onlineshop_ver01 [ai]
+- [gotcha] Shopify CLI でアプリ一覧取得には `shopify store auth --store <domain> --scopes read_apps` で事前認証が必須（スコープ指定が必須）
+- [tip] Admin API の `appInstallations` クエリは追加スコープ不要で実行可能（read_apps スコープで十分）
