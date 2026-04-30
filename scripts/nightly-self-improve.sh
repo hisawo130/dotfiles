@@ -12,7 +12,12 @@
 
 set -euo pipefail
 
-DOTFILES="$HOME/dotfiles"
+# Resolve dotfiles root (handles non-default install paths)
+if [ -f "$HOME/.dotfiles-root" ]; then
+  DOTFILES=$(head -1 "$HOME/.dotfiles-root" 2>/dev/null || echo "")
+fi
+[ -z "${DOTFILES:-}" ] || [ ! -d "$DOTFILES/claude" ] && DOTFILES="$(cd "$(dirname "$0")/.." && pwd)"
+
 LEARNINGS_DIR="$HOME/.claude/learnings"
 MEMORY_DIR="$HOME/.claude/memory"
 LOG_DIR="$HOME/.claude/logs"

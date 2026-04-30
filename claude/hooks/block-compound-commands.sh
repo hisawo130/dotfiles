@@ -2,6 +2,11 @@
 # PreToolUse hook: block compound commands (&&, ||, ;) in Bash calls
 # Allowed: pipes (|), for/if/while loops, conditional tests, subshells
 # Blocked: top-level command chaining like "cmd1 && cmd2", "cmd1; cmd2"
+#
+# STATUS: opt-in. Not wired in claude/settings.json by default because it
+# breaks common interactive patterns (e.g. `cd foo && ls`). To enable,
+# add this entry to the PreToolUse > Bash hooks array in settings.json:
+#   { "type": "command", "command": "bash $HOME/.claude/hooks/block-compound-commands.sh" }
 
 INPUT=$(cat)
 CMD=$(echo "$INPUT" | jq -r '.tool_input.command // ""')

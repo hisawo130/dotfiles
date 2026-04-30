@@ -115,7 +115,7 @@ Handle these automatically during implementation — never ask:
 - **Dependency dedup:** Before adding a package, check if a similar one already exists in the project.
 - **Blast radius:** When modifying shared CSS, layouts, or config, list all affected pages/sections in the response.
 - **High-risk flag:** Checkout flow, payment, or auth changes → always flag as 🔴 HIGH RISK regardless of change size.
-- **Stale branch warning:** If current branch is 10+ commits behind main/master, warn before starting work.
+- **Stale branch warning:** SessionStart hook auto fast-forward pulls when behind origin/main. If diverged or with uncommitted changes, surfaces a warning instead.
 - **Schema backup:** Before modifying `settings_data.json` or `{% schema %}`, note the original values for rollback.
 
 ## Operational rules
@@ -260,7 +260,7 @@ Save only if the information is **non-obvious and will help future sessions**. D
 |---|---|---|
 | 1 | `check-stale-refs.sh` | 14日以上未更新のリファレンスファイルを警告 |
 | 2 | `recovery-detect.sh` | 前回クラッシュ検出 — state.md + clean marker で判定 |
-| 3 | `stale-branch-check.sh` | origin/main から 10+ commits 遅れていたら警告 |
+| 3 | `stale-branch-check.sh` | origin/main より 1 commit でも遅れていたら fast-forward pull。不可なら警告のみ |
 | 4 | `shopify-session-start.sh` | Shopifyリポジトリのみ: git pull + Shopify CLI 認証確認 |
 | 5 | `ecforce-session-start.sh` | ecforceリポジトリのみ: git pull + 本番テーマ編集リマインダー |
 | 6 | `load-learnings.sh` | ドメイン別学習メモを systemMessage に注入 |
@@ -274,7 +274,7 @@ Save only if the information is **non-obvious and will help future sessions**. D
 | `/capture [domain] <insight>` | 学習メモを手動で即時保存（Stop hook を待たず） |
 | `/learning-report` | 全21ドメインの学習サマリーをレポート表示 |
 | `/memory-update` | 現セッションの学習を `claude/memory/` に即時統合 |
-| `/nightly-review` | 夜間自己改善バッチ（6タスク）を手動実行 |
+| `/nightly-review` | 夜間自己改善バッチ（6タスク + 週次タスク1ツ）を手動実行 |
 | `/sync-dotfiles` | `claude/` 配下の変更をコミット・プッシュ |
 
 ### Injected learnings (from SessionStart hook)
@@ -333,7 +333,7 @@ When not explicitly specified, assume:
 ## Nightly self-improvement
 
 Every day at AM3:00 JST, the GitHub Actions workflow `.github/workflows/nightly-self-improve.yml`
-runs `claude/scripts/prompts/nightly-review.md` headlessly (6 tasks):
+runs `claude/scripts/prompts/nightly-review.md` headlessly (6 daily tasks + 1 weekly task on Mondays):
 
 1. Memory consolidation — `learning-consolidator` エージェントで learnings → memory/ rules に昇格
 2. Autonomous operation review — update CLAUDE.md for stale rules
@@ -341,6 +341,7 @@ runs `claude/scripts/prompts/nightly-review.md` headlessly (6 tasks):
 4. Growth log — append daily report to `claude/scripts/growth-log.md`
 5. Stale date patrol — fix expired deadlines in memory/learnings files
 6. Learning metrics — record per-domain entry counts in growth log
+7. (週次 / Mondays only) Reference refresh — WebFetch sourcesのUPDATE BEFORE USEブロックを更新
 
 To trigger manually: `/nightly-review`
 Logs: GitHub Actions → "nightly-log-*" artifacts (30-day retention)

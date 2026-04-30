@@ -2,6 +2,10 @@
 # Session end hook: summarize changes and notify via ntfy
 
 NTFY_URL="${NTFY_TOPIC:-ntfy.sh/claude-2e88e2160d55}"
+LIB_DIR="$(dirname "$0")/lib"
+# shellcheck source=lib/dotfiles-root.sh
+source "$LIB_DIR/dotfiles-root.sh" 2>/dev/null
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 
 echo '─── session end ───'
 
@@ -15,10 +19,10 @@ echo "$COMMITS"
 echo '[uncommitted]'
 echo "$UNCOMMITTED"
 
-# Dotfiles sync (claude/ and scripts/ only — avoid accidentally staging project files)
+# Dotfiles sync (claude/ scripts/ zsh/ git/ .github/ — match CLAUDE.md policy)
 echo '[dotfiles]'
-_d="$HOME/dotfiles"
-git -C "$_d" add "claude/" "scripts/" ".github/" 2>/dev/null || true
+_d="$DOTFILES"
+git -C "$_d" add "claude/" "scripts/" "zsh/" "git/" ".github/" 2>/dev/null || true
 _s=$(git -C "$_d" diff --cached --name-only 2>/dev/null)
 if [ -n "$_s" ]; then
   git -C "$_d" commit -m 'chore: セッション終了時の自動同期' 2>/dev/null

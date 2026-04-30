@@ -14,13 +14,18 @@ TIME=$(date +%H:%M)
 CWD=$(pwd)
 DIR=$(basename "$CWD")
 
+# Resolve dotfiles root (handles ≠ ~/dotfiles installs)
+# shellcheck source=lib/dotfiles-root.sh
+source "$LIB_DIR/dotfiles-root.sh" 2>/dev/null
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
+
 # ── Early exit: skip dirs that would produce CLAUDE.md / system noise ────
 # Home dir, dotfiles, and .claude itself all contain instruction text that
 # matches keyword patterns but have zero learning value.
 if [ "$CWD" = "$HOME" ] || \
-   [ "$CWD" = "$HOME/dotfiles" ] || \
+   [ "$CWD" = "$DOTFILES" ] || \
    [[ "$CWD" == "$HOME/.claude"* ]] || \
-   [[ "$CWD" == "$HOME/dotfiles/claude"* ]]; then
+   [[ "$CWD" == "$DOTFILES/claude"* ]]; then
   exit 0
 fi
 
@@ -257,7 +262,6 @@ for domain in "${ALL_DOMAINS[@]}"; do
 done
 
 # ── Commit to dotfiles (push handled by session-end-notify.sh) ────────────
-DOTFILES="$HOME/dotfiles"
 if git -C "$DOTFILES" rev-parse --is-inside-work-tree &>/dev/null; then
   for domain in "${ALL_DOMAINS[@]}"; do
     [ -z "$domain" ] && continue

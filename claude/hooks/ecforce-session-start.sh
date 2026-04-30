@@ -17,8 +17,9 @@ mkdir -p "$_cache_dir"
 _flag="${_cache_dir}/ecforce_pull_${_repo}_${_today}"
 
 if [ ! -f "$_flag" ]; then
-  PULL_OUT=$(git -C "$CWD" pull --ff-only 2>&1 | head -5)
+  PULL_RAW=$(git -C "$CWD" pull --ff-only 2>&1)
   PULL_STATUS=$?
+  PULL_OUT=$(printf '%s\n' "$PULL_RAW" | head -5)
   [ "$PULL_STATUS" -eq 0 ] && touch "$_flag"
 else
   PULL_OUT="(skipped — already pulled today)"
