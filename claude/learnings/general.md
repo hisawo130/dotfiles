@@ -310,3 +310,8 @@
 ## 2026-04-30 11:25 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopify CLI でアプリ一覧取得には `shopify store auth --store <domain> --scopes read_apps` で事前認証が必須（スコープ指定が必須）
 - [tip] Admin API の `appInstallations` クエリは追加スコープ不要で実行可能（read_apps スコープで十分）
+
+## 2026-04-30 11:25 | pietro-onlineshop_ver01 [ai]
+- [gotcha] テーマ内コード検索（App Proxyエンドポイント）とAdmin API `appInstallations` クエリは確認する領域が異なる。前者は「テーマで参照」、後者は「実際にインストール」。両方で確認すべき。
+- [pattern] Shopifyテーマのアプリ統合は App Proxy URL (`/apps/xxx`) でコード内に記載されるため、snippet/section検索で用途を特定できる。設定値の参照有無で本番/開発環境の切り替え判定も可能。
+- [tip] `appInstallations` クエリ実行時はストアドメイン（`<store>.myshopify.com`）が必須。未設定なら `shopify store auth --scopes read_apps` で初期認証が必要。
