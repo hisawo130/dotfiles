@@ -346,3 +346,6 @@
 ## 2026-04-30 17:00 | mimc.co.jp-mailmagazine
 - 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/mimc.co.jp-mailmagazine/CLAUDE.md in the IDE. This may or m
 - 完了: [260508.html](260508.html) を作成しました。
+
+## 2026-04-30 17:00 | mimc.co.jp-mailmagazine
+- [open] - [tip] 商品リンク生成時、PDFから抽出した商品コードは末尾が切れることがあるため、正確性を要確認。
