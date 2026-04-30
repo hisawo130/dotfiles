@@ -331,3 +331,6 @@
 - [gotcha] `shopify store auth` の `read_apps` スコープは標準では存在しない。Admin APIでアプリ一覧を取得する際は、標準スコープの確認が必須。
 - [pattern] テーマ内のコード参照（App Proxy URL・スニペット）からアプリ依存関係を逆引きできる。GraphQL APIが必要でない場合も多い。
 - [tip] インストール済みアプリ一覧は管理画面 → 設定 → アプリと販売チャネル で直接確認が最速。URL: `https://admin.shopify.com/store/{store}/settings/apps`
+
+## 2026-04-30 16:55 | mimc.co.jp-mailmagazine
+- [open] 要確認事項:
