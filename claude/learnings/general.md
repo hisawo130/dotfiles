@@ -342,3 +342,7 @@
 - [pattern] メルマガHTML作成は「PDF構成読込 → 既存テンプレート参考 → 商品情報・画像パス確認」のステップで進める
 - [gotcha] PDFのURL情報は末尾が不完全な場合が多い。商品コード（gMLE-など）を正確に確認してから実装する
 - [tip] 画像パスは推定ではなく実ファイルの命名規則（2026/MMDD_XX.jpg）を事前に確認しておく
+
+## 2026-04-30 17:00 | mimc.co.jp-mailmagazine
+- 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/mimc.co.jp-mailmagazine/CLAUDE.md in the IDE. This may or m
+- 完了: [260508.html](260508.html) を作成しました。
