@@ -117,28 +117,8 @@
 - [gotcha] ### 🔴 Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
 
 ## 2026-04-25 10:18 | dotfiles
-- - [tip] dotfiles など共有リポジトリの同期は startup フック時点で行うと、毎セッション最新コード保証。UserPromptSubmit フックの二重実行は避ける。
-- [pattern] - [gotcha] pull 前に未コミット変更をチェック。ff-only でもコンフリクト時は警告停止し、自動実行で安全性を損なわない。
-- [pattern] 完了しました。変更内容:
-- [pattern] 作業: 毎晩のあなたのブラッシュアップですが、いかにトークンを使用せず、シェルやスクリプトを作成して、起動させるだけの状態になるように、毎晩見直して欲しいです。
 - 完了: 完了しました。変更内容:
-- [gotcha] - レートリミット消費を避ける → nightly reviewをレートリミットリセット後に実行したい？
-- - [tip] レートリミット（5h/7d）を避けるなら、実行スケジュール `0 3 * * 1-5`（月〜金のみ）にして週末を除外。5h リセット（AM8:00）より前に実行でき、7d は土日の消費がないため月曜朝時点で0%から開始できる
-- [gotcha] **WRONG** (replaces existing permissions):
 - [open] 1. Stop フックでlearningsのタグ品質チェック — セッション終了時に `[open]` が残っている項目をサマリー表示（未解決の課題を見逃さない）
-- [open] `[open]` 未解決項目のチェックの話ですね。
-- [pattern] Discord webhook URLを教えてください。GitHub ActionsのSecretsに `DISCORD_WEBHOOK_URL` として登録する必要があります。
-- [pattern] Discord webhook URL を教えてもらえれば、`! gh secret set DISCORD_WEBHOOK_URL` で登録できます。
-- 作業: あなたがshopify 改修で使えそうなプラグインやMCPなどしらべてみて
-- 完了: 設定を追加しました。次に dotfiles を同期します。
-- 作業: 自己ブラッシュアップと、複数PC間での設定共有について点検して欲しいです。
-- 完了: git -C ~/dotfiles commit -m "fix: learningsシンボリックリンク修復・ローカル差分マージ"
-- [gotcha] ### ❌ 問題: `~/.claude/learnings/` がシンボリックリンクでなくなっている
-- 今回の根本原因（symlink→実ディレクトリへの変化）を防ぐために `setup.sh` を再実行するか、定期的に symlink チェックを入れると安心です。必要なら追加しますか？
-- [pattern] └─ git pull --rebase (セッションにつき1回のみ)
-- [pattern] → git pull --rebase
-- [correction] 完了: 修正完了。886行追加（ローカルにあった未同期の学習ログをdotfilesへマージ）しました。
-- [gotcha] 完了: git -C ~/dotfiles commit -m "fix: learningsシンボリックリンク修復・ローカル差分マージ"
 
 
 
@@ -149,27 +129,16 @@
 
 
 - [gotcha] ### 🔴 1. Stop フックの実行順が逆 → learnings が常に1セッション遅れて push される
-- [correction] いままでの作業内容を見直して、ブラッシュアップできるところはありますか？
 - [gotcha] 注意: メタフィールドが未設定の商品では何も表示されません。`custom.category` も未設定の場合はカテゴリーテキストが省略されます。
 - [pattern] Prestige のセクション余白は `--section-vertical-spacing-override` カスタムプロパティで制御。直接 margin/padding 指定ではなくこのプロパティを上書きする。
 - [gotcha] 複数フィーチャーが混在するブランチから特定の修正のみ main に反映する場合は cherry-pick を使用。全マージすると無関係な機能が含まれるリスク。
 - [tip] Prestige ではセクション内パディングとセクション間ギャップが異なるプロパティで制御される（`--section-vertical-spacing-override` vs `section-stack-gap`）。余白調整時は両方確認が必要。
 
 ## 2026-04-24 11:56 | mimc-mailmagazine
-- [gotcha] - RANKING（No.1〜5）
 - [open] 要確認: 各商品画像は `0414_01.jpg` 〜 `0414_05.jpg` としています。実際にアップロードされる画像ファイル名と異なる場合は差し替えをお願いします。
-- [gotcha] - **RANKING**（No.1〜5）
 - [open] - No.4 ナチュラルトリートメントアップチャージ: SKUの対応が不確かで要確認
-- 完了: `260414.html` を作成しました。
-- [pattern] No.1〜5すべてのラベルをボーダー付き `<span>` スタイルに修正しました。
 - [correction] 以下のコードを参考にして修正してください
-- [pattern] 完了しました。全5商品のラベルが「画像の下・商品名の上」に配置されました。
-- [pattern] スクリプトが正しく動作しませんでした。直接Editで修正します。
-- [gotcha] 6箇所変わりましたが、CAMPAINGボックスの「特設サイトはこちら」も含まれている可能性があります。確認して戻します。
-- [gotcha] - RANKING見出しサブテキスト ✅
 - 完了: 完了しました。全5商品のラベルが「画像の下・商品名の上」に配置されました。
-- 5. スペシャルクーポン BOX（4月30日まで）+ 注意事項
-- [gotcha] 5. スペシャルクーポン BOX（4月30日まで）+ 注意事項
 
 ## 2026-04-09 11:08 | mimc-mailmagazine [ai]
 - [pattern] メールマガジンHTML新規作成時は既存テンプレートと関連配信HTML（前回分など）を確認して構造と画像パスを把握してから実装する
@@ -200,14 +169,6 @@
 - [pattern] メルマガHTMLコーディング時は複数の既存テンプレート（260401, 260410等）を参照し、再利用可能な画像・構造を特定する。商品SKUでマッピングして流用判定。
 - [gotcha] 同じSKUが異なるメール間で異なる商品説明を持つことがある。画像流用時は必ず内容確認が必要（alt テキストと実際の商品が一致しているか検証）。
 - [tip] メール HTML のラベル・ボタンUIはインラインスタイルで細かく指定（`border`, `padding`, `display: inline-block`）。メールクライアント対応を前提に PDF デザインと正確に合わせる。
-
-## 2026-04-20 01:31 | imrcry.jp
-- 2. 指示書 (5) の「使用する時の注意点 1-2. ルータへのIPv6アドレス配布方法」は画像と判断しています（該当セクション近傍にHTML本文の該当表記はなし）。画像差替え扱いでよいですか？
-- [correction] 作業: 修正指示書です。
-- 完了: **hisawo130/imrcry.jp#2** を main にマージしました（ブランチは自動削除済み）。
-- [correction] 修正B (5) 使用する時の注意点 → HTML本文に対象なし（画像扱いなら支給待ち）
-- 完了: - [pattern] HTMLテキスト修正と画像差替えを明確に分離し、テキスト修正を先にマージ → 画像受領後に別PR対応で衝突リスク削減
-- [gotcha] 2. 指示書 (5) の「使用する時の注意点 1-2. ルータへのIPv6アドレス配布方法」は画像と判断しています（該当セクション近傍にHTML本文の該当表記はなし）。画像差替え扱いでよいですか？
 
 ## 2026-04-20 01:31 | imrcry.jp [ai]
 - [pattern] 修正指示書を受け取ったら最初に「自分で対応vs外部支給」の判断をし、ユーザーに確認する。作業範囲がはっきりして、スコープ外の期待値ズレを防げる。
@@ -249,23 +210,9 @@
 - [pattern] Google Map・ビジネスプロフィールから店名情報を取得する際、URLパラメータ（qパラメータなど）に店名がエンコード状態で含まれていることがあり、URLデコード処理で情報抽出可能。
 - [gotcha] 複数の外部媒体（Google Map・HPB・ビジネスプロフィール）は店舗ごとに表記がバラバラで統一されていない可能性が高い。統一ルール決定前に全店舗の外部登録内容を確認し、既存パターンを把握してから方針立案すべき。
 
-## 2026-04-13 11:49 | bouquet
-- 作業: <ide_opened_file>The user opened the file /Users/P130/GitHub/bouquet/pages/gym/gym-akasakamitsuke.vue in the IDE. This m
-- 完了: 作成しました。
-- 完了: Notionを更新しました。
-
 ## 2026-04-14 10:23 | pietro-onlineshop_dev
-- 作業: 本番環境へのデプロイを手伝って欲しいです
 - 完了:    → これらを本番に含めますか？含める場合は `main` にマージしてからデプロイします。
-- 完了: 1. **`cdx/temperature-profile-totals` の3コミット**（温度帯送料判定テスト等）は今回の本番に含めますか？含める場合は先に `develop` へマージが必要です。
-- 作業: 学習ログ抽出システムです。以下のClaude Codeセッションから、将来同様の問題で悩んだ時に役立つ学びを抽出してください。
-- 完了: - [pattern] Shopifyアプリデプロイ前に、ブランチ先行状態とマージ予定を確認し、リリース範囲を明確化する
-- ⚠️ 注意: `shopify auth login` が必要な場合は対話操作が発生します。その場合は `! shopify auth login` をターミナルで実行してください。
-- 完了: 2. `develop` を `main` にマージ
 - [gotcha] コード上 `input.discount.discountClasses` に `SHIPPING` が含まれないと即 `{operations: []}` を返す設計です。アプリを削除・再作成したことで既存のディスカウントも消えています。
-- [gotcha] discountClasses: [SHIPPING]
-- [gotcha]    - `[gotcha]` — 罠・NG・禁止・バグ・エラーの原因
-- [gotcha] ⚠️ 注意: `shopify auth login` が必要な場合は対話操作が発生します。その場合は `! shopify auth login` をターミナルで実行してください。
 
 ## 2026-04-14 10:23 | pietro-onlineshop_dev [ai]
 - [pattern] Shopifyアプリデプロイ前に、ブランチ先行状態とマージ予定を確認し、リリース範囲を明確化する
@@ -328,7 +275,6 @@
 
 ## 2026-04-14 09:32 | pietro-app
 - [pattern] `main` へのマージ・プッシュが完了しました。最後に `shopify app deploy` を実行します。
-- 完了: `main` へのマージ・プッシュが完了しました。最後に `shopify app deploy` を実行します。
 
 ## 2026-04-14 09:32 | pietro-app [ai]
 - [gotcha] Shopify アプリを Partner Dashboard で削除した場合、新しい client_id が生成される。設定ファイルを `shopify app config link` で再紐づけしないとデプロイ失敗。
@@ -337,15 +283,6 @@
 - [gotcha] Shopifyアプリを削除・再作成すると client_id が変わる。デプロイ前に `shopify app config link` で新アプリに紐づけ直して client_id を更新する必要がある。
 - [pattern] `shopify auth login` や `shopify app deploy` など対話操作が必要なコマンドはClaude Codeから実行できない。ユーザーにターミナルで直接実行するよう指示する。
 - [tip] 本番デプロイ前に develop と main の差分を列挙し（コミット数・内容），リリース範囲を明示的に確認して認識を合わせる。
-
-## 2026-04-14 11:53 | pietro-onlineshop_ver01
-- ### 1. `stopImmediatePropagation()` will NOT break other document handlers ⚠️ Medium confidence
-- ### 2. Race condition before `discountDeckInstance` init — popup may silently fail to open ⚠️ High confidence (gotcha)
-- ### 4. Metafield `!= blank` check is unreliable for empty arrays/lists ⚠️ High confidence (gotcha)
-
-- [gotcha] ### 1. `stopImmediatePropagation()` will NOT break other document handlers ⚠️ Medium confidence
-- [gotcha] ### 2. Race condition before `discountDeckInstance` init — popup may silently fail to open ⚠️ High confidence (gotcha)
-- [gotcha] ### 4. Metafield `!= blank` check is unreliable for empty arrays/lists ⚠️ High confidence (gotcha)
 
 ## 2026-04-20 13:58 | teras-taya [ai]
 - [gotcha] Shopifyの `complementary_products` メタフィールドに当該商品自身が含まれる場合がある。ループ内で `product.id` との重複チェックでスキップ必須。
@@ -478,15 +415,13 @@
 - [gotcha] クリッカブルな`<span>`に`role="button"` + `aria-label`がないと、スクリーンリーダーユーザーに操作を認識されない。Shopifyテーマではアクセシビリティが後付けされやすい。
 - [gotcha] ポーリング完了時に console.warn だけでは、ユーザーに失敗が通知されない。UI フィードバック（トーストなど）を実装しないと UX が悪化する可能性がある。
 - [pattern] ポーリング実装では、再入場防止フラグ + maxWait + インターバル 100ms の組み合わせが堅牢。5秒タイムアウトは実用的な目安。
+
 ## 2026-04-20 13:50 | teras-taya
-- peek が出なかった根本原因:
-- [gotcha] - コード: `DJCD-WNGJ`
 - [correction] ストア間違えています。今のリポジトリを確認して。
+
 ## 2026-04-27 13:25 | P130
 - [correction] を明示的にしてあなたがプッシュするリポジトリを間違えないようにするにはどうすればいい？
-- 結論: ストアドメイン自体は公開情報なのでリスクは低いですが、`.envrc` に何を書くかで扱いが変わります。以下、実務上の注意点。
 - [gotcha] 結論: ストアドメイン自体は公開情報なのでリスクは低いですが、`.envrc` に何を書くかで扱いが変わります。以下、実務上の注意点。
-- [pattern] ローカル6コミット（セッション学びログ）vs リモート45コミット（nightly-monitor等）の分岐です。両側とも別ファイルへの書き込みなので `git pull --rebase` で解消できます。実行してよいですか？
 
 ## 2026-04-27 13:25 | P130 [ai]
 - [gotcha] shopify auth logout/login を毎回自動化するとCLIキャッシュが壊れて遅くなる。認証切り替えより対象store固定と検証を優先すること。
@@ -507,19 +442,12 @@
 - [pattern] マージコンフリクトで両側が有効な値の場合、片側を選ぶのではなく両方保持する設計も検討する（claude/settings.json のように）。
 - [tip] 未ステージ変更がある状態での rebase は stash で保護し、rebase 後に pop して変更喪失を防ぐ。
 
-## 2026-04-20 14:00 | ANIECA_ver02
-- 🛍️ Shopify Theme | ... | ⚠️ SHOPIFY_FLAG_STORE未設定
-- [gotcha] 🛍️ Shopify Theme | ... | ⚠️ SHOPIFY_FLAG_STORE未設定
-
 ## 2026-04-20 14:00 | ANIECA_ver02 [ai]
 - [pattern] Store URL を `.envrc` で固定し SHOPIFY_FLAG_STORE 環境変数で CLI を自動切替。毎回 logout/login を手動で打つより pre-push hook で認証検証する方が事故耐性高。
 - [gotcha] `.envrc` に Shopify token を書くと GitHub scanning 対象になり流出リスク。store URL のみコミット、token は `.envrc.local` で分離管理。
 - [tip] Shopify token（shpat_, shptka_ など）検出の pre-commit フックで二重防止。gitleaks や GitHub push protection も併用推奨。
 
 ## 2026-04-21 13:21 | Beauty-Select
-- > 注意: Shopify の Customer Segment API は比較的新しい。セグメント条件（`customer_tags CONTAINS 'userrank-gold'` 等）でディスカウントを制限できるか動作確認が必要。
-- [correction] 4. **ディスカウントの割引率** ― ランクごとに異なる？
-- 調査完了。Shopify APIで判明した重要な事実を整理します。
 - [gotcha] > 注意: Shopify の Customer Segment API は比較的新しい。セグメント条件（`customer_tags CONTAINS 'userrank-gold'` 等）でディスカウントを制限できるか動作確認が必要。
 
 ## 2026-04-21 13:25 | Beauty-Select [ai]
@@ -537,12 +465,7 @@
 - [tip] Shopify ディスカウント API の `segmentCreate` + `discountCodeBasicCreate` で顧客セグメント指定のコード発行が標準機能。セグメント制限も API から自動制御でき、後付けルール不要。
 
 ## 2026-04-21 14:32 | Pinup-Closet_ver01
-- ### 🔴 Critical Issues
 - [gotcha] HTML IDにスペースは無効で、`getElementById` はスペース区切りの複合IDにマッチしない。devtoolsで確認した値は `class="fsb sr summary"` というクラス名を誤読した可能性が高く、Strategy 1 は全ページで必ず失敗する。
-- ⚠️ Needs work — Critical 2件、Important 4件を対応してからマージ推奨。
-- 完了: - [pattern] ロケール文字列・CSSクラス・IDの削除・変更前に全プロジェクト検索で他テンプレートへの影響を確認。複数箇所に依存していないか確認してからマージ。
-- [pattern] 完了しました。
-- [gotcha] ⚠️ Needs work — Critical 2件、Important 4件を対応してからマージ推奨。
 
 ## 2026-04-21 14:32 | Pinup-Closet_ver01 [ai]
 - [gotcha] HTML IDはスペース不可。`getElementById` で見つからない場合、devtoolsで見えるのはクラス名の可能性がある。セレクターなら `.class1.class2` または `[class*="keyword"]` を使用。
@@ -557,12 +480,6 @@
 
 
 - [gotcha] - [gotcha] CAMPAIGNボックス内の要素構成（画像の配置位置や数）はスクリーンショット確認なしに決定してはいけない。ユーザーのビジュアルフィードバックで修正
-
-
-
-
-- - クーポンBOX（コード＋注意事項）→ お買い物はこちら
-- - クーポンBOX（コード＋お買い物はこちらボタン）→ 注意事項
 
 ## 2026-04-27 13:18 | mimc.co.jp-mailmagazine [ai]
 - [pattern] メール HTML は複雑なテーブルレイアウトより `<p>` タグのシンプル縦並びが、メールクライアント互換性と修正効率の面で優れている。
@@ -589,12 +506,6 @@
 - [pattern] Pythonで縦方向余白を一括変換：正規表現で縦方向`px`→`em`に、横方向は変更なし
 - [tip] メール設定テンプレートはYAMLより`tomllib`（Python 3.13標準）TOML形式が簡潔で追加パッケージ不要
 
-## 2026-04-27 20:17 | ohayoreuteri_theme
-- - [gotcha] ecforceテンプレートは行番号ベース指定が脆弱。行数変更で指定位置がずれる可能性。実装前に該当行を必ず確認
-
-- 作業: マイページ＞定期便情報＞詳細を見る＞お支払い情報…に表示されている
-- 完了: 完了しました。
-
 ## 2026-04-27 20:13 | ohayoreuteri_theme [ai]
 - [pattern] ecforce定期便テンプレートはshow/edit両方存在。片方の変更時は関連ページの整合性を確認（show側でクーポン非表示でもedit側入力フォームが残る場合など）
 - [pattern] テーブル列非表示は戻す可能性で選択：不要ならHTML/Liquidから削除、戻す可能性あればLiquidコメント化
@@ -611,22 +522,24 @@
 - [pattern] テーブル列の一時的非表示はLiquidコメント（{% comment %}...{% endcomment %}）推奨。完全削除より変更可逆性が高く、復活が簡単
 - [tip] ecforceテーブル列非表示時は見出し（th）と値セル（td）の両方をコメント化。片方だけだと列幅がずれる
 
-## Recurring Patterns (updated 2026-04-27)
-- [general] Python preprocess→Claude→postprocess delegation — seen 106 times
-- [general] token budget / compress / max-turns reduction — seen 58 times
-- [shopify/ecforce] Platform differences (Liquid syntax) — seen 112 times
-- [shopify] CSS selector specificity / style leak — seen 51 times
-- [shopify] JavaScript event handler / delegation — seen 35 times
-- [general] git commit / push workflows — seen 56 times
-- [shopify] Liquid template / metafield usage — seen 33+ times
-- [general] SessionStart / Stop hook automation — seen 24 times
-- [shopify] Swiper slider loop configuration — seen 21 times
-- [shopify] Metafield list type output — seen 19 times
-- [shopify] img_url deprecated → image_url — seen 5 times
-- [general] git pull --ff-only / auto-pull at session start — seen 5 times
-- [security] API token single-display safety — seen 5 times
-- [general] validation before commit — seen 3 times
-## 2026-04-25 10:18 | dotfiles
+## Recurring Patterns (updated 2026-04-30)
+- [shopify/ecforce] Platform differences (Liquid syntax) — seen 135 times
+- [shopify] Liquid template / metafield usage — seen 50 times
+- [shopify] CSS selector specificity / style leak — seen 49 times
+- [shopify] Shopify app delete → client_id change — seen 33 times
+- [shopify] Mail magazine HTML patterns — seen 32 times
+- [shopify] JavaScript event handler / delegation — seen 31 times
+- [general] Python preprocess→Claude→postprocess delegation — seen 30 times
+- [shopify] symlink integrity / dotfiles sync — seen 30 times
+- [shopify] Prestige carousel / scroll-snap loop — seen 29 times
+- [general] git commit / push workflows — seen 27 times
+- [general] SessionStart / Stop hook automation — seen 26 times
+- [general] token budget / compress / max-turns reduction — seen 25 times
+- [shopify] span role=button accessibility — seen 21 times
+- [shopify] pointer-events: none accessibility issue — seen 18 times
+- [general] YAML heredoc / GitHub Actions script extraction — seen 17 times
+- [security] API token single-display safety — seen 16 times
+- [general] git pull --ff-only / auto-pull at session start — seen 6 times
 
 ## 2026-04-25 10:18 | dotfiles [ai]
 - [gotcha] Symlink破損するとセッション学習がGitHubに届かなくなる。Stop hookが正しいパスに書き込めず、別PCで反映されない。SessionStart時の自動チェック機構が必須。
@@ -644,7 +557,6 @@
 - [tip] GitHub Actions/ヘッドレス環境では GitHub Secrets 経由で環境変数注入、API キーをリポジトリに入れない
 
 ## 2026-04-28 09:26 | dotfiles
-- 作業: ANTHROPIC_API_KEY を使わずに同期設定できますか？githubのdotfilesやgithub actionsを使うなど。
 - 完了: - **`settings.json`**: マージコンフリクト解消（`editorMode`/`remoteControlAtStartup`/`agentPushNotifEnabled` を保持）
 
 ## 2026-04-28 09:26 | dotfiles [ai]
@@ -654,7 +566,6 @@
 
 ## 2026-04-28 09:46 | dotfiles
 - 内容を読みました。重要な概念を整理します。
-- コアの原則: プロンプトの作者は自分の文章を客観的に読めない。必ず bias-free な別エージェントに実行させて評価する。
 - [gotcha] 1. スキルを書いたら必ずサブエージェントで実行テスト — 自己再読は bias が入るので NG
 
 ## 2026-04-28 09:46 | dotfiles
@@ -672,28 +583,15 @@
 - [gotcha] メール HTML のファイルパスに `__`（ダブルアンダースコア）や特殊記号があるとメールクライアント対応で崩れるリスク → パス確認は必須チェック項目
 - [correction] メルマガ HTML 完成後は「ブラウザプレビュー + メールクライアント実表示確認」が必須（CLAUDE.md に明記）だが、タスク報告時に確認状況を明示すること
 
-## 2026-04-28 10:00 | mimc-mailmagazine
-- 作業: /Users/P130/Desktop/20260505.pdf
-- 完了: `260505.html` を作成しました。
-
-## 2026-04-28 10:01 | mimc-mailmagazine
-- - [gotcha] メルマガHTMLのコーディングリクエスト時、PDFファイル指定があいまいな場合（`20260505.pdf`、`0505.pdf`、ファイル名の有無など）は、実装を始める前に必ずファイル存在確認してから進める
-
 ## 2026-04-28 10:00 | mimc-mailmagazine [ai]
 - [gotcha] メルマガHTMLのコーディングリクエスト時、PDFファイル指定があいまいな場合（`20260505.pdf`、`0505.pdf`、ファイル名の有無など）は、実装を始める前に必ずファイル存在確認してから進める
 - [pattern] メルマガHTML完成後、差し替えが必要な素材（KV画像、RECOMMEND画像、URL等）をテーブル形式で一覧化すると、ユーザーの確認・差し替え作業が効率化される
 - [tip] 前の配信素材を流用する場合（例：CAMPAIGN内のプレゼント画像）は「同じキャンペーン期間のため0424_present.jpgを流用しています」と明記しておくと、ユーザーが差し替え判断しやすい
 
-## 2026-04-28 10:13 | mimc-mailmagazine
-- 作業: /Users/P130/Desktop/20260430.pdf
-- 完了: `260430.html` を作成しました。
-
 ## 2026-04-28 10:13 | mimc-mailmagazine [ai]
 - [pattern] メルマガHTML作成時は直近の成功ファイル（260424.html など）をテンプレートベースとして参照・流用し、セクション構成・スタイル・リンク構造を継承する
 - [gotcha] 新規配信分のメルマガは画像ファイルの差し替え（0430_kv.jpg など）が必須確認項目。ダブルアンダースコアパス（`img_top__st.jpg`）はメールクライアント対応時に注意
 - [pattern] テンプレート流用時は UTM パラメータを配信日（YYMMDD）に一律更新することで追跡精度を確保し、置換処理は機械的に実行可能
-
-## 2026-04-28 10:37 | mimc-mailmagazine
 
 ## 2026-04-28 10:37 | mimc-mailmagazine [ai]
 - [pattern] メールHTML新規作成時は直近テンプレートのセクションパターン（Ranking、RECOMMENDなど）を参照し、デザイン一貫性を保つ
@@ -701,30 +599,21 @@
 - [tip] ファイル参照時に「見つかりません」と報告する際は、候補ファイル名を複数挙げるとユーザーの確認効率が上がる
 
 ## 2026-04-28 13:37 | pietro-onlineshop_ver01
-- - ✓箇条書き2行 → 説明文 → `▼eギフトにてご注文の場合は…`注意書き → お届け方法UIボックス の順に変更
+- [gotcha] - ✓箇条書き2行 → 説明文 → `▼eギフトにてご注文の場合は…`注意書き → お届け方法UIボックス の順に変更
 
 ## 2026-04-28 13:37 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマ開発でCDN配信のCSSは直接編集できない。Liquidの`<style>`タグやHTML構造の工夫でオーバーライドするか対応すること。
 - [pattern] HTMLの要素順序変更で外部CDN依存のCSS差分を回避できる。CSSスコープが限定的なときの有効な戦略。
 - [tip] 静的UI（リンク不要）の実装時は、HTMLで構造を整えCSSでスタイリングすれば、後の機能追加時に容易に拡張可能。
 
-## 2026-04-28 13:41 | pietro-onlineshop_ver01
-
 ## 2026-04-28 13:41 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマで外部CDN配信CSSは直接編集不可。Liquid内の`{% stylesheet %}`タグでCSSをオーバーライドするか、HTMLの構造変更で対応する
 - [pattern] PDFデザインとコード差分分析は、構造（HTML順序）とスタイル（CSS）に分けて判断することで、実装方針を明確化できる
-
-## 2026-04-28 13:49 | pietro-onlineshop_ver01
 
 ## 2026-04-28 13:49 | pietro-onlineshop_ver01 [ai]
 - [gotcha] CDN配信のCSSは直接編集不可。Liquidファイル内の`{% stylesheet %}`タグでオーバーライドするか、HTMLの構造変更で対応する
 - [pattern] UI仕様が不明な場合（例：「eギフトの贈り方はこちら」リンク先）、最小限のHTML（リンクなし静的テキスト）から実装して、後から追加修正の方が効率
 - [gotcha] `shopify theme push`実行前に認証有効期限を確認。切れていたら`shopify auth login`で先に再認証する
-
-## 2026-04-28 14:03 | pietro-onlineshop_ver01
-
-## 2026-04-28 14:04 | pietro-onlineshop_ver01
-- 完了: - [tip] Shopify CLI認証トークン切れ時は、ターミナルで直接`shopify theme push`実行→ブラウザで表示されるコード入力、または`shopify auth login`で先に認証を完了させてから再実行
 
 ## 2026-04-28 14:03 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマでは外部CDN配信のCSSは直接編集できない。Liquidファイル内の`<style>`タグで上書きスタイルを定義するか、HTMLの構造を変更して対応する
@@ -732,31 +621,21 @@
 - [tip] Shopify CLI認証トークン切れ時は、ターミナルで直接`shopify theme push`実行→ブラウザで表示されるコード入力、または`shopify auth login`で先に認証を完了させてから再実行
 
 ## 2026-04-28 15:26 | pietro-onlineshop_ver01
-- [pattern] コミットは完了しました。プッシュはターミナルで実行してください：
 - [correction] - フォントサイズが異なるところがあります。デザインに合わせて下さい。
-
-## 2026-04-28 15:27 | pietro-onlineshop_ver01
-- 完了: - [pattern] PDFデザイン仕様確認時に「行間」「フォントサイズ」「マージン」を数値化し、既存CSS値と並べて比較する。目視だけでなく数値化することで調整箇所が明確になり、修正回数が減る。
 
 ## 2026-04-28 15:26 | pietro-onlineshop_ver01 [ai]
 - [pattern] CDN配信されたCSSの上書きはLiquidファイル内の`<style>`タグで行う。別ファイルやインラインスタイルではなく、セクション/スニペット内でカプセル化するとメンテナンス性が高い。
 - [pattern] PDFデザイン仕様確認時に「行間」「フォントサイズ」「マージン」を数値化し、既存CSS値と並べて比較する。目視だけでなく数値化することで調整箇所が明確になり、修正回数が減る。
-
-## 2026-04-28 16:07 | pietro-onlineshop_ver01
 
 ## 2026-04-28 16:07 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマ内のCSSがCDN配信されている場合、直接編集できないため、Liquidファイルの`<style>`タグでオーバーライドCSSを書く必要がある。
 - [pattern] PDFデザインと現在のコードを詳細に比較してから実装を開始すると、実装漏れや優先順位の誤りを防げる。
 - [tip] フォントサイズを`clamp(min, Xvw, max)`形式で統一すると、レスポンシブ対応が一貫性を持ち、ブレークポイント別のスケーリングが容易になる。
 
-## 2026-04-28 16:10 | pietro-onlineshop_ver01
-
 ## 2026-04-28 16:10 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopifyテーマで外部CDN配信CSSがある場合、Liquidファイル内の`<style>`タグでオーバーライドする。直接的なCSS編集では反映されない。
 - [pattern] レスポンシブ調整時は`px`ベースから`vw`/`clamp()`ベースに統一することで、ブレークポイント間の一貫性と保守性が向上。シンプルな`vw`のみで足りれば`clamp()`は不要。
 - [tip] Shopify CLI認証が切れた場合、`shopify auth login`で事前ログインしてからテーマコマンド実行すると、ブラウザ認証プロンプトが消える。
-
-## 2026-04-28 16:14 | pietro-onlineshop_ver01
 
 ## 2026-04-28 16:14 | pietro-onlineshop_ver01 [ai]
 - [gotcha] CDN配信CSSは直接編集できないため、Liquidの`{% stylesheet %}`タグでオーバーライドCSSを追記してスタイル調整する
@@ -770,5 +649,3 @@
 - [gotcha] Shopify CDN CSS の基準値（例：`min-width: 1367px`）を最初に確認しないと、後で px→vw 変換が何度も発生。計算基準を先に定める
 - [pattern] リスポンシブ値を `clamp(min, vw, max)` から純 `vw` に統一すると、計算・保守がシンプル化。PC/SP 両対応時は特に有効
 - [gotcha] HTML 内 `<style>` タグで CDN CSS をオーバーライドする場合、specificity と計算精度が直結。近似値ではなく確実な値を使う必要がある
-
-## 2026-04-28 16:18 | pietro-onlineshop_ver01
