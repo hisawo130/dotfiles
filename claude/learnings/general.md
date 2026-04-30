@@ -375,3 +375,8 @@
 
 ## 2026-04-30 17:13 | mimc.co.jp-mailmagazine
 - 構造・スタイル・utm パラメータの基本品質は良好です。ただし、重要度の高い問題が2件、確認が必要な点が複数あります。
+
+## 2026-04-30 17:13 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] 空の `<p>` タグはメールクライアントで高さが崩れる可能性。セパレーターが必要な場合は `&nbsp;` か `<hr>` を使うべき
+- [gotcha] `<td>` に `margin` を指定してもメールクライアントで無視される。メールHTMLではパディングと高さで余白を制御する
+- [pattern] キャンペーンメールの全リンクに `utm_source=mailmagazine&utm_medium=email&utm_campaign=YYMMDD` を統一付与すると分析精度が向上
