@@ -368,3 +368,7 @@
 
 ## 2026-04-30 17:04 | mimc.co.jp-mailmagazine
 - 完了: 黒背景・白文字に修正しました。
+
+## 2026-04-30 17:04 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] メール HTML のボタンスタイル（色・背景）はPDFデザイン確認後に実装（初期版で不確定なまま進めない）
+- [pattern] メール画像は `width="100%" style="max-width:100%;"` で幅100%対応する
