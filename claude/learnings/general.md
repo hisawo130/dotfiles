@@ -315,3 +315,8 @@
 - [gotcha] テーマ内コード検索（App Proxyエンドポイント）とAdmin API `appInstallations` クエリは確認する領域が異なる。前者は「テーマで参照」、後者は「実際にインストール」。両方で確認すべき。
 - [pattern] Shopifyテーマのアプリ統合は App Proxy URL (`/apps/xxx`) でコード内に記載されるため、snippet/section検索で用途を特定できる。設定値の参照有無で本番/開発環境の切り替え判定も可能。
 - [tip] `appInstallations` クエリ実行時はストアドメイン（`<store>.myshopify.com`）が必須。未設定なら `shopify store auth --scopes read_apps` で初期認証が必要。
+
+## 2026-04-30 11:28 | pietro-onlineshop_ver01 [ai]
+- [pattern] Shopify Admin APIの`appInstallations`クエリで`shopify store auth` → `shopify store execute`でインストール済みアプリ一覧を取得可能。id、title、handle、launchUrl、accessScopesなどが取得できる
+- [gotcha] `.shopify/project.json`にストアドメインが設定されていない場合、`shopify store auth --store <domain>.myshopify.com` で手動指定してから実行コマンドを実行する必要がある
+- [tip] テーマファイル内の参照（Liquid/JS grep検索）とAdmin API確認を組み合わせると、実装されているアプリと実際にインストール済みのアプリの両方を把握できる
