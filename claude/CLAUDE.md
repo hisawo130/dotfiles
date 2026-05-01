@@ -300,6 +300,18 @@ When not explicitly specified, assume:
 
 ### Shopify
 
+**Shopify AI Toolkit (必須):** Shopifyテーマリポジトリでは以下の MCP ツールを積極的に活用すること。インストール済みであれば自動的に利用可能:
+
+| 場面 | 使用ツール |
+|---|---|
+| API・ドキュメント調査 | `mcp__shopify-dev-mcp__search_docs_chunks` / `mcp__shopify-dev-mcp__learn_shopify_api` |
+| Liquidテンプレート検証 | `mcp__shopify-dev-mcp__validate_theme` |
+| GraphQLクエリ検証 | `mcp__shopify-dev-mcp__validate_graphql_codeblocks` |
+| UIコンポーネント検証 | `mcp__shopify-dev-mcp__validate_component_codeblocks` |
+
+- ローカルリファレンス (`~/.claude/references/shopify-reference.md`) より MCP ツールの情報が常に最新。API仕様・Liquidフィルター確認は MCP ツールを優先
+- 未インストールの場合: `/plugin marketplace add Shopify/shopify-ai-toolkit` → `/plugin install shopify-plugin@shopify-ai-toolkit`
+
 - Theme: specify Dawn version or custom theme name
 - Always use section schema `{% schema %}` for customizer settings
 - Asset references: `{{ 'filename.css' | asset_url | stylesheet_tag }}`
