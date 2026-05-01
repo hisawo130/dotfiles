@@ -16,6 +16,11 @@ if ! command -v git &>/dev/null; then
   exit 1
 fi
 
+# --- dotfiles ルートマーカー ---
+# hooks / scripts / zsh が DOTFILES の場所を解決するための単一ソース
+echo "$DOTFILES" > "$HOME/.dotfiles-root"
+echo "  記録: ~/.dotfiles-root → $DOTFILES"
+
 # --- Claude Code ---
 echo "→ Claude Code 設定..."
 mkdir -p "$HOME/.claude"
@@ -45,9 +50,9 @@ fi
 # --- scripts (claude-run 等) ---
 echo "→ scripts 設定..."
 chmod +x "$DOTFILES"/scripts/*.sh 2>/dev/null || true
-ln -sfn "$DOTFILES/scripts" "$HOME/.local/bin/claude-scripts" 2>/dev/null || true
 # PATH に含まれる場所へ claude-run のシンボリックリンクを作成
 mkdir -p "$HOME/.local/bin"
+ln -sfn "$DOTFILES/scripts" "$HOME/.local/bin/claude-scripts"
 ln -sf "$DOTFILES/scripts/claude-run.sh" "$HOME/.local/bin/claude-run"
 chmod +x "$HOME/.local/bin/claude-run" 2>/dev/null || true
 echo "  完了: claude-run → ~/.local/bin/claude-run"

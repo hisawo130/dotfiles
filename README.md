@@ -9,19 +9,31 @@ git clone https://github.com/hisawo130/dotfiles.git ~/dotfiles
 bash ~/dotfiles/setup.sh
 ```
 
+> 任意のパス（例: `~/GitHub/dotfiles`）にも対応。`setup.sh` 実行時に `~/.dotfiles-root` へ実体パスを記録し、各 hook / scripts / zshrc がそこから解決します。
+
 ## 構成
 
 ```
 claude/
   CLAUDE.md          # グローバル指示（システムプロンプト）
   settings.json      # 権限・フック・effortLevel
-  agents/            # サブエージェント定義（planner / executor / researcher / reviewer）
+  agents/            # サブエージェント定義（planner / executor / researcher / reviewer 他）
   commands/          # スラッシュコマンド一覧（下表参照）
-  references/        # プラットフォームリファレンス（Shopify / Flow / Custom App）
+  hooks/             # SessionStart / PreToolUse / PostToolUse / Stop hook 群
+    lib/             # フック共通ライブラリ（dotfiles-root 解決・ドメイン判定）
+  learnings/         # ドメイン別学習ログ（自動蓄積）
+  memory/            # 永続メモ（feedback/project/reference/user）
+  references/        # プラットフォームリファレンス（Shopify / ecforce）
+  scripts/prompts/   # 夜間バッチ用プロンプト
+  templates/         # CI / GitHub Actions 用テンプレート
 git/
   .gitignore_global  # グローバル gitignore
 zsh/
   .zshrc             # シェル設定（PATH / エイリアス / Claude Code ラッパー）
+scripts/
+  claude-run.sh             # ヘッドレス実行ラッパー
+  install-nightly-cron.sh   # 夜間バッチ cron 登録
+  nightly-self-improve.sh   # 夜間自己改善バッチ本体
 setup.sh             # シンボリックリンク作成スクリプト
 ```
 
@@ -52,14 +64,21 @@ setup.sh             # シンボリックリンク作成スクリプト
 | `~/.claude/settings.json` | `claude/settings.json` |
 | `~/.claude/agents/` | `claude/agents/` |
 | `~/.claude/commands/` | `claude/commands/` |
+| `~/.claude/hooks/` | `claude/hooks/` |
 | `~/.claude/references/` | `claude/references/` |
+| `~/.claude/learnings/` | `claude/learnings/` |
+| `~/.claude/memory/` | `claude/memory/` |
+| `~/.claude/logs/` | (mkdir) |
+| `~/.local/bin/claude-scripts` | `scripts/` |
+| `~/.local/bin/claude-run` | `scripts/claude-run.sh` |
 | `~/.zshrc` | `zsh/.zshrc` |
 | `~/.gitignore_global` | `git/.gitignore_global` |
+| `~/.dotfiles-root` | (text file: dotfiles 実体パス) |
 
 ## 別の PC との同期
 
 ```bash
-cd ~/dotfiles && git pull
+cd "$(head -1 ~/.dotfiles-root)" && git pull
 ```
 
 Claude Code 起動時に dotfiles を自動 pull するフックが `settings.json` に設定済み。

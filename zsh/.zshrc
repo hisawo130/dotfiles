@@ -46,8 +46,16 @@ fi
 # =============================================================================
 # Claude Code — dotfiles auto-sync on launch
 # =============================================================================
+# Resolve dotfiles location once: marker file → CLAUDE.md symlink → fallback
+if [[ -f "$HOME/.dotfiles-root" ]]; then
+  export DOTFILES="$(head -1 "$HOME/.dotfiles-root" 2>/dev/null)"
+elif [[ -L "$HOME/.claude/CLAUDE.md" ]]; then
+  export DOTFILES="$(cd "$(dirname "$(readlink "$HOME/.claude/CLAUDE.md")")/.." 2>/dev/null && pwd)"
+fi
+[[ -z "$DOTFILES" || ! -d "$DOTFILES/claude" ]] && export DOTFILES="$HOME/dotfiles"
+
 claude() {
-  git -C "$HOME/dotfiles" pull --ff-only --quiet 2>/dev/null || true
+  [[ -d "$DOTFILES/.git" ]] && git -C "$DOTFILES" pull --ff-only --quiet 2>/dev/null || true
   command claude "$@"
 }
 

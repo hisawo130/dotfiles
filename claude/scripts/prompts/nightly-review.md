@@ -68,4 +68,39 @@ Return ONLY a valid JSON object. No markdown, no explanation outside the JSON.
 }
 ```
 
-If there is nothing to change, return empty arrays/objects. Never return null. Always return valid JSON.
+---
+
+## TASK 7: リファレンスの週次更新 (Weekly Reference Refresh)
+
+> このタスクは **週1回のみ実行**する。今日が月曜日でない場合はスキップ。
+
+1. `~/.claude/references/` 配下の全 `.md` ファイルを確認する
+2. `UPDATE BEFORE USE` ブロックを含むファイルのみ対象とする
+3. 各ファイルの `Sources:` リストから URL を抽出し、WebFetch で取得する
+4. 現在のファイル内容と比較し、以下があれば更新する:
+   - 新しいAPIバージョン・新機能・廃止された機能・変更された制限値
+   - リリースノートや変更ログの新しいエントリ
+   - 既存の内容は削除しない（明確に廃止されたものを除く）
+5. 更新があったファイルを書き込む（必ず完全なファイル内容で上書き）
+6. 更新があれば以下を実行する（別々の呼び出しで）:
+   - `git -C ~/dotfiles add claude/references/`
+   - `git -C ~/dotfiles commit -m "docs: リファレンス週次更新 $(date +%Y-%m-%d)"`
+   - `git -C ~/dotfiles push`
+7. 以下フォーマットで growth-log.md の当日レポートに追記する:
+
+```markdown
+### リファレンス更新
+| ファイル | ステータス | 変更箇所 |
+|---|---|---|
+| shopify-reference.md | ✅ 変更なし / 🔄 更新済み | - |
+...
+```
+
+---
+
+## 実行ルール
+
+- ファイルの読み書きには Read/Write/Edit ツールを使う
+- 確認や質問は一切不要。自律的に判断して実行する
+- 変更は最小限・安全優先。不確かな場合は変更しない
+- 全タスク完了後、変更したファイルの一覧を日本語で出力する

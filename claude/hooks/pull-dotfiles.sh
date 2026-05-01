@@ -1,22 +1,17 @@
 #!/bin/bash
 # pull-dotfiles.sh
-# UserPromptSubmit hook: pull dotfiles once per session (cached).
-# Uses a cache file to avoid repeated pulls within the same session.
+# UserPromptSubmit hook: pull dotfiles once per day (cached).
+
+LIB_DIR="$(dirname "$0")/lib"
+# shellcheck source=lib/dotfiles-root.sh
+source "$LIB_DIR/dotfiles-root.sh" 2>/dev/null
+DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 
 _cache_dir="/tmp/claude-dotfiles-pull"
 mkdir -p "$_cache_dir"
-# Session-based flag: use session_id from hook input so each session pulls once.
-# Falls back to a per-process flag if session_id is unavailable.
-_hook_input=$(cat /dev/stdin 2>/dev/null || true)
-_session_id=$(echo "$_hook_input" | jq -r '.session_id // ""' 2>/dev/null || true)
-_flag_key="${_session_id:-$$}"
-_flag="$_cache_dir/pulled_${_flag_key}"
+_today=$(date +%Y-%m-%d)
+_flag="$_cache_dir/dotfiles_pull_${_today}"
 
-if [ ! -f "$_flag" ]; then
-  git -C "$HOME/dotfiles" pull --rebase -q 2>/dev/null && touch "$_flag"
-fi
-
-# 月初に 7 日以上前のフラグを ~/.trash/ へ退避（無限蓄積防止）
-if [ "$(date +%d)" = "01" ]; then
-  find "$_cache_dir" -type f -mtime +7 -exec mv {} "$HOME/.trash/" \; 2>/dev/null || true
+if [ ! -f "$_flag" ] && [ -d "$DOTFILES/.git" ]; then
+  git -C "$DOTFILES" pull --ff-only -q 2>/dev/null && touch "$_flag"
 fi

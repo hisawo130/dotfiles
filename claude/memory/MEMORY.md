@@ -18,7 +18,6 @@
 ## Reference
 
 **dotfiles管理 (`~/.claude/references/`):**
-- `shopify-dawn-reference.md` — Dawn v15.4.1完全リファレンス（ディレクトリ構成・CSS変数体系・Custom Elements・全sections/snippets一覧・カスタマイズBP）
 - `shopify-reference.md` — Shopifyテーマ総合（Dawn・OS2.0・API）
 - `shopify-custom-app-reference.md` — カスタムアプリ（Storefront API・Functions・GraphQL）
 - `shopify-flow-reference.md` — Shopify Flow
@@ -29,7 +28,7 @@
 
 **セッション学びログ（ドメイン別・自動蓄積）:**
 - ドメイン: `shopify` / `shopify-app` / `shopify-flow` / `shopify-extensions` / `shopify-hydrogen` / `shopify-webhooks` / `ecforce` / `wordpress` / `ec-cube` / `matrixify` / `ga4-gtm` / `klaviyo` / `line` / `react-nextjs` / `vue-nuxt` / `github-actions` / `cloudflare` / `make-zapier` / `cms` / `stripe` / `general`
-- Stop hookが毎セッション終了時にドメインを自動判定して追記。auto-context時に該当ドメインのみ末尾60行をロード
+- Stop hookが毎セッション終了時にドメインを自動判定して追記。SessionStart時は `load-learnings.sh` が `[recurring]` > `[gotcha]` > `[correction]` > `[pattern]` の優先順で抽出して注入（末尾固定ではなく優先度ベース）
 - セカンダリドメイン対応: 1セッションで複数ドメインに同時書き込み（例: shopify + matrixify）
 - `[recurring]` 自動昇格: `[gotcha]` が3回出現すると Recurring Patterns セクションに自動昇格
 

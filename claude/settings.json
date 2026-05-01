@@ -298,6 +298,10 @@
           {
             "type": "command",
             "command": "bash $HOME/.claude/hooks/block-rm.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash $HOME/.claude/hooks/pre-push-validate.sh"
           }
         ]
       }
