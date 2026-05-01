@@ -122,7 +122,7 @@
 
 
 
-- 完了: 修正完了。886行追加（ローカルにあった未同期の学習ログをdotfilesへマージ）しました。
+- [correction] 完了: 修正完了。886行追加（ローカルにあった未同期の学習ログをdotfilesへマージ）しました。
 
 
 
@@ -476,7 +476,7 @@
 - [gotcha] Shopify Dawn テーマの既存クラス（`title-wrapper-with-link` 等）をリネームすると定義済みスタイルが失われる。リネーム不要なら並存させるべき。
 
 ## 2026-04-27 13:18 | mimc.co.jp-mailmagazine
-- 完了: 修正しました。変更内容：
+- [correction] 完了: 修正しました。変更内容：
 
 
 - [gotcha] - [gotcha] CAMPAIGNボックス内の要素構成（画像の配置位置や数）はスクリーンショット確認なしに決定してはいけない。ユーザーのビジュアルフィードバックで修正
@@ -522,24 +522,13 @@
 - [pattern] テーブル列の一時的非表示はLiquidコメント（{% comment %}...{% endcomment %}）推奨。完全削除より変更可逆性が高く、復活が簡単
 - [tip] ecforceテーブル列非表示時は見出し（th）と値セル（td）の両方をコメント化。片方だけだと列幅がずれる
 
-## Recurring Patterns (updated 2026-04-30)
-- [shopify/ecforce] Platform differences (Liquid syntax) — seen 135 times
-- [shopify] Liquid template / metafield usage — seen 50 times
-- [shopify] CSS selector specificity / style leak — seen 49 times
-- [shopify] Shopify app delete → client_id change — seen 33 times
-- [shopify] Mail magazine HTML patterns — seen 32 times
-- [shopify] JavaScript event handler / delegation — seen 31 times
-- [general] Python preprocess→Claude→postprocess delegation — seen 30 times
-- [shopify] symlink integrity / dotfiles sync — seen 30 times
-- [shopify] Prestige carousel / scroll-snap loop — seen 29 times
-- [general] git commit / push workflows — seen 27 times
-- [general] SessionStart / Stop hook automation — seen 26 times
-- [general] token budget / compress / max-turns reduction — seen 25 times
-- [shopify] span role=button accessibility — seen 21 times
-- [shopify] pointer-events: none accessibility issue — seen 18 times
-- [general] YAML heredoc / GitHub Actions script extraction — seen 17 times
-- [security] API token single-display safety — seen 16 times
-- [general] git pull --ff-only / auto-pull at session start — seen 6 times
+## Recurring Patterns (updated 2026-05-01)
+- [workflow] Preprocess with Python (JSON digest) before passing to Claude; keep Claude role to judgment only — seen 56 times
+- [workflow] Compress command output >50 lines; use JSON digest pattern for batch tasks — seen 37 times
+- [ecforce] Duplicate ecforce theme before editing; live edits go to production immediately — seen 8 times
+- [shopify] Never stage settings_data.json accidentally; always check before commit — seen 6 times
+- [shopify] Use {% render %} not {% include %} in OS 2.0; auto-replace if found — seen 4 times
+- [workflow] Never use rm; always move to ~/.trash/ with timestamp prefix — seen 3 times
 
 ## 2026-04-25 10:18 | dotfiles [ai]
 - [gotcha] Symlink破損するとセッション学習がGitHubに届かなくなる。Stop hookが正しいパスに書き込めず、別PCで反映されない。SessionStart時の自動チェック機構が必須。
@@ -551,13 +540,12 @@
 - [pattern] APIキーはdotfilesや設定スクリプトに含めず、.zshrc/OSキーチェーン/GitHub Secretsに個別設定。
 - [tip] dotfiles同期は認証不要（git認証利用）、自動化パイプラインはsecrets経由、インタラクティブCLIはOAuth利用で使い分け。
 
-## 2026-04-28 09:24 | P130 [ai]
 - [pattern] macOS Keychain で API キー管理：1回保存で iCloud 経由で複数 Mac に自動同期、新環境初期化時のキー入力不要
 - [pattern] Keychain → ~/.secrets フォールバック：存在確認→対話入力の段階的フロー、既存環境との後方互換性を両立
 - [tip] GitHub Actions/ヘッドレス環境では GitHub Secrets 経由で環境変数注入、API キーをリポジトリに入れない
 
 ## 2026-04-28 09:26 | dotfiles
-- 完了: - **`settings.json`**: マージコンフリクト解消（`editorMode`/`remoteControlAtStartup`/`agentPushNotifEnabled` を保持）
+- [gotcha] 完了: - **`settings.json`**: マージコンフリクト解消（`editorMode`/`remoteControlAtStartup`/`agentPushNotifEnabled` を保持）
 
 ## 2026-04-28 09:26 | dotfiles [ai]
 - [pattern] APIキー管理は3つのケースに分類：①dotfiles同期（Git運用、キー不要）②GitHub Actions（Secrets使用）③interactive CLI（OAuth認証）で、状況に応じて使い分け
@@ -568,7 +556,6 @@
 - 内容を読みました。重要な概念を整理します。
 - [gotcha] 1. スキルを書いたら必ずサブエージェントで実行テスト — 自己再読は bias が入るので NG
 
-## 2026-04-28 09:46 | dotfiles
 - [gotcha] 1. **スキルを書いたら必ずサブエージェントで実行テスト** — 自己再読は bias が入るので NG
 
 ## 2026-04-28 09:46 | dotfiles [ai]
@@ -650,7 +637,6 @@
 - [pattern] リスポンシブ値を `clamp(min, vw, max)` から純 `vw` に統一すると、計算・保守がシンプル化。PC/SP 両対応時は特に有効
 - [gotcha] HTML 内 `<style>` タグで CDN CSS をオーバーライドする場合、specificity と計算精度が直結。近似値ではなく確実な値を使う必要がある
 
-## 2026-04-28 16:18 | pietro-onlineshop_ver01
 
 ## 2026-04-28 16:18 | pietro-onlineshop_ver01 [ai]
 - [gotcha] Shopify Theme で CDN CSS とLiquid内 `<style>` が混在する場合、CDNの基準ブレークポイント（ここでは1367px）の値を確認してからオーバーライドCSS戦略を立てないと、ブレーク境界で微妙にズレる
