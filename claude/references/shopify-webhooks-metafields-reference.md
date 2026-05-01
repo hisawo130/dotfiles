@@ -1,6 +1,28 @@
 # Shopify Webhooks & Metafields / Metaobjects リファレンス
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-04-08（公式ドキュメント精査済み）
+
+---
+
+## 📋 Recent Changelog
+
+### 2026-04-15: [Removing deprecated PRIVATE and PUBLIC_READ enums on metaobject definitions](https://shopify.dev/changelog/removing-deprecated-private-and-publicread-enums-on-metaobject-definitions)
+The `MetaobjectAdminAccess` enum removes obsolete `PRIVATE` and `PUBLIC_READ` values. Developers must update any code referencing these enum values to maintain compatibility with the Admin API.
+
+### 2026-04-01: [Metafield translations now available via GraphQL Admin API](https://shopify.dev/changelog/metafield-translations-now-available-via-graphql-admin-api)
+Admin API 2026-04 adds a `translations` field to the `Metafield` object, allowing querying of published translated values with locale and market filtering.
+
+### 2026-04-01: [Metaobject access in Shopify Functions](https://shopify.dev/changelog/metaobject-access-in-shopify-functions)
+Functions can now query metaobject entries during execution, enabling structured data like pricing tiers and configuration tables to be used in discount and validation logic.
+
+### 2026-04-01: [App-owned metaobjects can be used without access scopes](https://shopify.dev/changelog/metaobject-scopes-not-required-for-app-metaobjects)
+App-owned metaobjects identified by `$app:example` types can now be used without requiring access scopes when using Admin API 2026-04 or later. This simplifies app development and reduces the scopes merchants must approve.
+
+### 2026-04-01: [Adding access field to StandardMetaobjectDefinitionTemplate](https://shopify.dev/changelog/adding-access-field-to-standardmetaobjectdefinitiontemplate)
+A new `access` field on `StandardMetaobjectDefinitionTemplate` lets developers verify template access configurations for Storefront API integration planning in Admin API 2026-04.
+
+### 2026-03-28: [Updated handling of customer data erasure requests with recent orders](https://shopify.dev/changelog/updated-handling-of-customer-data-erasure-requests-with-recent-orders)
+Erasure requests now process 10 days after submission regardless of order history (previously held 180 days after the customer's most recent order). Apps handling `customers/redact` must update any logic assuming the 180-day hold period.
 
 ---
 
@@ -109,7 +131,7 @@ webhookSubscription: {
 | `customers/redact` | 顧客データ削除リクエスト処理 | 受信後30日以内 |
 | `shop/redact` | アンインストール後のショップデータ削除 | 受信後30日以内 |
 
-- `customers/redact`: 最終注文から6ヶ月経過前はShopifyが送信保留（注文なしの場合は10日遅延）
+- `customers/redact`: リクエスト送信から **10日後** に処理（注文履歴に関わらず。以前は最終注文から180日保留）
 - `shop/redact`: アンインストール **48時間後** に送信される
 
 ---

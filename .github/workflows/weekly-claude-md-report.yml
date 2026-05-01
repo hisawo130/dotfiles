@@ -1,0 +1,44 @@
+name: 📊 Weekly CLAUDE.md Report
+
+on:
+  schedule:
+    - cron: '0 18 * * 5'  # 金曜 AM3:00 JST (UTC+9)
+  workflow_dispatch:
+
+jobs:
+  weekly-report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 全履歴必要（git log --since 用）
+
+      - name: Run weekly CLAUDE.md report
+        run: |
+          python3 scripts/weekly-claude-md-report.py 2>&1
+          echo "✅ weekly report completed"
+
+      - name: Commit report
+        run: |
+          git config user.name  "Claude Nightly Bot"
+          git config user.email "claude-bot@noreply.github.com"
+          JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+          git add claude/scripts/growth-log.md 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: 📊 weekly CLAUDE.md report (${JST_DATE} JST)"
+            git push
+          else
+            echo "ℹ️ 変更なし"
+          fi
+
+      - name: Notify Discord
+        if: always()
+        run: |
+          JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+          python3 scripts/notify-discord.py weekly "$JST_DATE" "${{ job.status }}" "${{ github.run_number }}" "$DISCORD_WEBHOOK_URL"
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}

@@ -2,7 +2,7 @@ name: 🌙 Nightly Self-Improve
 
 on:
   schedule:
-    - cron: '0 18 * * *'  # AM3:00 JST (UTC+9)
+    - cron: '0 18 * * 1-5'  # AM3:00 JST (UTC+9)、月〜金のみ
   workflow_dispatch:        # 手動実行も可能
 
 jobs:
@@ -15,67 +15,49 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 全履歴取得（学習ログの履歴参照のため）
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Claude Code
-        # NOTE: pin to a specific version (e.g. @1.x.x) to avoid unexpected breaking changes.
-        # Leaving as "latest" for now; update after validating each new release.
-        run: npm install -g @anthropic-ai/claude-code
-
-      - name: Check required secrets
-        run: |
-          if [ -z "$ANTHROPIC_API_KEY" ]; then
-            echo "::error::ANTHROPIC_API_KEY が設定されていません。Repository Secrets を確認してください。"
-            exit 1
-          fi
-          echo "✅ ANTHROPIC_API_KEY confirmed"
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          fetch-depth: 0
 
       - name: Setup Claude environment
         run: |
           set -euo pipefail
           mkdir -p ~/.claude/logs
-          # CI 用の設定ファイルをコピー
-          cp claude/templates/settings.ci.json ~/.claude/settings.json
-          # ディレクトリごとシンボリックリンク
-          # 既存ディレクトリを先に削除（ln -sfn は既存ディレクトリがあると内部に入れ子になる）
           rm -rf ~/.claude/learnings ~/.claude/memory
           ln -sfn "$(pwd)/claude/learnings" ~/.claude/learnings
-          ln -sfn "$(pwd)/claude/memory" ~/.claude/memory
+          ln -sfn "$(pwd)/claude/memory"    ~/.claude/memory
           echo "✅ Claude environment ready"
 
       - name: Run nightly self-improvement
-        id: claude_run
         run: |
           set -euo pipefail
-          # SECURITY NOTE: --dangerously-skip-permissions bypasses ALL allow/deny rules
-          # in claude/templates/settings.ci.json (including the deny list for rm -rf, curl, etc.).
-          # Scope control relies on the prompt itself; review claude/scripts/prompts/nightly-review.md
-          # and growth-log.md output after each run to detect unexpected actions.
-          claude -p "$(cat claude/scripts/prompts/nightly-review.md)" \
-            --dangerously-skip-permissions \
-            --max-turns 30 \
-            2>&1 | tee ~/.claude/logs/nightly-ci.log
-          echo "✅ Claude run completed"
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+          # STEP 1: preprocess — stale dates / metrics / gotcha候補 / growth-log scaffold
+          python3 scripts/nightly-preprocess.py \
+            > ~/.claude/logs/nightly-digest.json \
+            2> ~/.claude/logs/nightly-preprocess.log
+          cat ~/.claude/logs/nightly-preprocess.log
+          echo "✅ preprocess completed"
+
+          # STEP 2: shell validate — bash -n で全 .sh ファイルを検証
+          python3 scripts/nightly-validate-shell.py \
+            > ~/.claude/logs/nightly-shell.json \
+            2>> ~/.claude/logs/nightly-preprocess.log
+          cat ~/.claude/logs/nightly-preprocess.log | tail -5
+          echo "✅ shell validate completed"
+
+          # STEP 3: postprocess — growth-log の placeholder を埋める
+          python3 scripts/nightly-postprocess.py \
+            ~/.claude/logs/nightly-digest.json \
+            ~/.claude/logs/nightly-shell.json \
+            2>> ~/.claude/logs/nightly-preprocess.log
+          echo "✅ postprocess completed"
 
       - name: Commit improvements
         run: |
           set -euo pipefail
           git config user.name  "Claude Nightly Bot"
           git config user.email "claude-bot@noreply.github.com"
-          # JST 日付をコミットメッセージに使用
           JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
-          # シンボリックリンク経由で更新されたファイルをステージ
-          git add claude/learnings/ claude/memory/ claude/CLAUDE.md 2>/dev/null || true
-          git add claude/scripts/growth-log.md 2>/dev/null || true
+          git add claude/learnings/ claude/memory/ claude/CLAUDE.md claude/scripts/growth-log.md 2>/dev/null || true
           if ! git diff --cached --quiet; then
             git commit -m "chore: 🌙 nightly self-improve (${JST_DATE} JST)"
             git push
@@ -84,10 +66,18 @@ jobs:
             echo "ℹ️ 変更なし — コミットをスキップ"
           fi
 
+      - name: Notify Discord
+        if: always()
+        run: |
+          JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+          python3 scripts/notify-discord.py nightly "$JST_DATE" "${{ job.status }}" "${{ github.run_number }}" "$DISCORD_WEBHOOK_URL"
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+
       - name: Upload logs
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: nightly-log-${{ github.run_number }}
-          path: ~/.claude/logs/nightly-ci.log
+          path: ~/.claude/logs/nightly-preprocess.log
           retention-days: 30

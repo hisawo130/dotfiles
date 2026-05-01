@@ -19,8 +19,8 @@ Sources:
 | checkout.liquid（Plusストア: サンキュー/注文ステータスページ） | 2025年8月28日 | Checkout UI Extensions | ✅ 期限済み（移行完了想定） |
 | checkout.liquid（非Plusストア: 同上） | **2026年8月26日** | Checkout UI Extensions | ⚠️ 要対応 |
 | Shopify Scripts | **2026年6月30日** | Shopify Functions | ⚠️ 要対応（最優先） |
-| JSONメタフィールド値の128KB上限 | **2026年4月** | — | ⚠️ 直近 |
-| チェックアウトIDのトークンベース参照化 | **2026年4月** | — | ⚠️ 直近 |
+| JSONメタフィールド値の128KB上限 | **2026年4月** | — | ✅ 期限済み 直近 |
+| チェックアウトIDのトークンベース参照化 | **2026年4月** | — | ✅ 期限済み 直近 |
 
 ## Checkout Extensibility（checkout.liquid廃止後の代替）
 

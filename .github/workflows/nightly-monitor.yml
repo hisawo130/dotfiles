@@ -1,0 +1,66 @@
+name: 🔧 Nightly Monitor (API-free)
+
+# Claude APIを使わず、シェル+Pythonだけで実行するモニタリングワークフロー。
+# daily-maintenance (Remote Trigger) が失敗してもこちらは独立して動作する。
+
+on:
+  schedule:
+    - cron: '20 18 * * *'  # AM3:20 JST — daily-maintenance (18:00) の20分後
+  workflow_dispatch:         # 手動実行可
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run nightly monitor
+        env:
+          # GitHub Secret "DISCORD_WEBHOOK" を設定していない場合はスクリプト内のデフォルト値を使用
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: python3 claude/scripts/nightly-monitor.py
+
+      - name: Commit state files
+        run: |
+          git config user.name  "Nightly Monitor Bot"
+          git config user.email "nightly-monitor@noreply.github.com"
+          JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+
+          # 状態ファイルのみステージ（参照MDは変更しない）
+          git add \
+            claude/references/.shopify-changelog-last-sync \
+            claude/references/.shopify-api-last-known \
+            claude/references/.staleness-report \
+            claude/references/.dawn-version-last-known \
+            claude/references/.cli-version-last-known \
+            claude/references/.hydrogen-version-last-known \
+            claude/references/.liquid-version-last-known \
+            2>/dev/null || true
+
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: nightly-monitor ${JST_DATE}"
+            git push
+            echo "✅ state files committed"
+          else
+            echo "ℹ️ no state changes"
+          fi
+
+      - name: Upload log
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nightly-monitor-log-${{ github.run_number }}
+          path: /tmp/nightly-monitor.log
+          retention-days: 14
+          if-no-files-found: ignore

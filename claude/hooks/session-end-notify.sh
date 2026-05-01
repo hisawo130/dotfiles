@@ -29,6 +29,11 @@ if [ -n "$_s" ]; then
 fi
 _u=$(git -C "$_d" log --oneline @{u}..HEAD 2>/dev/null)
 if [ -n "$_u" ]; then
+  # Pull with rebase before push to avoid non-fast-forward errors.
+  # learnings/*.md uses merge=union driver so conflicts auto-resolve.
+  if ! git -C "$_d" pull --rebase -q 2>/dev/null; then
+    git -C "$_d" rebase --abort 2>/dev/null
+  fi
   git -C "$_d" push 2>/dev/null && echo 'dotfiles pushed'
 fi
 git -C "$_d" log --oneline -1 2>/dev/null

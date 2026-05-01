@@ -1,7 +1,21 @@
 # Shopify Hydrogen / App Bridge / Selling Plans / B2B リファレンス
+<!-- Hydrogen latest: skeleton@2026.4.2 (released 2026-04-24) -->
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > ⚠️ B2Bテーマ対応・App Bridge 4の一部API・Remixとの比較は公式URLが404のため未確認
+
+---
+
+## 📋 Recent Changelog
+
+### 2026-04-15: [New CSS variable for mobile safe area insets](https://shopify.dev/changelog/new-css-variable-for-mobile-safe-area-insets)
+A new `--shopify-safe-area-inset-bottom` CSS variable is available for embedded apps on Shopify Mobile. Most apps need no code changes, but developers using custom overlay positioning should evaluate this variable.
+
+### 2026-04-01: [Create subscriptions contracts without payment methods](https://shopify.dev/changelog/create-subscriptions-contracts-without-payment-methods)
+The `paymentMethodId` field is now optional in `subscriptionContractAtomicCreate` and `subscriptionContractCreate` mutations, enabling migration of subscription contracts that lack valid payment methods.
+
+### 2026-04-01: [Create unpaid orders from subscription billing attempts](https://shopify.dev/changelog/create-unpaid-orders-from-subscription-billing-attempts)
+A new `paymentProcessingPolicy` field on `subscriptionBillingAttemptCreate` allows creation of unpaid orders when valid payment methods are unavailable, giving subscribers more flexibility.
 
 ---
 

@@ -31,15 +31,15 @@ get_cron_time() {
   offset=$(detect_tz_offset)
   case "$offset" in
     +0900|JST)
-      echo "0 3 * * *"   # JST: そのまま AM3:00
+      echo "0 3 * * 1-5"   # JST: 月〜金 AM3:00
       ;;
     +0000|UTC)
-      echo "0 18 * * *"  # UTC: 18:00 UTC = 03:00 JST
+      echo "0 18 * * 1-5"  # UTC: 18:00 UTC = 03:00 JST、月〜金のみ
       ;;
     *)
       # その他のタイムゾーン: UTC換算で計算
       echo "[WARN] 未対応のタイムゾーン ($offset) — UTC基準で 18:00 を登録します。AM3:00 JST と一致しない可能性があります" >&2
-      echo "0 18 * * *"
+      echo "0 18 * * 1-5"
       ;;
   esac
 }

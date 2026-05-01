@@ -8,4 +8,7 @@ Steps:
 5. Push: `git -C ~/dotfiles push`
 6. Report what was synced
 
-Note: ~/.claude/CLAUDE.md, settings.json, agents/, hooks/, learnings/ are all symlinked to dotfiles — edits there are already in dotfiles.
+Note: ~/.claude/{CLAUDE.md, settings.json, statusline.py, agents/, commands/, hooks/, references/, learnings/, memory/, tools/} are all symlinked to dotfiles — edits there are already in dotfiles.
+
+Health check first if anything looks off:
+- `python3 ~/.claude/tools/dotfiles-doctor.py --verbose` (or `/doctor`)

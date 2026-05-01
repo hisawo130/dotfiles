@@ -23,10 +23,10 @@ GENERAL_FILE="$LEARNINGS_DIR/general.md"
 extract_priority() {
   local file="$1" max="$2"
   {
-    grep '\[recurring\]' "$file" 2>/dev/null | tail -3
-    grep '\[gotcha\]'    "$file" 2>/dev/null | tail -4
-    grep '\[correction\]' "$file" 2>/dev/null | tail -2
-    grep '\[pattern\]'   "$file" 2>/dev/null | tail -2
+    grep '\[recurring\]' "$file" 2>/dev/null | tail -2
+    grep '\[gotcha\]'    "$file" 2>/dev/null | tail -2
+    grep '\[correction\]' "$file" 2>/dev/null | tail -1
+    grep '\[pattern\]'   "$file" 2>/dev/null | tail -1
   } | awk '!seen[$0]++' | head -"$max"
 }
 
@@ -43,11 +43,11 @@ GENERAL_LINES=""
 SECONDARY_LINES=""
 
 if [ -f "$DOMAIN_FILE" ] && [ "$PRIMARY_DOMAIN" != "general" ]; then
-  DOMAIN_LINES=$(extract_priority "$DOMAIN_FILE" 6)
+  DOMAIN_LINES=$(extract_priority "$DOMAIN_FILE" 4)
 fi
 
 if [ -f "$GENERAL_FILE" ]; then
-  GENERAL_LINES=$(extract_priority "$GENERAL_FILE" 3)
+  GENERAL_LINES=$(extract_priority "$GENERAL_FILE" 2)
 fi
 
 # Inject top gotchas from secondary domains (e.g. matrixify during a Shopify session)

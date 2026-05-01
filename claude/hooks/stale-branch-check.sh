@@ -8,8 +8,31 @@ CWD=$(pwd)
 # gitリポジトリでなければスキップ
 git -C "$CWD" rev-parse --is-inside-work-tree &>/dev/null || exit 0
 
-# リモートの最新を取得（失敗してもスキップ、ネットワークなし環境に配慮）
-git -C "$CWD" fetch --quiet 2>/dev/null || true
+# fetch キャッシュ: CWD別に 5 分以内なら再 fetch しない（ネットワーク I/O 削減）
+_cache_dir="/tmp/claude-fetch-cache"
+mkdir -p "$_cache_dir"
+_key=$(echo "$CWD" | sed 's|/|-|g')
+_flag="$_cache_dir/${_key}"
+_now=$(date +%s)
+_ttl=300  # 5 分
+
+if [ -f "$_flag" ]; then
+  _mtime=$(stat -f %m "$_flag" 2>/dev/null || stat -c %Y "$_flag" 2>/dev/null || echo 0)
+  _age=$(( _now - _mtime ))
+else
+  _age=$(( _ttl + 1 ))  # キャッシュ無し = TTL 越え扱い
+fi
+
+if [ "$_age" -ge "$_ttl" ]; then
+  # リモートの最新を取得（失敗してもスキップ、ネットワークなし環境に配慮）
+  git -C "$CWD" fetch --quiet 2>/dev/null || true
+  touch "$_flag"
+
+  # 月1で 7 日以上前の cache 残骸を掃除（無限増殖防止）
+  if [ "$(date +%d)" = "01" ]; then
+    find "$_cache_dir" -type f -mtime +7 -exec mv {} "$HOME/.trash/" \; 2>/dev/null || true
+  fi
+fi
 
 # origin/main または origin/master を特定
 MAIN=""

@@ -1,7 +1,54 @@
 # Shopify カスタムアプリ リファレンス
+<!-- API alert (2026-04-20): stable: 2026-04 → 2027-01 -->
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > 対象: Storefront API / Checkout Extensibility / Shopify Functions / GraphQL Admin API
+
+---
+
+## 📋 Recent Changelog
+
+### 2026-04-24: [Use MATCHES in ShopifyQL to filter by what customers did](https://changelog.shopify.com/posts/use-matches-in-shopifyql-to-filter-by-what-customers-did)
+ShopifyQL now supports the MATCHES operator in WHERE clauses for filtering by customer behavior patterns, enabling consistent segment logic between Customer Segmentation and Analytics reports.
+
+### 2026-04-17: [Updates to Italy's Sardinian province definitions](https://changelog.shopify.com/posts/italy-s-sardinian-province-definitions-updated)
+Address validation and autocomplete APIs now reflect updated Sardinian province names and new selectable provinces for accurate geographic data.
+
+### 2026-04-01: [Add Tags to Discounts](https://shopify.dev/changelog/add-tags-to-discounts)
+Admin API 2026-04 adds a `tags` field to all discount types, allowing merchants and apps to label, filter, and organize discounts via GraphQL mutations.
+
+### 2026-04-01: [Add Prerequisites to Product Discount Functions](https://shopify.dev/changelog/add-prerequisites-to-product-discount-functions)
+Discount Functions now support a `prerequisites` field on product discount candidates, enabling Buy X Get Y (BXGY) logic with `cartLinePrerequisite` specifying ID and required quantity.
+
+### 2026-04-01: [Multi-channel support for sales channel apps](https://shopify.dev/changelog/multi-channel-support-for-sales-channel-apps)
+Sales channel apps can now manage multiple channel connections within a single app using new APIs (`channelCreate`, `channelUpdate`, `channelDelete`, etc.); single-channel APIs are now deprecated.
+
+### 2026-04-01: [Removing outdated Polaris reference docs](https://shopify.dev/changelog/removing-outdated-polaris-reference-docs)
+Polaris reference documentation now follows GraphQL API versioning policies, with only the last four stable versions documented starting with the 2026-04 release.
+
+### 2026-04-01: [`delegateAccessTokenCreate` mutation now returns `expiresIn`](https://shopify.dev/changelog/delegateaccesstokencreate-mutation-now-returns-expiresin)
+The `delegateAccessTokenCreate` mutation now returns an `expiresIn` field indicating token expiration in seconds, available in GraphQL Admin API 2026-04 and later.
+
+### 2026-04-01: [Line item component information now available for draft orders on Customer Account API](https://shopify.dev/changelog/line-item-components-draft-orders-customer-account-api)
+Customer Account API 2026-04 adds a `components` field on `DraftOrderLineItem` and a new `flattenComponents` argument to control component representation in response structures.
+
+### 2026-04-01: [Cart and checkout validation adds billing address and PO number error targets](https://shopify.dev/changelog/cart-and-checkout-validation-adds-billing-address-and-po-number-error-targets)
+As of API 2026-04, Cart and Checkout Validation Functions can now validate billing addresses and purchase order numbers with new checkout field error targets.
+
+### 2026-04-01: [Payment method identifier now required for customerPaymentMethodRemoteCreate](https://shopify.dev/changelog/payment-method-identifier-now-required-for-customerpaymentmethodremotecreate)
+Starting with API 2026-07, payment method identifier fields become required for `customerPaymentMethodRemoteCreate` with Stripe, Authorize.net, or Braintree inputs. Update integrations before the 2026-07 release.
+
+### 2026-04-01: [Report Fulfillment Order progress with new fulfillmentOrderReportProgress GraphQL mutation](https://shopify.dev/changelog/report-fulfillment-order-progress-with-new-fulfillmentorderreportprogress-graphql-mutation)
+The new `fulfillmentOrderReportProgress` mutation enables 3PLs and fulfillment apps to report work-in-progress on orders with optional status notes, supported in Admin API 2026-04.
+
+### 2026-03-31: [New rejection reason codes in Payments Apps API](https://shopify.dev/changelog/new-rejection-reason-codes-in-payments-apps-graphql-api)
+The Payments Apps API now provides more granular decline reason codes for rejected payment sessions. New codes added to `PaymentSessionStateRejectedReason` enum alongside a new source field for better error handling.
+
+### 2026-03-30: [Role-based access control and org management for partners](https://shopify.dev/changelog/role-based-access-control-and-org-management-for-partners)
+Partner organizations now support role-based access control with seven system roles covering org administration, store access, and app development. Dev stores, client transfer stores, and collaborator stores are unified in one dashboard; existing permissions are automatically migrated with no action required.
+
+### 2026-03-25: [The Shopify CLI app release --force flag is deprecated and will be removed](https://shopify.dev/changelog/the-shopify-cli-app-release-force-flag-is-deprecated-and-will-be-removed)
+The `--force` flag on `shopify app deploy` and `shopify app release` commands will be removed in May 2026. Replace with `--allow-updates` and `--allow-deletes` flags for more granular CI/CD control.
 
 ---
 
@@ -372,7 +419,7 @@ shopify app deploy  # 本番デプロイ（アプリと一緒にリリース）
 ```toml
 name = "my-discount-function"
 type = "discounts"
-api_version = "2025-10"
+api_version = "2026-04"
 
 [build]
 command = "cargo build --release --target wasm32-wasip1"

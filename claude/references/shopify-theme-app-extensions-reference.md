@@ -1,6 +1,19 @@
 # Shopify Theme App Extensions & Customer Account UI Extensions リファレンス
 
-> 最終更新: 2026-03-20（公式ドキュメント精査済み）
+> 最終更新: 2026-04-08（公式ドキュメント精査済み）
+
+---
+
+## 📋 Recent Changelog
+
+### 2026-04-21: [Updates to local pickup user experience in checkout](https://changelog.shopify.com/posts/updates-to-local-pickup-user-experience-in-checkout)
+Checkout now renders local pickup options inline alongside shipping methods, with the nearest available location shown by default and a modal for additional locations. Checkout extension developers should test pickup-flow customizations against the updated inline UI layout.
+
+### 2026-04-01: [Removing outdated Polaris reference docs](https://shopify.dev/changelog/removing-outdated-polaris-reference-docs)
+Polaris reference docs for Admin UI, Checkout UI, Customer Account UI, and POS UI extensions now follow the GraphQL API 12-month versioning policy; starting with 2026-04, only the last four stable versions are published.
+
+### 2026-04-01: [Cart and checkout validation adds billing address and PO number error targets](https://shopify.dev/changelog/cart-and-checkout-validation-adds-billing-address-and-po-number-error-targets)
+As of API 2026-04, Cart and Checkout Validation Functions support billing address validation and purchase order number targets, enabling compliance rule enforcement without client-side checkout UI extensions.
 
 ---
 

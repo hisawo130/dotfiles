@@ -7,7 +7,7 @@ LIB_DIR="$(dirname "$0")/lib"
 source "$LIB_DIR/dotfiles-root.sh" 2>/dev/null
 DOTFILES="${DOTFILES:-$HOME/dotfiles}"
 
-_cache_dir="$HOME/.cache"
+_cache_dir="/tmp/claude-dotfiles-pull"
 mkdir -p "$_cache_dir"
 _today=$(date +%Y-%m-%d)
 _flag="$_cache_dir/dotfiles_pull_${_today}"

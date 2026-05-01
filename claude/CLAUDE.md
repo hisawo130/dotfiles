@@ -2,67 +2,22 @@
 
 ## Identity
 
-Web design / frontend implementation specialist. Primary platforms: Shopify, ecforce.
-Timezone: JST. Language: Japanese for discussion, English for code comments.
+Web design / frontend specialist. Platforms: Shopify, ecforce.
+Timezone: JST. Discussion: Japanese. Code comments: English.
 
 ## Autonomous operation
 
-Proceed without asking unless one of the stop conditions below applies.
-
-**Proceed without confirmation — examples:**
-- "ヘッダーを修正して" → edit the header file; commit if dotfiles or doc repo
-- "PRを作って" → create PR with `gh pr create`; no further confirmation needed
-- "リファレンスを更新して" → fetch sources, update the file, commit+push
-- "全リポジトリにCLAUDE.mdを追加して" → iterate all repos, push each, report totals
-- Platform/framework detection → state assumption at top, proceed immediately
-- File exists already when scaffold is requested → overwrite with warning in output, don't stop
-
-**Stop and confirm only when:**
-- Deleting files, branches, database records — confirm exact targets before proceeding
-- Force-push or `reset --hard` — always stop; suggest `--force-with-lease` as safer alternative
-- Deploying to production or sending external messages — requires explicit "go ahead"
-- Two or more valid interpretations where the wrong one causes data loss
-
-**Default behavior when ambiguous:**
-- Take the safest, most common interpretation
-- State the assumption in **one line** at the top (e.g., "Assumption: target branch is `main`")
-- Implement immediately — do not present option menus before acting
-- If the assumption turns out wrong, the user corrects it; this is faster than asking upfront
-
-## Auto-context protocol
-
-On the first task in any project directory, silently perform:
-
-1. **Detect project type** from file structure:
-   - `shopify.theme.toml` or `config/settings_schema.json` → Shopify theme
-   - `ec_force/` or `layouts/ec_force/` → ecforce theme
-   - `package.json` with `@shopify/` dependencies → Shopify app
-   - `.flow` files or Flow-related task description → Shopify Flow
-   - Otherwise → generic project
-
-2. **Load reference** — read the matching file from `~/.claude/references/`:
-   - Shopify theme → `shopify-reference.md`
-   - Shopify app → `shopify-custom-app-reference.md`
-   - Shopify Flow → `shopify-flow-reference.md`
-   - ecforce theme → `ecforce-reference.md`
-   - Follow the UPDATE BEFORE USE protocol if the file has that block
-
-2a. **Apply session learnings** — The SessionStart hook injects recent domain
-    learnings as `📚 前回の学習メモ`. Treat `[recurring]` and `[gotcha]` entries
-    as confirmed traps — apply them silently during implementation without
-    re-announcing to the user.
-
-3. **Announce context** in the first line of the first response:
-   > 📍 [Project type] | [key version/framework] | [reference loaded or N/A]
-
-Skip for non-project tasks (shell help, dotfiles management, general questions).
+Proceed without asking unless:
+- **Delete** files/branches/DB records → confirm targets
+- **Force-push / reset --hard** → always stop; suggest `--force-with-lease`
+- **Production deploy / external messages** → require explicit "go ahead"
+- **Ambiguous with data-loss risk** → take safest interpretation, state assumption in one line, proceed
 
 ## Response style
 
-- Conclusion first. No preamble, no affirmation, no filler.
-- State problems, blind spots, and risks upfront — before solutions.
-- When uncertain, say so explicitly. Do not hedge with vague qualifiers.
-- **Questions to the user must be in Japanese.** Never ask questions in English.
+- Conclusion first. No preamble, no filler.
+- State problems and risks before solutions.
+- Questions to user must be in Japanese.
 
 ## Code rules
 
@@ -74,15 +29,57 @@ Skip for non-project tasks (shell help, dotfiles management, general questions).
   `mkdir -p ~/.trash && mv <file> ~/.trash/$(date +%Y%m%d-%H%M%S)-<basename>`
   ゴミ箱の中身を空にするには `/empty-trash` を使う。
 
-## Pre-change checklist
+## Execution model: Claude judges, Python executes
 
-Before completing any implementation, verify internally. Do not ask the user to confirm these items:
+Claude's role: interpret intent, make decisions, specify what to do, review results.
+Bulk work: delegate to `python3 ~/.claude/tools/<script>.py` via single Bash call.
 
-1. **Full code** — Complete file(s) written, no omissions
-2. **File path** — Exact location specified (e.g., `sections/hero-banner.liquid`, `app/views/layouts/application.html.erb`)
-3. **Dependencies** — Versions pinned (e.g., Tailwind 3.4.x, Alpine.js 3.x, Swiper 11.x)
-4. **Verification** — Test steps with expected outcomes (e.g., "Open /collections/all → banner renders at 100vw, image lazy-loads")
-5. **Rollback** — How to revert (e.g., `git checkout HEAD~1 -- sections/hero-banner.liquid`, or theme editor restore)
+**Script-first rule:** 3+同種ツールコール（複数Read, 複数Edit等）が必要な場合、Pythonスクリプト1本にまとめる。
+- 複数ファイル編集 → `multi-edit.py`
+- アドホック複合処理 → `run-task.py`（コードをJSON渡し）
+- 単純な一回限り → `python3 -c '...'`
+
+Available Python tools (`~/.claude/tools/`):
+- `git-ops.py` — git status+diff+add+commit+push in one call
+- `validate.py` — Liquid構文・schema JSON・completeness・pre-push checks
+- `context-loader.py` — project detection + reference loading + learnings injection
+- `bulk-read.py` — 複数ファイル一括読み取り・検索・サマリー
+- `multi-edit.py` — 複数ファイル一括find-and-replace（バックアップ付き）
+- `run-task.py` — アドホックPythonスクリプト実行（timeout + stderr capture）
+- `compress-output.py` — コマンド出力を圧縮（空行除去・重複排除・グルーピング・切り詰め）
+- `dotfiles-doctor.py` — symlink健全性チェック＋自動修復。`--verbose`で詳細、`--check`で診断のみ
+
+When no Python tool exists, use minimal tool calls. Prefer 1 Bash call with a Python one-liner over multiple Read/Edit/Bash round-trips.
+
+## Diagnostic shortcuts
+
+設定や同期状態が怪しい時は、複数コマンドで調査せず先に:
+- `python3 ~/.claude/tools/dotfiles-doctor.py --verbose` — symlink/learnings drift/repo状態を一括確認
+- SessionStart hook で自動修復も走るため、通常は明示的に叩く必要なし
+
+## Output compression (token budget)
+
+Large command output inflates context faster than code. Apply these rules:
+
+**Always limit at source:**
+- `git log` → always `--oneline -20` (or fewer)
+- `git diff` large → `git diff --stat` first, then expand only needed files
+- `ls` deep dirs → `ls -1 | head -50` or use `find -maxdepth 2`
+- `find` results → pipe `| head -100`
+- `npm test` / `jest` → capture failures only; skip passed-test lines
+
+**Pipe through compressor when output may exceed 50 lines:**
+```bash
+<command> | python3 ~/.claude/tools/compress-output.py
+# or run with --stats to see reduction
+python3 ~/.claude/tools/compress-output.py --cmd "<command>" --stats
+```
+
+**Never compress:** `curl`, `wget`, `aws`, `gcloud`, `terraform`, `ssh` — output integrity required.
+
+## Pre-change checklist (internal — never ask user)
+
+Before completing implementation, verify: complete code, correct file path, pinned dependencies, test steps, rollback plan.
 
 ## Precision protocol
 
@@ -128,51 +125,33 @@ Handle these automatically during implementation — never ask:
 
 ## Git & commit rules
 
-**Commit message format** — Conventional commits, Japanese body:
-```
-<type>: <日本語の変更説明>
+Format: `<type>: <日本語の変更説明>` + `Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>`
+Types: feat / fix / refactor / docs / chore / style / test
 
-Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>
-```
-Types: `feat` / `fix` / `refactor` / `docs` / `chore` / `style` / `test`
+Auto-commit triggers:
+- `~/dotfiles` changes → `git add claude/ scripts/ .github/` → commit → push
+- Doc file changes in project repos → add + commit + push immediately
+- Shopify theme → commit; push only if `/shopify-push` or PR requested
+- ecforce theme → commit locally; push only when explicitly asked
 
-**Auto-commit triggers by repo type:**
+PR update trigger:
+- After pushing updates to a branch with an open PR, always post `/gemini review` as a PR comment.
 
-| Repo | Trigger | Action |
-|---|---|---|
-| `~/dotfiles` | Any change to `claude/` or `zsh/` or `git/` | `git add claude/ scripts/ .github/` → commit → push (separate calls) |
-| `/Users/P130/GitHub/*/` | Any doc file change (CLAUDE.md, README.md, docs/) | `git add + commit + push` immediately |
-| Shopify theme repo | Task completion with code changes | commit; push only if `/shopify-push` or PR was requested |
-| ecforce theme repo | Task completion with code changes | commit locally; push only when explicitly asked |
+Stage only task-relevant files. Never `git add .`.
 
-**Commit scope:** Stage only files relevant to the current task. Never mass-stage with `git add .` unless the task explicitly covers all changed files.
-
-**Reference file commits:** After updating any file in `~/dotfiles/claude/references/`, immediately run as separate Bash calls: `git -C ~/dotfiles add claude/references/` → `git -C ~/dotfiles commit -m "docs: リファレンス更新"` → `git -C ~/dotfiles push`
-
-## Reference document update rule
-
-Any file containing an `UPDATE BEFORE USE` block at the top must be refreshed before its contents are used:
-
-1. Read the `Sources:` list in the block.
-2. For `WebFetch:` sources — fetch each URL and compare against current content.
-3. For `Scan:` sources — read the listed local paths and compare.
-4. Apply any new or changed information to the file body.
-5. Run `git add + git commit + git push` immediately after updating.
-
-When creating a new reference document, always add an `UPDATE BEFORE USE` block at the top with appropriate `Sources:` entries (WebFetch URLs or local Scan paths).
-
-## Agent architecture
-
-The main agent is responsible for:
-- Interpreting instructions and clarifying intent
-- Directing sub-agents with specific task prompts
-- Evaluating sub-agent output and deciding next steps
-
-All actual work — implementation, research, debugging, testing, file reads, web fetches — must be delegated to sub-agents via the Agent tool when feasible. If a sub-agent lacks access to required tools (e.g., Bash), the main agent performs the task directly without re-escalating or asking the user.
+## PR workflow
+- After creating or updating a PR, post a `/gemini review` comment to trigger Gemini code review.
 
 ## Task routing
 
-Route tasks to sub-agents by complexity:
+| Task | Route |
+|---|---|
+| Simple read/confirm/question | Direct (no sub-agent) |
+| File search, web research | `researcher` (haiku) |
+| Architecture, 10+ files | `planner` (sonnet) |
+| Implementation | `executor` (sonnet) — uses Python tools |
+| Post-impl review (5+ files) | `reviewer` (sonnet) — auto-invoked |
+| Large-scale review | `code-reviewer` (opus) |
 
 | Task type | Agent | Model | Notes |
 |---|---|---|---|
@@ -204,51 +183,34 @@ The main agent reviews candidates and decides whether to create a permanent skil
 
 ## Error recovery
 
-Handle failures autonomously without escalating:
+Handle autonomously: test/lint/build failures (fix + retry ×2), tool errors (retry once differently), network errors (retry once), permission errors (report, no sudo). Never suppress errors.
 
-- **Test failure:** Fix root cause and re-run, up to 2 iterations. If still failing, report with: error message, file:line, and what was tried.
-- **Lint failure:** Auto-fix (formatter, missing import, type error) without asking.
-- **Build failure:** Read full error output. Check dependency issues, version mismatches, missing files. Fix and retry.
-- **Tool/command error:** Retry once with a different approach, then report.
-- **Network/API error:** Retry once after brief delay. If persistent, continue with cached/local data and note the failure.
-- **Permission error:** Do not use `sudo`. Report the issue and suggest manual resolution.
-- **Vague requirements:** State assumption, implement, note alternatives at the end.
+## Task completion
 
-Never suppress errors or add workarounds that hide failures. Report the exact error, not a summary.
+1. Validate (tests/linters if available)
+2. Review (auto if 5+ files changed)
+3. Commit (conventional format, Japanese)
+4. Push (if task requires it)
+5. Report: changed files, review status, commit hash
 
-## Task completion protocol
+## Auto-context protocol
 
-After completing any implementation, execute this sequence automatically:
-
-1. **Validate** — Run existing tests/linters if the project has them. Fix failures silently (up to 2 retries).
-2. **Review** — If 2+ files changed or git operations included → invoke `reviewer` agent. Do not ask. If FAIL → fix items and retry once.
-3. **Commit** — Use conventional commit format from Git & commit rules above. Message in Japanese.
-4. **Push** — Push if the task explicitly or implicitly requires it (PR creation, deploy, sync, or stated plan).
-5. **Report** — End with a brief summary:
-
-| 項目 | 内容 |
-|---|---|
-| 変更ファイル | (list) |
-| レビュー | PASS / SKIP |
-| コミット | `hash` message |
-
-Skip inapplicable steps. For document-specific commit rules, see Git & document rules.
+On first task in a project directory, detect project type from file structure and load matching reference from `~/.claude/references/`. Announce: `📍 [type] | [version] | [reference]`. Skip for non-project tasks.
 
 ## Session discipline
 
-- At session start, if uncommitted changes exist in the working directory, summarize them before starting new work.
-- At the end of a significant implementation session, note the single most important bias or assumption that may have influenced the work.
-- When context is running low, use `/compact` proactively before losing important details.
-- Prefer `/clear` between unrelated tasks.
+- Summarize uncommitted changes at session start.
+- SessionStart/Stop hooks run automatically (pull, learnings inject/save, notify).
 
-### Session learning (auto-save)
+## Compaction
 
-Before a session ends or when context is compacted, automatically check:
+When compacting, always preserve:
+- List of files modified in this session
+- Current branch and any uncommitted changes summary
+- Active task description and acceptance criteria
+- Any test/build commands discovered during the session
 
-1. Did the user correct my approach? → Save as `feedback` memory
-2. Did I learn something new about the user's role/preferences? → Save as `user` memory
-3. Did I discover a project fact not in code/git? → Save as `project` memory
-4. Did I find an external resource URL? → Save as `reference` memory
+## Injected learnings
 
 Save only if the information is **non-obvious and will help future sessions**. Do not ask — just save and mention it in the session summary.
 
@@ -343,18 +305,4 @@ runs `claude/scripts/prompts/nightly-review.md` headlessly (6 daily tasks + 1 we
 6. Learning metrics — record per-domain entry counts in growth log
 7. (週次 / Mondays only) Reference refresh — WebFetch sourcesのUPDATE BEFORE USEブロックを更新
 
-To trigger manually: `/nightly-review`
-Logs: GitHub Actions → "nightly-log-*" artifacts (30-day retention)
-
-## Headless / remote execution
-
-When running via `claude -p` (print/headless mode) or `claude-run`:
-
-- **No interactive prompts** — never pause to ask questions; make the safest assumption and document it in output
-- **No confirmation dialogs** — `--dangerously-skip-permissions` is set; proceed directly
-- **JSON output preferred** — use `--output-format json` for CI pipelines so output is parsable
-- **Bound by `--max-turns`** — stop cleanly when turn limit reached; summarize what was done vs. remaining
-- **Error = exit non-zero** — if a critical step fails, output error details to stdout and exit 1
-- **Secrets via env** — ANTHROPIC_API_KEY must be in `~/.secrets` or environment before running headlessly
-- **Read `scripts/claude-run.sh`** for flag reference; read `claude/templates/claude.yml` for CI usage
-- **Scope creep prevention** — in headless mode, do exactly what the prompt says; skip tangential improvements unless explicitly instructed
+In `claude -p` / `claude-run`: no questions, no confirmation, JSON output preferred, respect `--max-turns`, exit non-zero on failure, do exactly what prompt says.

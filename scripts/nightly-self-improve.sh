@@ -150,31 +150,34 @@ done
 
 [ "$step1_changed" -eq 0 ] && echo "  (変更なし)" || echo "  完了"
 
-# ── STEP 2: AI 自己レビュー (claude -p) ──────────────────────────────────────
+# ── STEP 2: スクリプト自己改善 (AI 不要) ────────────────────────────────────
 echo ""
-echo "── STEP 2: AI 自己レビュー ──"
+echo "── STEP 2: スクリプト自己改善 ──"
 
-CLAUDE_RUN="$DOTFILES/scripts/claude-run.sh"
+PREPROCESS="$DOTFILES/scripts/nightly-preprocess.py"
+VALIDATE_SH="$DOTFILES/scripts/nightly-validate-shell.py"
+POSTPROCESS="$DOTFILES/scripts/nightly-postprocess.py"
+DIGEST_FILE="$LOG_DIR/nightly-digest.json"
+SHELL_RESULT="$LOG_DIR/nightly-shell.json"
 
-# claude コマンドを解決: 直接呼び出し優先、次に claude-run.sh ラッパー
-if command -v claude &>/dev/null; then
-  _claude_invoke() { claude -p "$1" --dangerously-skip-permissions --max-turns 30; }
-elif [ -x "$CLAUDE_RUN" ]; then
-  _claude_invoke() { bash "$CLAUDE_RUN" --dir "$DOTFILES" --turns 30 "$1"; }
-else
-  echo "  [SKIP] claude コマンドが見つかりません"
-  _claude_invoke() { return 1; }
-fi
+python3 "$PREPROCESS" > "$DIGEST_FILE" 2>&1 \
+  && echo "  前処理完了 (stale dates + metrics + gotcha候補 + growth-log scaffold)" \
+  || echo "  [WARNING] 前処理エラー"
 
-# 2a: 記憶の整理 + CLAUDE.md 見直し + 成長ログ生成
-NIGHTLY_PROMPT="$PROMPTS_DIR/nightly-review.md"
-if [ -f "$NIGHTLY_PROMPT" ]; then
-  echo "  記憶整理・自己レビュー実行中..."
-  _claude_invoke "$(cat "$NIGHTLY_PROMPT")" \
-    && echo "  完了" \
-    || echo "  [WARNING] AI レビューがエラーで終了"
-else
-  echo "  [SKIP] プロンプトファイルが見つかりません: $NIGHTLY_PROMPT"
+python3 "$VALIDATE_SH" > "$SHELL_RESULT" 2>&1 \
+  && echo "  シェル構文チェック完了" \
+  || echo "  [WARNING] シェルチェックエラー"
+
+python3 "$POSTPROCESS" "$DIGEST_FILE" "$SHELL_RESULT" 2>&1 \
+  && echo "  成長ログ記入完了" \
+  || echo "  [WARNING] 後処理エラー"
+
+# ── STEP 2.5: settings.local.json 掃除（月曜のみ・週1）──────────────────────
+if [ "$(date +%u)" = "1" ]; then
+  echo ""
+  echo "── STEP 2.5: settings.local.json 掃除 (週次) ──"
+  python3 "$DOTFILES/claude/tools/cleanup-local-permissions.py" --apply 2>&1 \
+    | sed 's/^/  /' || echo "  [WARNING] 掃除エラー"
 fi
 
 # ── STEP 3: dotfiles に全変更をコミット ──────────────────────────────────────
