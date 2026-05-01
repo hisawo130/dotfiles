@@ -14,6 +14,13 @@ Sources:
 
 ---
 
+## 📋 Recent Changelog
+
+### 2026-04-30: [Flow: New triggers for inventory transfer completed and inventory transfer ready to ship](https://changelog.shopify.com/posts/flow-new-triggers-for-inventory-transfers-completed-and-inventory-transfer-ready-to-ship)
+Two new Flow triggers for inventory transfer automation: "inventory transfer ready to ship" fires when stock movement between locations is prepared for dispatch, and "inventory transfer completed" fires when items arrive at the destination. Use these to automate logistics alerts, dashboard updates, and fulfillment workflows.
+
+---
+
 ## 1. 概要
 
 Shopify Flow はノーコードの自動化ツール。**Trigger → Condition → Action** の3要素でワークフローを構築する。
