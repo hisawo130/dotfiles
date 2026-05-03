@@ -1,5 +1,5 @@
 # Shopify カスタムアプリ リファレンス
-<!-- API alert (2026-04-20): stable: 2026-04 → 2027-01 -->
+<!-- API alert (2026-05-03): stable: 2026-04 → 2027-01 -->
 
 > 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > 対象: Storefront API / Checkout Extensibility / Shopify Functions / GraphQL Admin API
