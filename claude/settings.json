@@ -484,7 +484,8 @@
       "args": [
         "-y",
         "@shopify/dev-mcp@latest"
-      ]
+      ],
+      "alwaysLoad": true
     },
     "shopify-admin": {
       "command": "npx",
