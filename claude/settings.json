@@ -1,6 +1,4 @@
 {
-  "effortLevel": "normal",
-  "skipAutoPermissionPrompt": true,
   "permissions": {
     "allow": [
       "Bash(awk:*)",
@@ -103,7 +101,6 @@
       "mcp__claude_ai_Google_Calendar__gcal_respond_to_event",
       "mcp__claude_ai_Google_Calendar__gcal_update_event"
     ],
-    "defaultMode": "auto",
     "deny": [
       "Bash(rm -rf /)",
       "Bash(rm -rf ~)",
@@ -115,7 +112,8 @@
       "Bash(sudo rm:*)",
       "Bash(sudo chmod:*)",
       "Bash(> /dev/sda:*)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
   "hooks": {
     "UserPromptSubmit": [
@@ -245,5 +243,8 @@
         ]
       }
     ]
-  }
+  },
+  "skipAutoPermissionPrompt": true,
+  "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true
 }
