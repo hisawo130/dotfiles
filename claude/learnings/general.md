@@ -118,63 +118,25 @@
 - [pattern] Shopifyアプリデプロイ前に、ブランチ先行状態とマージ予定を確認し、リリース範囲を明確化する
 - [gotcha] 本番デプロイ時に`shopify.app.<config>.toml`で環境を指定するステップを忘れやすい—手順チェックリストに含める
 - [tip] 複数ブランチが並行している場合、デプロイ前に全ブランチのコミット差分を`git log main..develop`で可視化してから確認質問を出すと齟齬が減る
-- [gotcha] 本番デプロイ時に複数ブランチが存在する場合、「どのコミットをリリースするのか」を明確にしないまま進めると誤デプロイのリスク。必ず状態整理と確認を分けて行う
 - [pattern] デプロイ前の流れ：状態整理（各ブランチのコミット差分）→ マージ計画の確認 → 実行手順の明示 → 明示的な「進めてください」許可待ち
-- [gotcha] Shopify アプリのデプロイ前に、複数ブランチ（main/develop/feature）の状態とコミット差分を確認し、本番に含めるコミット範囲を明確に判断する必要がある。
 - [pattern] Shopify アプリのデプロイ手順がドキュメント化されていれば、デプロイ前に参照して手順を確認・チェックできる。
 - [tip] 本番デプロイ後、本番アプリダッシュボード URL と設定ファイルの client_id を照合することで、デプロイの正確性を検証できる。
 - [gotcha] 本番デプロイ前に含めるコミット範囲とマージ戦略を複数回確認してからマージを進める
 - [gotcha] 「アプリ削除」と「アンインストール」は対応が異なるため、事前に区別して確認する必要がある
 - [pattern] デプロイ手順書に確認チェックリスト（含めるコミット、設定ファイル、client_id 検証）を組み込む
 - [gotcha] Shopifyアプリが削除・再作成されたら`client_id`が変わる。`shopify app config link`で新アプリにリンク直しが必須
-- [pattern] 本番デプロイ前に全ブランチの状態確認（main/develop/feature）を実施。含めるコミット、除外するコミットを明示的に確認
-- [tip] Partner Dashboardでのアプリ削除とストア管理画面でのアンインストールは別。前者は新規アプリ作成、後者は再インストール可能
-- [gotcha] Shopifyアプリを削除・再作成した場合、`client_id`が変わるため`shopify app config link --config <toml>`で新アプリに再度紐づけが必須
-- [pattern] 本番デプロイ前に過去削除された拡張機能の履歴を確認し、削除警告に備える（Removing extensions警告は既削除データに対しては無視可）
-- [tip] `shopify app deploy`は対話操作が必要なため、自動化できず手動ターミナル実行が必須
-- [gotcha] Partner Dashboardでアプリ削除後の再作成時、client_idが変わるため`shopify app config link`で新アプリに紐づけ直す必要がある
-- [tip] リポジトリから削除済みのextensionをデプロイする際の警告は、アプリを再作成している場合はユーザーデータ既消のため`Yes`で進めて問題ない
-- [gotcha] Shopify Partner Dashboard でアプリ削除すると新しいアプリ作成・client_id が変更される。デプロイ失敗時は client_id 変更が原因の可能性。
 - [pattern] アプリ連携変更時は `shopify app config link --config <toml>` でリンク直し。Partner Dashboard のアプリ一覧から選択すると client_id 自動更新。
-- [pattern] Shopify アプリ再作成後のインストール：Dev Dashboard の "Install app" からインストール URL 取得→本番ストア実行。既存インストール有れば新版自動適用。
-- [gotcha] Shopify アプリ削除・再作成後、新しい client_id が生成される。デプロイ前に `shopify app config link` で config ファイルを新アプリに紐づけ直す。
-- [pattern] `shopify app deploy` で削除済みエクステンション警告が出ても、アプリ自体が既に削除・再作成されていればデータは消えており、Yes で進める。
-- [tip] `shopify app deploy` は対話操作が必要なため、バッチ実行せず直接ターミナルで実行する。
-- [gotcha] Shopifyアプリをダッシュボードから削除・再作成するとclient_idが変わり、config紐づけが無効化される。デプロイ前に `shopify app config link` で再紐づけが必須。
-- [pattern] 削除済みエクステンションについてのデプロイ警告は、アプリ自体が一度削除・再作成されている場合はユーザーデータ既に消失しているため進行可能。
-- [tip] `shopify app deploy` は対話操作が必須のためClaude内で実行できない。本番デプロイはターミナルで直接実行すること。
-- [gotcha] Shopifyアプリ削除・再作成時、`client_id`が変わる → `shopify app config link`で設定ファイルを新アプリに再リンク必須
-- [pattern] 本番デプロイ時は、未マージコミット確認 → `main`へマージ → `shopify app deploy` → 本番アプリURL + `client_id`照合で検証
+- [tip] Partner Dashboardでのアプリ削除とストア管理画面でのアンインストールは別。前者は新規アプリ作成、後者は再インストール可能
+- [tip] リポジトリから削除済みのextensionをデプロイする際の警告は、アプリを再作成している場合はユーザーデータ既消のため`Yes`で進めて問題ない
+- [tip] `shopify app deploy`は対話操作が必要なため、自動化できず手動ターミナル実行が必須
 - [gotcha] アプリ削除によりDiscount設定も消滅 → Function は管理画面でDiscount再作成まで動作しない（`input.discount.discountClasses`が空）
-- [gotcha] アプリを削除・再作成すると`client_id`が変わり、既存の割引ディスカウント・Function設定が全てリセットされる — 初期設定から再構築が必要
 - [gotcha] FunctionコードがFunction ハンドラで割引クラスをチェックしており、割引未作成＝Function未動作となる隠れた依存関係 — デプロイ後の動作確認時に注意
 - [pattern] 複雑な送料判定ロジック（金額帯×地域×温度帯）は最大値（¥11,000以上）から始めるのが検証効率が高い
-- [gotcha] Shopify アプリを削除・再作成するとすべての関連データ（ディスカウント、カスタム設定等）も削除される。再デプロイ後は初期設定を完全にリセットする必要がある。
-- [pattern] Function のデプロイ時に「Removing extensions」警告が出ても、アプリ既存削除済みならそのエクステンションのデータも既に消えている。安全に確認プロンプトで Yes で進められる。
 - [tip] Shopify Function デプロイ後に機能が動作しない場合、Function の入力条件（ディスカウント存在確認など）が満たされているか先に確認する。Function は前提データなしでは動作しない。
 - [gotcha] Shopify アプリを Partner Dashboard で削除・再作成すると、割引ディスカウント等のリソースデータが消える。Function は Deploy されても入力データがないため動作しない。GraphiQL で functionId と `discount.discountClasses` を確認して診断する。
 - [pattern] Shopify アプリデプロイ後の確認手順は、Deploy 成功 → Install app（既インストール時は自動適用） → カート動作確認（Function の入力データ含む）の順。
-- [tip] アプリ削除後の再インストール時は、`shopify app config link` で新しい `client_id` を自動取得できる。手動入力より確実。
-- [gotcha] Partner Dashboard でアプリを削除・再作成すると、Function による割引設定も消失する。デプロイ後は管理画面でディスカウント・キャンペーンを再作成してから機能テストを実施する必要がある。
-- [pattern] アプリ再作成後は必ず `shopify app config link --config <config-file>` で新しい client_id に紐づけ直す。設定ファイルの client_id が自動更新されることを確認してからコミット。
-- [tip] Function が条件を満たさない場合は即座に `{operations: []}` を返す設計になっている。稼働チェックリストに「管理画面でディスカウント作成・有効化」を含める。
-- [gotcha] アプリ削除・再作成時、Partner Dashboard上で新規アプリ作成 → shopify app config link で紐付け。新client_idが自動更新されるため、この変更をコミット・デプロイが必須
-- [pattern] Functionデプロイ後はコード検証のみでなく、管理画面でディスカウント設定を作成 → 実カートで割引反映を確認する実動作検証が必須
 - [tip] 割引が機能しない場合、まずGraphQL APIで installed_functions を確認してFunction正常性を診断してからコード疑いに進む
-- [gotcha] Shopify アプリ削除・再作成時は新しい `client_id` が生成される。`shopify app config link` で `.toml` を再リンク必須。
-- [gotcha] Function 型ディスカウントのコードがリポジトリにあってもデプロイ後は、管理画面で実際にディスカウントを作成・有効化しないと Function が動作しない。
-- [pattern] Shopify アプリ削除・再作成後の Function エクステンション削除警告は無視可能（アプリ削除でデータ既消失）。
-- [gotcha] アプリ削除後の Function デプロイで「Removing extensions can permanently delete app user data」警告が出ても、アプリ自体がもう消えていればデータは既に消えているため Yes で進める判断できる
-- [gotcha] アプリを削除・再作成すると Shopify Admin で作成したディスカウント設定も消える。Function デプロイ後に管理画面で初期設定（ディスカウント作成）を改めて実行する必要がある
-- [pattern] アプリ削除後の復旧：`shopify app config link` で新 client_id に再紐づけ → デプロイ → 管理画面で初期データ再構築、という手順で完全復旧できる
-- [gotcha] Shopify アプリ削除→再作成時、client_id が変わるだけでなく、関連する全ディスカウント・設定もリセットされる。再インストール後は初期設定をやり直す必要がある。
-- [gotcha] Function のコードが完璧でも、実行時に必要な GraphQL データ（ディスカウント等）がないと即座に空を返す。Function デプロイと管理画面での設定作成は別タスク。
 - [pattern] Shopify アプリ本番デプロイは config link（client_id 同期）→ コミット → develop/main マージ → deploy の順序で実行する。
-- [gotcha] Shopify パートナーダッシュボードでアプリを削除すると新しい `client_id` が生成されるため、`shopify app config link` で config ファイルを再紐付けする必要がある。
-- [gotcha] アプリの削除・再作成により Shopify Admin 側のディスカウント設定も消えるため、Function が GraphQL 入力を受け取れず動作停止する。Admin 画面でディスカウントを再作成する必要がある。
-
-## 2026-04-14 09:32 | pietro-app
-
 ## 2026-04-14 09:32 | pietro-app [ai]
 - [gotcha] Shopify アプリを Partner Dashboard で削除した場合、新しい client_id が生成される。設定ファイルを `shopify app config link` で再紐づけしないとデプロイ失敗。
 - [pattern] デプロイ前に main と develop の先行状況を確認し、どのコミットをリリースするか明確にしておくと、ロールバック判断やミス防止が容易になる。
@@ -187,55 +149,22 @@
 - [gotcha] Shopifyの `complementary_products` メタフィールドに当該商品自身が含まれる場合がある。ループ内で `product.id` との重複チェックでスキップ必須。
 - [pattern] Shopify theme で `settings_data.json` は自動同期により変更される。PR作成時は事前に確認し、必要に応じてマージ時に `main` と同期させる手順を用意。
 - [tip] メタフィールドデータをテンプレートで使う前に、バリデーション・フィルタリングステップを入れるとデータ品質の問題に強くなる。
-- [gotcha] Prestige の `visibility: hidden` は peek 実装を構造的に不可能にする。opacity ベースのスライダーでは隣接スライド表示不可。実装前に CSS 制約を確認
 - [pattern] peek 機能は scroll-carousel（スクロール型）で実装可能。opacity フェード型は非表示スライド完全に隠すため不適切
 - [tip] サードパーティテーマの警告（`custom.overlay` など）は既存グループ名で問題なし。Prestige の命名規則を尊重してスキーマ追加
-- [gotcha] Prestige の slideshow-carousel は CSS `position: absolute; visibility: hidden` で非アクティブスライドを隠すため、opacity フェードベースでは隣スライドの peek 実装は構造的に不可能。
-- [pattern] Peek とループの実装には scroll-carousel + CSS scroll-snap + padding-inline を使用。クローンスライド追加で無限ループを効率的に実現。
 - [tip] 有料テーマ使用時は既存スライド実装の CSS 設計を最初に調査してから対応方針を決める。制約を理解することで最適な解決策を判断できる。
 - [gotcha] Prestige の `slideshow-carousel` は非アクティブスライドを `position: absolute; visibility: hidden` で隠すため peek（隣スライドのチラ見え）は構造的に不可能 → `scroll-carousel` + CSS scroll-snap への切り替えが必須
 - [pattern] scroll-carousel で loop を実現するには最終スライドの clone を先頭に、最初のスライドの clone を末尾に追加し、`scrollend` イベントでクローン着地時にリアルスライドへ `instant` ジャンプ
 - [gotcha] `<img>` 要素のブラウザネイティブドラッグは JS の drag ハンドラより発火優先度が高い → CSS `pointer-events: none` で抑制必要
-- [gotcha] Prestige テーマの CSS `.slideshow__slide:not(.is-selected) { position: absolute; visibility: hidden }` は opacity フェードの peek を構造的に不可能にする。別セクション実装（scroll-snap ベース）で代替を検討
-- [pattern] Swiper なし環境で carousel loop を実装するには、最終スライドを先頭に、最初のスライドを末尾に複製し、`scrollend` で実スライドへ `instant` ジャンプすることで視覚的な切れ目をなくせる
-- [tip] scroll carousel で画像ドラッグ選択を防ぐには `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` の CSS で、ブラウザネイティブドラッグハンドラを封じる
-- [gotcha] Prestige の slideshow-carousel は CSS で非アクティブスライドを `visibility: hidden` で隠すため、隣スライドのチラ見え（peek）は構造的に不可能。scroll-carousel への切り替えが必要。
-- [pattern] scroll-snap ベースのスライダーで最後/最初のスライドをクローンして先頭/末尾に追加し、scrollend でリアルスライドへ instant ジャンプさせることでループを自然に実現。
 - [tip] 画像ドラッグ選択防止には `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` を組み合わせる。pointer-events は親要素へのイベントをバブルさせるのでリンク機能が保たれる。
-- [gotcha] Prestige の `slideshow-carousel` は非アクティブスライドを `position: absolute; visibility: hidden` で隠すため、隣スライドのpeeking は構造的に不可能。スクロールベース実装への変更が必須。
-- [pattern] スクロール型カルーセルの無限ループ実装：最初と最後のスライドを clone して配列前後に挿入し、`scrollend` イベントで clone 到達時に対応する実スライドへ瞬時ジャンプさせると、視覚的に切れ目なくループできる。
-- [gotcha] 画像要素のブラウザネイティブドラッグが drag ハンドラより先に発火するため、`-webkit-user-drag: none` + `pointer-events: none` で抑制が必要。クリックは親要素にバブルするため機能は維持される。
-- [gotcha] Prestige の `slideshow__slide:not(.is-selected) { position: absolute; visibility: hidden }` は非アクティブスライドを完全に隠すため、peek は`scroll-carousel` など別のコンポーネントに切り替えが必須。同じ方式では構造的に不可能。
-- [gotcha] スライダー内の `<img>` ドラッグはネイティブブラウザドラッグが drag ハンドラより優先。`-webkit-user-drag: none`, `user-select: none`, `pointer-events: none` で CSS 抑制が必要。
-- [pattern] 最終スライド clone を先頭、最初スライド clone を末尾に配置し、`scrollend` で実スライドへ瞬時ジャンプすることで Swiper.js なしの無限ループが実現可能。
-- [gotcha] Prestige の opacity-fade carousel は非表示スライド に `position: absolute; visibility: hidden` を適用するため、隣スライドのチラ見え（peek）は構造的に不可能。scroll-snap ベースキャリーセルで再実装が必須。
-- [pattern] CSS scroll-snap carousel でループを実装する際、先頭・末尾にクローンスライドを追加し、scrollend イベントで着地位置を検出してリアルスライドへ instant ジャンプする手法が有効（参考：Pietro テーマの Swiper.js `loop: true` と同等の効果）。
-- [gotcha] スクロールキャリーセル内の画像ドラッグが div の drag ハンドラに割り込む場合、`-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` の組み合わせでネイティブドラッグを抑制し、スクロール優先度を確保する。
-- [gotcha] Prestige の `slideshow-carousel` は CSS で非アクティブスライドを `position: absolute; visibility: hidden` で隠すため、peek（隣スライドのチラ見え）は構造的に不可能。このケースでは `scroll-carousel`（scroll-snap ベース）への切り替えが必要。
-- [pattern] 無限ループを実装する際、最初のスライドを末尾に、最後のスライドを先頭に clone 配置し、scrollend でリアルスライドへ瞬時ジャンプさせるアプローチで、フレームワークなしでも視覚的に途切れない loop を実現可能。
-- [gotcha] `scroll-carousel` 上の画像ドラッグで、ブラウザネイティブドラッグが drag ハンドラより優先実行されるため、`pointer-events: none` + `-webkit-user-drag: none` + `user-select: none` の 3 つを組み合わせて抑制する必要がある。
-- [gotcha] Prestige の CSS `.slideshow__slide:not(.is-selected) { visibility: hidden }` により opacity フェード時の peek は構造的に不可。テーマ CSS 制約を最初に確認してから設計すること
-- [pattern] スライド複製ループ：最終スライド clone を先頭、最初スライド clone を末尾に追加し、`is-initial` で初期位置固定、scrollend で `instant` ジャンプ。視覚的に切れ目なし
 - [pattern] Prestige のような paid theme では既存セクション名を変更せず、機能追加は新規セクション追加で対応するのが正解
-- [gotcha] Prestige の `slideshow-carousel` は非選択スライドを `position: absolute; visibility: hidden` で隠すため、peek は CSS 構造上不可能。`scroll-carousel`（scroll-snap）に切り替えが必須。
-- [pattern] CSS scroll-snap のループ実装：最終・最初スライドをクローン追加、`scrollend` でクローン着地時にリアルスライドへ `instant` ジャンプ。視覚的に切れ目なし。
-- [tip] スクロール時の画像ドラッグ選択を防ぐ：`-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` 組み合わせ。リンクスライドはバブルで機能維持。
-- [gotcha] Prestige の `slideshow-carousel` は非選択スライドを `position: absolute; visibility: hidden` で隠すため peek は構造的に不可。`scroll-carousel`（scroll-snap ベース）への切り替えが必須。
-- [pattern] スクロールカルーセルの infinite loop: 最終スライドの clone を先頭に、最初のスライドの clone を末尾に追加し、`scrollend` で実スライドへ瞬時ジャンプで視覚的に切れ目なし。
-- [gotcha] img ネイティブドラッグを防ぐには `-webkit-user-drag: none` + `user-select: none` + `pointer-events: none` で複合抑制。これなしだと scroll ハンドラより優先される。
 - [tip] Shopify CLIセッション切れ時は `shopify auth login --store <store>.myshopify.com` または `--device-code` でセッション復旧可能
 - [pattern] `shopify theme push --only layout/theme.liquid` で特定ファイルのみプッシュ可能。settings_data.json など不要な変更の混入を防ぐ
 - [gotcha] Shopify CLI セッション切れ時、`shopify theme push` は `shopify auth login --store <store>` で再認証が必要。インタラクティブログインの場合はブラウザのコード入力も求められる
 - [pattern] `settings_data.json` に変更がない場合、`shopify theme push --only <file>` で特定ファイルのみプッシュして不要な data.json 変更を回避
 - [tip] Shopify CLI の認証が必要な操作は IDE ツール統合より、ターミナルで直接実行する方が確実（ブラウザ認証やコード入力が必要な場合）
 - [pattern] Shopify Liquid のレスポンシブリンク対応：PC 用/モバイル用で別々の `<a>` 要素を用意し、`md:hidden`/`md-max:hidden` で表示制御すると、異なるリンク先でも保守性が高い
-- [tip] Shopify テーマ push 前に `git diff config/settings_data.json` で意図しない設定変更がないか必ず確認してから実行
-- [pattern] Shopify Liquidで異なる表示分岐する要素が異なるリンク先を必要とする場合、Tailwindクラス（`md-max:hidden` など）で分岐した各要素を別々の `<a>` タグでラップする実装パターン
 - [gotcha] `shopify theme push` 前に `config/settings_data.json` の diff を確認し、意図しない自動生成変更を含めていないか警告する
 - [gotcha] Shopify CLI実行時は事前にストアドメインを確認。複数ストア運用時は `shopify theme list` で現在のコンテキストを確認必須
-- [pattern] Liquid条件付きレスポンシブ（`md-max:hidden` / `md:hidden`）でモバイル/PC版を分離し、異なるリンク先を指定可能
-- [tip] プッシュ前に `git diff --name-only` で変更ファイルを確認し、settings_data.json の不意な変更を検出
-
 ## 2026-04-14 18:45 | pietro-onlineshop_ver01 [ai]
 
 - [gotcha] Liquid の `!= blank` は JSON 文字列 `"[]"` を空でなく判定。メタフィールド型を Shopify 管理画面で確認し、必要に応じて明示的な空文字列チェックを実装する
@@ -353,7 +282,7 @@
 - [pattern] テーブル列の一時的非表示はLiquidコメント（{% comment %}...{% endcomment %}）推奨。完全削除より変更可逆性が高く、復活が簡単
 - [tip] ecforceテーブル列非表示時は見出し（th）と値セル（td）の両方をコメント化。片方だけだと列幅がずれる
 
-## Recurring Patterns (updated 2026-05-03)
+## Recurring Patterns (updated 2026-05-04)
 - [workflow] Python preprocess (JSON digest) before passing to Claude; keep Claude role to judgment only — seen 16 times
 - [workflow] Compress command output >50 lines; use JSON digest pattern for batch tasks — seen 2 times
 - [ecforce] Duplicate ecforce theme before editing; live edits go to production immediately — seen 0 times
@@ -364,6 +293,8 @@
 - [shopify] Clickable <span> requires role="button", aria-label, and keyboard handler — seen 12 times
 - [dotfiles] dotfiles symlinks can silently become real directories; verify at SessionStart — seen 10 times
 - [shopify] Shopify app delete/recreate changes client_id; re-link with shopify app config link — seen 106 times
+- [shopify] Prestige slideshow-carousel hides inactive slides with visibility:hidden; peek is structurally impossible; switch to scroll-carousel + scroll-snap — seen 13 times
+- [shopify] Email HTML SKU mismatch between templates; always verify image content not just SKU code when reusing — seen 10 times
 
 ## 2026-04-25 10:18 | dotfiles [ai]
 - [gotcha] Symlink破損するとセッション学習がGitHubに届かなくなる。Stop hookが正しいパスに書き込めず、別PCで反映されない。SessionStart時の自動チェック機構が必須。
