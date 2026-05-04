@@ -23,3 +23,8 @@
 
 ## Recurring Patterns (updated 2026-03-27)
 - [shopify] ShopifyのCSVインポート・エクスポートには仕様上の落とし穴が多い（タグ上書き・重複エラー・Matrixify列名差異） — seen 4 times
+
+## 2026-05-04 21:58 | imrcry.jp
+- ### 重要な所見
+- [gotcha] This matches perfectly! RecACE does NOT have a URL for PS-52Jp either (it's blank in the PS-52Jp column too). So my previous plan was WRONG about RecACE having a URL for PS-52Jp.
+- [gotcha] So RecACE has NO URL for either page. My previous plan that said RecACE → https://www.ascend-corp.co.jp/news/20220909/ for PS-52Jp was WRONG.
