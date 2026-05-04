@@ -28,3 +28,7 @@
 - ### 重要な所見
 - [gotcha] This matches perfectly! RecACE does NOT have a URL for PS-52Jp either (it's blank in the PS-52Jp column too). So my previous plan was WRONG about RecACE having a URL for PS-52Jp.
 - [gotcha] So RecACE has NO URL for either page. My previous plan that said RecACE → https://www.ascend-corp.co.jp/news/20220909/ for PS-52Jp was WRONG.
+
+## 2026-05-04 22:02 | imrcry.jp
+- 作業: ## コード渡し用 修正指示テキスト（2026年05月01日付）
+- 完了: **コミット:** `b250de0`
