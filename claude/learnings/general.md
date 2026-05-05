@@ -282,20 +282,13 @@
 - [pattern] テーブル列の一時的非表示はLiquidコメント（{% comment %}...{% endcomment %}）推奨。完全削除より変更可逆性が高く、復活が簡単
 - [tip] ecforceテーブル列非表示時は見出し（th）と値セル（td）の両方をコメント化。片方だけだと列幅がずれる
 
-## Recurring Patterns (updated 2026-05-04)
-- [workflow] Python preprocess (JSON digest) before passing to Claude; keep Claude role to judgment only — seen 16 times
-- [workflow] Compress command output >50 lines; use JSON digest pattern for batch tasks — seen 2 times
-- [ecforce] Duplicate ecforce theme before editing; live edits go to production immediately — seen 0 times
-- [shopify] Never stage settings_data.json accidentally; always check before commit — seen 28 times
-- [shopify] Use {% render %} not {% include %} in OS 2.0; auto-replace if found — seen 10 times
-- [workflow] Never use rm; always move to ~/.trash/ with timestamp prefix — seen 4 times
-- [shopify] Shopify CDN CSS cannot be edited directly; override via Liquid <style> tags — seen 18 times
-- [shopify] Clickable <span> requires role="button", aria-label, and keyboard handler — seen 12 times
-- [dotfiles] dotfiles symlinks can silently become real directories; verify at SessionStart — seen 10 times
-- [shopify] Shopify app delete/recreate changes client_id; re-link with shopify app config link — seen 106 times
-- [shopify] Prestige slideshow-carousel hides inactive slides with visibility:hidden; peek is structurally impossible; switch to scroll-carousel + scroll-snap — seen 13 times
-- [shopify] Email HTML SKU mismatch between templates; always verify image content not just SKU code when reusing — seen 10 times
-
+## Recurring Patterns (updated 2026-05-05)
+- [dotfiles/claude] Python前処理でClaudeトークン消費を大幅削減 — seen 3 times
+- [dotfiles/github] GitHub Actionsによるcron一元化で複数PC問題を解消 — seen 8 times
+- [dotfiles/claude] SessionStartフックで毎回一貫した環境を確保 — seen 8 times
+- [dotfiles/claude] バッチ処理は前処理→Claude判断→後処理の3段階分割 — seen 4 times
+- [shopify] Shopify schema setting IDs変更はテーマデータ破壊になる — seen 3 times
+- [dotfiles/claude] Script-first: 3+同種ツールコールはPythonスクリプト1本に — seen 10 times
 ## 2026-04-25 10:18 | dotfiles [ai]
 - [gotcha] Symlink破損するとセッション学習がGitHubに届かなくなる。Stop hookが正しいパスに書き込めず、別PCで反映されない。SessionStart時の自動チェック機構が必須。
 - [pattern] 複数の小さな診断Bash/ls/diffコマンド（20回超）は1つのPython統合ツール（`dotfiles-doctor.py`）で置き換え可能。トラブルシューティングのコンテクスト消費が激減する。
