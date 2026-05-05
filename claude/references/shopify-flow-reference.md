@@ -16,6 +16,10 @@ Sources:
 
 ## 📋 Recent Changelog
 
+### 2026-05-05: [Flow: View who edited, activated, or deactivated a workflow version](https://changelog.shopify.com/posts/flow-see-exactly-what-changed-in-any-workflow-and-roll-it-back)
+Workflow version history now logs all edits, activations, and deactivations with staff member and timestamp, enabling developers and admins to audit which staff changed workflows and when, and roll back if needed.
+
+
 ### 2026-04-30: [Flow: New triggers for inventory transfer completed and inventory transfer ready to ship](https://changelog.shopify.com/posts/flow-new-triggers-for-inventory-transfers-completed-and-inventory-transfer-ready-to-ship)
 Two new Flow triggers for inventory transfer automation: "inventory transfer ready to ship" fires when stock movement between locations is prepared for dispatch, and "inventory transfer completed" fires when items arrive at the destination. Use these to automate logistics alerts, dashboard updates, and fulfillment workflows.
 
