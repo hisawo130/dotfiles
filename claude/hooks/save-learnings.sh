@@ -232,12 +232,7 @@ while IFS= read -r line; do
   fi
 done <<< "$OPEN_ISSUES"
 
-# Fallback: minimal task summary if nothing substantive was extracted
-if [ "${#LINES[@]}" -eq 0 ]; then
-  [[ -n "$FIRST_REQUEST" ]] && LINES+=("- 作業: $FIRST_REQUEST")
-  [[ -n "$COMPLETION" ]] && LINES+=("- 完了: $COMPLETION")
-fi
-
+# タグ付き学習が何も抽出できなければ書かない（作業ログは git history で十分）
 [ "${#LINES[@]}" -eq 0 ] && exit 0
 
 # ── Write to all detected domain files ────────────────────────────────────
