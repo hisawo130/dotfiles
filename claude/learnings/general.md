@@ -428,3 +428,8 @@
 
 ## 2026-05-07 13:11 | teras-taya
 - 重要な情報があります。このファイルについてすでに観測が記録されています。詳細を取得します。
+
+## 2026-05-07 13:10 | teras-taya [ai]
+- [gotcha] localStorage.setItem() は Safari プライベートブラウジングで SecurityError を throw する。重要な UI操作は必ず try/catch で囲む必須。
+- [pattern] Flash-of-content を防ぐには、デフォルト HTML 状態を非表示（aria-hidden="true"）にして、JS で必要な場合だけ解除する逆転パターンが確実。
+- [gotcha] Shopify テーマで locale キーを追加するとき、base locale（en.default.json）に同時に追加していないと theme check で警告される。
