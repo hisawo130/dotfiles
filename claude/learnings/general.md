@@ -415,3 +415,8 @@
 - [gotcha] XServer APIのエンドポイントはバージョン付き（`/v1/...`）で、ドメイン取得・DNS操作ごとにパスが異なる。`/domains` ではなく `/v1/server/{servername}/domain` など必ずドキュメント確認必須
 - [gotcha] XServer API呼び出しにはサーバー名がパスに必須。コンソール「サーバー情報」から `sv12345` を確認し、`sv12345.xsrv.jp` フル形式で設定
 - [pattern] 外部API連携時はレスポンス構造の事前確認。XServerはフィールド名が `value` → `content`、`name` → `host` など非直感的。ドキュメントとスクリプトの並行確認がデバッグ時間を短縮
+
+## 2026-05-07 11:54 | P130 [ai]
+- [gotcha] XServer APIはエンドポイントパス・フィールド名・サーバー名形式が全て非自明（/domains→/v1/server/{servername}/domain、value→content等）。ドキュメント照合なしに実装すると確実に失敗する。
+- [pattern] 403 FORBIDDENエラーはコード修正より先にアカウント管理画面のAPIキー権限・対象サーバー設定を確認。root causeは大抵権限設定側。
+- [correction] サーバーIDとサーバーFQDNは別。XServerではサーバーパネル「サーバー情報」の実名（例: cingroup2.xsrv.jp）をAPI呼び出しに使用。
