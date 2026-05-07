@@ -60,7 +60,8 @@ jobs:
           # and growth-log.md output after each run to detect unexpected actions.
           claude -p "$(cat claude/scripts/prompts/nightly-review.md)" \
             --dangerously-skip-permissions \
-            --max-turns 30 \
+            --model claude-haiku-4-5-20251001 \
+            --max-turns 15 \
             2>&1 | tee ~/.claude/logs/nightly-ci.log
           echo "✅ Claude run completed"
         env:
