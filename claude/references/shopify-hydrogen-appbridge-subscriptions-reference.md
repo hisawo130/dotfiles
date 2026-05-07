@@ -8,6 +8,9 @@
 
 ## 📋 Recent Changelog
 
+### 2026-05-07: [Product Variant Publishing](https://changelog.shopify.com/posts/product-variant-publishing)
+Variant-level publishing supports B2B exclusivity by allowing specific variants to be hidden from or shown in particular sales channels without deletion, useful for B2B-only product configurations.
+
 ### 2026-04-15: [New CSS variable for mobile safe area insets](https://shopify.dev/changelog/new-css-variable-for-mobile-safe-area-insets)
 A new `--shopify-safe-area-inset-bottom` CSS variable is available for embedded apps on Shopify Mobile. Most apps need no code changes, but developers using custom overlay positioning should evaluate this variable.
 

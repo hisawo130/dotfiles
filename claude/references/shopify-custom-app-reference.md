@@ -8,6 +8,9 @@
 
 ## 📋 Recent Changelog
 
+### 2026-05-07: [Product Variant Publishing](https://changelog.shopify.com/posts/product-variant-publishing)
+Variant-level publishing now allows developers to control which product variants appear in specific sales channels via API without deleting variants, supporting staging workflows, regional restrictions, and B2B exclusivity.
+
 ### 2026-04-24: [Use MATCHES in ShopifyQL to filter by what customers did](https://changelog.shopify.com/posts/use-matches-in-shopifyql-to-filter-by-what-customers-did)
 ShopifyQL now supports the MATCHES operator in WHERE clauses for filtering by customer behavior patterns, enabling consistent segment logic between Customer Segmentation and Analytics reports.
 
