@@ -85,6 +85,48 @@ jobs:
             echo "ℹ️ 変更なし — コミットをスキップ"
           fi
 
+      - name: Notify Discord (efficiency proposals)
+        if: always()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          set -euo pipefail
+          [ -z "${DISCORD_WEBHOOK:-}" ] && echo "ℹ️ DISCORD_WEBHOOK 未設定 — スキップ" && exit 0
+
+          JST_DATE=$(TZ=Asia/Tokyo date +%Y-%m-%d)
+
+          # 当日の 効率化リフレクション セクションを抽出
+          PROPOSALS=$(awk "
+            /^## ${JST_DATE}.*夜間自己改善レポート/ { found=1 }
+            found && /^### 効率化リフレクション/ { capture=1; next }
+            capture && /^###/ { exit }
+            capture { print }
+          " claude/scripts/growth-log.md 2>/dev/null || true)
+
+          # 提案なし・改善点なし の場合はスキップ
+          if [ -z "$PROPOSALS" ] || echo "$PROPOSALS" | grep -q "改善点なし"; then
+            echo "ℹ️ 効率化提案なし — Discord通知スキップ"
+            exit 0
+          fi
+
+          PAYLOAD=$(jq -n \
+            --arg title "🌙 夜間バッチ 効率化提案 (${JST_DATE})" \
+            --arg body "$PROPOSALS" \
+            '{
+              "embeds": [{
+                "title": $title,
+                "description": ("```\n" + $body + "\n```"),
+                "color": 16776960
+              }]
+            }')
+
+          curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "$DISCORD_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" | grep -q "^2" \
+            && echo "✅ Discord通知送信完了" \
+            || echo "⚠️ Discord通知送信失敗"
+
       - name: Upload logs
         uses: actions/upload-artifact@v4
         if: always()
