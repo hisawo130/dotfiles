@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 全履歴取得（学習ログの履歴参照のため）
+          fetch-depth: 1  # shallow clone で十分（夜間タスクは git log を使わない）
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
