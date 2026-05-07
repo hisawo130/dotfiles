@@ -437,3 +437,13 @@
 ## 2026-05-07 13:22 | teras-taya
 - ### Critical（リリース前に必ず修正）
 - [correction] #1〜#7まですべて修正してください
+
+## 2026-05-07 13:22 | teras-taya [ai]
+- [gotcha] ポップアップをHTML側で表示状態にしておくとFOUC発生。JS実行前に一瞬見える。デフォルトは `aria-hidden="true"` にしてJS側で条件判定時に外す
+- [gotcha] Shopifyで `ja.json` にキーを追加したら `en.default.json` にも同じキーを英語値で追加必須。フォールバック仕様で英語ユーザーに生キー名が表示される
+- [tip] CSS `transform: scale()` を常時適用するなら実寸をコメントで明記。宣言値と実態の乖離で将来の編集者が混乱する
+
+## 2026-05-07 13:23 | teras-taya [ai]
+- [gotcha] Shopify themeでポップアップ等のJS制御UI要素は、HTML側でデフォルトを隠す（aria-hidden="true"やdisplay:none）ことが必須。そうしないとJSが実行される前に一瞬表示されてしまう（FOUC）。
+- [gotcha] Shopifyのローカライゼーション：テーマキーを `ja.json` に追加しても、Shopifyは `en.default.json` をフォールバックとして使うため、スタッフアカウントが英語設定だと生キー名が出力される。すべてのキーを `en.default.json` にも登録すること。
+- [pattern] CSS で `scale()` 等の変換値を使う場合、宣言値と実表示サイズがズレるため、実寸ベースで設計し直すか、実寸をコメントで明記してメンテナンス性を高める。
