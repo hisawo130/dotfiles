@@ -3,7 +3,7 @@
 session-start-orchestrator — 全 SessionStart フックを並列実行して 1 つに統合
 
 これまで settings.json の SessionStart には 10 個のフックが順次起動していた:
-  10 process spawns + sequential = 体感数百ms
+  10 process spawns + sequential = 体感数百ミリ
 
 このオーケストレーターは:
   - 各フックを ThreadPoolExecutor で並列起動
@@ -52,7 +52,7 @@ def log_error(name: str, kind: str, detail: str) -> None:
         pass  # ログ書込失敗は静黙
 
 
-# ── Native Python hooks (旧 inline shell の移植) ──────────────────────────────
+# ── Native Python hooks (旧 inline shell の移植) ──────────────────────────────────────────────
 
 def py_stale_refs() -> str | None:
     """references/ で 14 日以上更新されていない .md を列挙。"""
@@ -74,7 +74,7 @@ def py_stale_refs() -> str | None:
 
 
 def py_project_state() -> str | None:
-    """カレントディレクトリ別の state.md があれば読み込む（2KB上限）。"""
+    """カレントディレクトリ別の state.md があれば読み込むﾈ2KB上限ﾉ。"""
     cwd = Path.cwd()
     sanitized = str(cwd).replace("/", "-")
     sf = HOME / f".claude/projects/{sanitized}/state.md"
