@@ -292,6 +292,33 @@ When not explicitly specified, assume:
 - Missing `+smartphone` variant when desktop template changed → flag for manual check
 - CSS `!important` added → note specificity risk in response
 
+## NotebookLM integration
+
+NotebookLM CLI (`nlm`) and MCP server are available for research and persistent memory.
+
+**Master Brain notebook ID:** `58f81c6c-6f3e-42d1-9de5-e59b8975f51c`
+
+Before answering questions about project architecture, historical decisions, or past session learnings, query the Master Brain notebook:
+```bash
+nlm notebook query 58f81c6c-6f3e-42d1-9de5-e59b8975f51c "<question>"
+```
+
+**Use NotebookLM when:**
+- Analyzing 5+ documents/sources (offload to NotebookLM to save tokens)
+- User asks to research a topic with multiple web sources or PDFs
+- Generating audio overviews, slide decks, flashcards, or mind maps
+
+**Available notebooks (as of 2026-05-08):**
+- `df968fc5` — Shopify (73 sources)
+- `6c66b80c` — Shopify Matrixify (41 sources)
+- `95096a0b` — 【見積作成】株式会社スズヤ様 (12 sources)
+- `58f81c6c` — Master Brain (session memory)
+
+**Session wrap-up:** At end of session, extract key decisions/learnings and push to Master Brain:
+```bash
+nlm notebook source add 58f81c6c-6f3e-42d1-9de5-e59b8975f51c --text "<session-summary>"
+```
+
 ## Nightly self-improvement
 
 Every day at AM3:00 JST, the GitHub Actions workflow `.github/workflows/nightly-self-improve.yml`
