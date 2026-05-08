@@ -316,4 +316,20 @@ if git -C "$DOTFILES" rev-parse --is-inside-work-tree &>/dev/null; then
   fi
 fi
 
+# ── Master Brain sync (best-effort, background) ───────────────────────────
+# Push [gotcha]/[correction]/[recurring] entries to NotebookLM for cross-session memory.
+_important=""
+for _line in "${LINES[@]}"; do
+  echo "$_line" | grep -qE '\[(gotcha|correction|recurring)\]' && _important+="${_line}\n"
+done
+
+if [ -n "$_important" ] && command -v nlm >/dev/null 2>&1; then
+  MASTER_BRAIN_ID="58f81c6c-6f3e-42d1-9de5-e59b8975f51c"
+  _nlm_tmp=$(mktemp /tmp/nlm-save-XXXXXX.md)
+  printf "## %s | %s | %s\n" "$DATE" "$PRIMARY_DOMAIN" "$DIR" > "$_nlm_tmp"
+  printf '%b\n' "$_important" >> "$_nlm_tmp"
+  # Run in background so session stop hook doesn't block
+  (nlm source add "$MASTER_BRAIN_ID" "$_nlm_tmp" &>/dev/null; rm -f "$_nlm_tmp") &
+fi
+
 exit 0

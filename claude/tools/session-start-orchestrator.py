@@ -93,12 +93,34 @@ def py_project_state() -> str | None:
     return f"📋 Project state loaded:\n{body}"
 
 
+def py_master_brain_status() -> str | None:
+    """Master Brain (NotebookLM) の接続状態を確認。クエリは行わず高速チェックのみ。"""
+    import shutil
+
+    if not shutil.which("nlm"):
+        return None
+
+    try:
+        r = subprocess.run(
+            ["nlm", "login", "--check"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if r.returncode == 0:
+            return "🧠 NotebookLM: 接続済み — /wrap-up で知見を保存, nlm notebook query で検索できます"
+        return None
+    except Exception:
+        return None
+
+
 HOOKS: list[tuple[str, object]] = [
     # name, callable | command-list
     # callable は str|None を返す関数。subprocess を呼ばないので bash のオーバーヘッド無し。
     ("doctor",        ["python3", str(TOOLS_DIR / "dotfiles-doctor.py"), "--hook"]),
     ("stale-refs",    py_stale_refs),
     ("project-state", py_project_state),
+    ("master-brain",  py_master_brain_status),
     ("recovery",      ["bash", str(HOOKS_DIR / "recovery-detect.sh")]),
     ("shopify",       ["bash", str(HOOKS_DIR / "shopify-session-start.sh")]),
     ("ecforce",       ["bash", str(HOOKS_DIR / "ecforce-session-start.sh")]),

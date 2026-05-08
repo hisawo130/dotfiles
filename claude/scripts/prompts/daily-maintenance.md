@@ -262,6 +262,60 @@ Track: `t7_updates` (newline-separated list of `repo: OLD → NEW`, or empty if 
 
 ---
 
+## TASK 8: Master Brain Sync (NotebookLM)
+
+Push a structured summary of today's maintenance run to the Master Brain notebook
+for persistent cross-session memory.
+
+Master Brain notebook ID: `58f81c6c-6f3e-42d1-9de5-e59b8975f51c`
+
+1. Build a summary combining results from earlier tasks:
+
+```markdown
+# Daily Maintenance — DATE
+
+## Memory Changes (T1)
+- Files processed: N, removed: N, tagged: N, patterns: N
+- New memory rules added: (list rule names, or "none")
+
+## Learnings Highlights (T1)
+- (paste up to 5 most significant [recurring] / [gotcha] entries found)
+
+## Shopify Changelog (T2)
+- New entries: N
+- (list titles if any)
+
+## Reference Alerts (T3, T4, T5)
+- Dawn: VERSION (new: YES/NO)
+- API: ALERT or "no change"
+- Stale refs: STALE_LIST or "all OK"
+
+## Anthropic Monitor (T6, T7)
+- Changes: N files or "skipped" or "no changes"
+```
+
+2. Write the summary to a temp file and push:
+
+```bash
+MASTER_BRAIN_ID="58f81c6c-6f3e-42d1-9de5-e59b8975f51c"
+SUMMARY_FILE="/tmp/daily-maintenance-$(date +%Y%m%d).md"
+# Write summary content to $SUMMARY_FILE
+nlm source add "$MASTER_BRAIN_ID" "$SUMMARY_FILE"
+rm -f "$SUMMARY_FILE"
+```
+
+If `nlm` command is not found or exits non-zero, log a warning and continue.
+Do not abort — this task is best-effort.
+
+```bash
+git add claude/scripts/growth-log.md 2>/dev/null || true
+git diff --cached --quiet || git commit -m "docs: nightly master-brain sync $(date +%Y-%m-%d)"
+```
+
+Track: `t8_synced` (true/false)
+
+---
+
 ## FINAL: Push + Discord
 
 ```bash
@@ -281,6 +335,7 @@ dotfiles daily (DATE 03:00 JST)
 [5] Stale refs — STALE_LIST_OR_all_OK
 [6] Anthropic monitor — CHANGES_OR_skipped_OR_no_changes
 [7] Repos — cli:OLD→NEW / hydrogen:OLD→NEW / no_changes
+[8] Master Brain — synced:YES/NO
 https://github.com/hisawo130/dotfiles/commits/main
 ```
 

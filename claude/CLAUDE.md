@@ -314,22 +314,24 @@ nlm notebook query 58f81c6c-6f3e-42d1-9de5-e59b8975f51c "<question>"
 - `95096a0b` — 【見積作成】株式会社スズヤ様 (12 sources)
 - `58f81c6c` — Master Brain (session memory)
 
-**Session wrap-up:** At end of session, extract key decisions/learnings and push to Master Brain:
-```bash
-nlm notebook source add 58f81c6c-6f3e-42d1-9de5-e59b8975f51c --text "<session-summary>"
-```
+**Session wrap-up:** Use `/wrap-up` command at end of session. It extracts key corrections/decisions/patterns and pushes to Master Brain automatically.
 
 ## Nightly self-improvement
 
-Every day at AM3:00 JST, the GitHub Actions workflow `.github/workflows/nightly-self-improve.yml`
-runs `claude/scripts/prompts/nightly-review.md` headlessly (6 daily tasks + 1 weekly task on Mondays):
+Every day at AM3:00 JST, `nightly-self-improve.sh` (local cron) and `.github/workflows/nightly-self-improve.yml` (GitHub Actions, Python-only) run the self-improvement pipeline.
 
-1. Memory consolidation — `learning-consolidator` エージェントで learnings → memory/ rules に昇格
-2. Autonomous operation review — update CLAUDE.md for stale rules
-3. Light refactoring — fix obvious bugs in hooks/agents
-4. Growth log — append daily report to `claude/scripts/growth-log.md`
-5. Stale date patrol — fix expired deadlines in memory/learnings files
-6. Learning metrics — record per-domain entry counts in growth log
-7. (週次 / Mondays only) Reference refresh — WebFetch sourcesのUPDATE BEFORE USEブロックを更新
+**Pipeline architecture:**
 
-In `claude -p` / `claude-run`: no questions, no confirmation, JSON output preferred, respect `--max-turns`, exit non-zero on failure, do exactly what prompt says.
+| Step | Tool | Description |
+|---|---|---|
+| preprocess | `nightly-preprocess.py` | Stale dates, metrics, gotcha候補, growth-log scaffold |
+| shell-validate | `nightly-validate-shell.py` | bash -n + shellcheck for all hooks/scripts |
+| postprocess | `nightly-postprocess.py` | Fill growth-log placeholders |
+| AI review | `nightly-review.md` prompt via `claude -p` | Memory consolidation, CLAUDE.md review, observations |
+| Master Brain | `nlm source add` (local only) | Push growth-log entry to NotebookLM |
+
+**Prompts:**
+- `claude/scripts/prompts/nightly-review.md` — headless JSON-in/JSON-out AI review (used with `claude -p`)
+- `claude/scripts/prompts/daily-maintenance.md` — full-session 8-task maintenance (Shopify changelog, Dawn version, API alerts, Master Brain sync, etc.)
+
+Manual trigger: `/nightly-review`

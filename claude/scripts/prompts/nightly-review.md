@@ -37,6 +37,11 @@ Only if you identify obvious issues from the digest (do NOT read hook files). Sk
 ### TASK 4: Growth Log Observations
 Write 2-3 sentences of observations based on the learning patterns you see.
 
+### TASK 5: Master Brain Push Summary
+Build a one-paragraph summary of key patterns and corrections for today's run.
+This will be pushed to NotebookLM Master Brain by nightly-self-improve.sh separately.
+Include it in the `growth_log.master_brain_summary` field.
+
 ---
 
 ## OUTPUT FORMAT
@@ -63,7 +68,8 @@ Return ONLY a valid JSON object. No markdown, no explanation outside the JSON.
     "memory_summary": "追加したメモリルール: N件\n内容: ...",
     "claude_md_changes": "変更箇所の説明またはなし",
     "refactoring": "なし",
-    "observations": "2-3文の観察"
+    "observations": "2-3文の観察",
+    "master_brain_summary": "今日の主要パターン・修正事項の1段落サマリー（英語可）"
   }
 }
 ```

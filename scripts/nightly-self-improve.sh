@@ -207,5 +207,49 @@ if git -C "$DOTFILES" rev-parse --is-inside-work-tree &>/dev/null; then
   fi
 fi
 
+# ── STEP 4: Master Brain sync (NotebookLM) ──────────────────────────────
+echo ""
+echo "── STEP 4: Master Brain sync ──"
+
+MASTER_BRAIN_ID="58f81c6c-6f3e-42d1-9de5-e59b8975f51c"
+
+if command -v nlm >/dev/null 2>&1; then
+  # Extract today's growth-log entry
+  today_entry=$(python3 - "$DOTFILES/claude/scripts/growth-log.md" "$DATE" 2>/dev/null <<'PYEOF'
+import sys, re
+from pathlib import Path
+
+log_path = Path(sys.argv[1])
+date_str = sys.argv[2]
+
+if not log_path.exists():
+    sys.exit(0)
+
+content = log_path.read_text(encoding="utf-8")
+# Find today's entry (## DATE section)
+sections = re.split(r"(?=^## \d{4}-\d{2}-\d{2})", content, flags=re.MULTILINE)
+for sec in sections:
+    if sec.startswith(f"## {date_str}"):
+        print(sec.strip())
+        break
+PYEOF
+)
+
+  if [ -n "$today_entry" ]; then
+    _nlm_tmp=$(mktemp /tmp/nlm-nightly-XXXXXX.md)
+    printf '%s\n' "$today_entry" > "$_nlm_tmp"
+    if nlm source add "$MASTER_BRAIN_ID" "$_nlm_tmp" &>/dev/null; then
+      echo "  Master Brain sync完了 ($DATE)"
+    else
+      echo "  [WARNING] Master Brain sync失敗 (nlm 認証切れの可能性)"
+    fi
+    rm -f "$_nlm_tmp"
+  else
+    echo "  (今日のgrowth-logエントリなし — スキップ)"
+  fi
+else
+  echo "  [SKIP] nlm コマンドが見つかりません"
+fi
+
 echo ""
 echo "✅ nightly-self-improve 完了 — $DATE $TIME"
