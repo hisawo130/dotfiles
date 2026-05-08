@@ -258,12 +258,17 @@
 - [pattern] テーブル列の一時的非表示はLiquidコメント（{% comment %}...{% endcomment %}）推奨。完全削除より変更可逆性が高く、復活が簡単
 - [tip] ecforceテーブル列非表示時は見出し（th）と値セル（td）の両方をコメント化。片方だけだと列幅がずれる
 
-## Recurring Patterns (updated 2026-05-07)
-- [shopify] メルマガでSKUと画像の整合性確認が必須 — seen 14 times
-- [shopify] Shopify CLI認証セッション切れに注意 — seen 8 times
-- [shopify] symlinkの定期検証が必要 — seen 8 times
+## Recurring Patterns (updated 2026-05-08)
+- [shopify] メルマガでSKUと画像の整合性確認が必須 — seen 30 times
+- [shopify] Shopify CLI認証セッション切れに注意 — seen 12 times
+- [shopify] symlinkの定期検証が必要 — seen 9 times
+- [general] dotfiles symlink/git同期は破損リスクあり、定期チェック必須 — seen 16 times
+- [email] メルマガ認証・URL・UTMはテンプレート流用時に全確認 — seen 17 times
+- [general] GitHub Actions YAMLは複数行文字列・APIキー設定に注意 — seen 8 times
 - [ecforce] ecforceはshow/editの両方を確認 — seen 4 times
 - [email] メールHTML縦方向余白はem統一 — seen 4 times
+- [general] APIキー管理は環境別に分類（dotfiles/GitHub Secrets/OAuth） — seen 5 times
+- [css] レスポンシブ単位は最初に統一戦略を決める（clamp/vw/px） — seen 3 times
 - [shopify-app] アプリ削除で client_id が変わる — seen 3 times
 ## 2026-04-28 09:24 | P130 [ai]
 - [gotcha] ヘッドレス環境（GitHub Actions）でのClaude CLI認証は$ANTHROPIC_API_KEYが必須。OAuthブラウザ認証は不可。
