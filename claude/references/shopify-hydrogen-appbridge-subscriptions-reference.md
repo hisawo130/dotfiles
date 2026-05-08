@@ -26,7 +26,7 @@ A new `paymentProcessingPolicy` field on `subscriptionBillingAttemptCreate` allo
 
 ### 概要
 
-ShopifyのHeadlessストアフロントを構築するための**Reactベースのフルスタックフレームワーク**。
+ShopifyのHeadlessストアフロントを構範するための**Reactベースのフルスタックフレームワーク**。
 
 ```
 Hydrogen（アプリ層・Shopify最適化コンポーネント）
@@ -103,7 +103,7 @@ const PRODUCT_QUERY = `#graphql
 | 戦略 | Cache-Control値 | 用途 |
 |---|---|---|
 | `CacheShort()` | `public, max-age=1, stale-while-revalidate=9`（約10秒） | 在庫・価格など頻繁に変わるデータ |
-| `CacheLong()` | `public, max-age=3600, stale-while-revalidate=82800`（最大1日） | 商品タイトル・説明など安定データ |
+| `CacheLong()` | `public, max-age=3600, stale-while-revalidate=82800`（最大１日） | 商品タイトル・説明など安定データ |
 | `CacheNone()` | `no-store` | **顧客固有データ（カート・アカウント）に必須** |
 
 ⚠️ 未指定時デフォルト: `public, max-age=1, stale-while-revalidate=86399`
@@ -119,7 +119,7 @@ const PRODUCT_QUERY = `#graphql
 | 条件 | 推奨 |
 |---|---|
 | コード中心の完全カスタムUX / 高度なパーソナライゼーション | **Hydrogen** |
-| テーマエディタで非エンジニアが運用 | **通常テーマ（Liquid）** |
+| テーマエディターで非エンジニアが運用 | **通常テーマ（Liquid）** |
 | テーマの制約を超えた体験が必要 | **Hydrogen** |
 | スピードとコスト優先の標準EC | **通常テーマ** |
 
@@ -155,7 +155,7 @@ const app = createApp({
 // セッショントークン取得（非同期）
 const sessionToken = await getSessionToken(app);
 
-// サーバーへのリクエストにBearerとして付与
+// サーバーへのリクエストのBearerとして付与
 fetch("/api/endpoint", {
   headers: { Authorization: `Bearer ${sessionToken}` },
 });
@@ -324,7 +324,7 @@ selling_plan_groups/delete
 
 ```
 Company（企業エンティティ）
-  ├── CompanyContact（担当者 / 小売顧客レコードと紐付け）
+  ├── CompanyContact（担当者 / 小売顧客レコードと紐付）
   │     └── CompanyContactRole（権限・役割）
   └── CompanyLocation（拠点・支店）
         ├── 請求先・配送先住所

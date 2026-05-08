@@ -6,6 +6,9 @@
 
 ## 📋 Recent Changelog
 
+### 2026-05-08: [Collect marketing consent on the account component](https://changelog.shopify.com/posts/collect-marketing-consent-on-the-account-component)
+The account component now includes a built-in marketing opt-in checkbox below the email field; Customer Account UI Extension developers should review how this consent signal surfaces in the marketing consent API and test sign-in flows that previously handled opt-in separately.
+
 ### 2026-04-21: [Updates to local pickup user experience in checkout](https://changelog.shopify.com/posts/updates-to-local-pickup-user-experience-in-checkout)
 Checkout now renders local pickup options inline alongside shipping methods, with the nearest available location shown by default and a modal for additional locations. Checkout extension developers should test pickup-flow customizations against the updated inline UI layout.
 
@@ -32,7 +35,7 @@ As of API 2026-04, Cart and Checkout Validation Functions support billing addres
 |---|---|---|
 | 管理者 | アプリ開発者がデプロイ | テーマ開発者がコミット |
 | 更新方法 | `shopify app deploy` で全店舗即時反映 | テーマのgit pushが必要 |
-| テーマ依存 | アプリのCDNに乗る | テーマに同梱 |
+| テーマ依存 | アプリのCDNに乗る | テーマに同桨 |
 
 ✅ Theme App Extension はアプリ側のコードであり、テーマファイルには含まれない。
 
@@ -232,7 +235,7 @@ shopify app versions list
 
 ✅ `shopify app deploy` を実行すると、アプリを使用している全ストアへ自動反映。テーマファイルの変更は不要。
 
-⚠️ アプリのWebサーバー自体のデプロイは別途ホスティング側で行う（CLIのdeployはExtensionのみ）。
+⚠️ アプリのWebサーバー自体のデプロイは別途ホスティング側で行う（CLIのdeltaはExtensionのみ）。
 
 ---
 
@@ -378,5 +381,5 @@ export default function Extension() {
 | ⚠️ 保護データには要申請 | 住所・氏名などのProtected Customer DataはShopifyの審査が必要 |
 | ⚠️ サンドボックス隔離 | 各Extensionは独立。他Extensionのデータにアクセス不可 |
 | ⚠️ `window` / `document` 制限 | 直接アクセスは制限される |
-| ⚠️ ReactではなくPreact | `useState` 等は `preact/hooks` からimport |
+| ⚠️ ReactでなくPreact | `useState` 等は `preact/hooks` からimport |
 | ⚠️ importパス | `@shopify/ui-extensions/customer-account`（`/checkout` は2023-10以降非推奨） |
