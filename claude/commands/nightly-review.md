@@ -43,4 +43,3 @@ bash "$DOTFILES/scripts/install-nightly-cron.sh"           # AM3:00 に登録
 bash "$DOTFILES/scripts/install-nightly-cron.sh" --status  # ログ確認
 bash "$DOTFILES/scripts/install-nightly-cron.sh" --remove  # 削除
 ```
-
