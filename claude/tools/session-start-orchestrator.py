@@ -49,10 +49,10 @@ def log_error(name: str, kind: str, detail: str) -> None:
             ts = _dt.datetime.now().isoformat(timespec="seconds")
             f.write(f"{ts}\t{name}\t{kind}\t{detail[:200]}\n")
     except Exception:
-        pass  # ログ書込失敗は静默
+        pass  # ログ書込失敗は静黙
 
 
-# ── Native Python hooks (旧 inline shell の移植) ────────────────────────────────────────────────────────────
+# ── Native Python hooks (旧 inline shell の移植) ──────────────────────────────────────────────
 
 def py_stale_refs() -> str | None:
     """references/ で 14 日以上更新されていない .md を列挙。"""
@@ -70,11 +70,11 @@ def py_stale_refs() -> str | None:
             stale.append(f"{f.name}: {d}")
     if not stale:
         return None
-    return "⚠️ 以下のリファレンスく14日以上未更新:\n" + "\n".join(stale)
+    return "⚠️ 以下のリファレンスが14日以上未更新:\n" + "\n".join(stale)
 
 
 def py_project_state() -> str | None:
-    """カレントディレクトリ別の state.md があれば読み込むﾆ㊭ﾇ2KB上限ﾉ。"""
+    """カレントディレクトリ別の state.md があれば読み込む（2KB上限）。"""
     cwd = Path.cwd()
     sanitized = str(cwd).replace("/", "-")
     sf = HOME / f".claude/projects/{sanitized}/state.md"
