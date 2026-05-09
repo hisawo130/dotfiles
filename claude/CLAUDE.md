@@ -27,7 +27,7 @@ Proceed without asking unless:
 - **No cosmetic refactoring.** Do not reorganize, reformat, or "improve" code outside the scope of the current task.
 - **ファイル削除は trash パターンで行う。** `rm` は禁止。代わりに `~/.trash/` へ移動する:
   `mkdir -p ~/.trash && mv <file> ~/.trash/$(date +%Y%m%d-%H%M%S)-<basename>`
-  ゴミ箱の中身を空にするには `/empty-trash` を使う。
+  ゴミ筱の中身を空にするには `/empty-trash` を使う。
 
 ## Execution model: Claude judges, Python executes
 
@@ -53,9 +53,9 @@ When no Python tool exists, use minimal tool calls. Prefer 1 Bash call with a Py
 
 ## Diagnostic shortcuts
 
-設定や同期状態が怪しい時は、複数コマンドで調査せず先に:
+設定や同期状態が怎しい時は、複数コマンドで調査せず先に:
 - `python3 ~/.claude/tools/dotfiles-doctor.py --verbose` — symlink/learnings drift/repo状態を一括確認
-- SessionStart hook で自動修復も走るため、通常は明示的に叩く必要なし
+- SessionStart hook で自動修復も走るため、通常は明示的に叫ぶ必要なし
 
 ## Output compression (token budget)
 
@@ -165,7 +165,7 @@ Stage only task-relevant files. Never `git add .`.
 **Skip conditions (サブエージェント不要):**
 - 単一ファイルの読み取り・確認 → メインエージェントが直接 Read/Grep
 - 単純な質問・状態確認 → 直接回答
-- 明らかな 1〜2 ツール操作 → メインエージェントが直接実行
+- 明らかな 1。2 ツール操作 → メインエージェントが直接実行
 - effort-calibrate が 🟢 [lite] を返した場合 → サブエージェント禁止
 - Web fetch of a known URL → main agent fetches directly
 
