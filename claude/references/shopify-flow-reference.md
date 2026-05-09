@@ -16,6 +16,9 @@ Sources:
 
 ## 📋 Recent Changelog
 
+### 2026-05-09: [Flow: New action to get analytics data using ShopifyQL](https://changelog.shopify.com/posts/flow-new-action-to-get-analytics-data-using-shopifyql)
+New ShopifyQL action enables workflows to query Shopify analytics data for sales, sessions, and inventory, making results available as variables for conditions and actions.
+
 ### 2026-05-05: [Flow: View who edited, activated, or deactivated a workflow version](https://changelog.shopify.com/posts/flow-see-exactly-what-changed-in-any-workflow-and-roll-it-back)
 Workflow version history now logs all edits, activations, and deactivations with staff member and timestamp, enabling developers and admins to audit which staff changed workflows and when, and roll back if needed.
 

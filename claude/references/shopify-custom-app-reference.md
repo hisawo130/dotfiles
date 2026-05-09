@@ -1,5 +1,5 @@
 # Shopify カスタムアプリ リファレンス
-<!-- API alert (2026-05-07): stable: 2026-04 → 2027-01 -->
+<!-- API alert (2026-05-09): stable: 2026-04 → 2027-01 -->
 
 > 最終更新: 2026-04-08（公式ドキュメント精査済み）
 > 対象: Storefront API / Checkout Extensibility / Shopify Functions / GraphQL Admin API
@@ -373,7 +373,7 @@ query Input {
 ### 対応 Function API 一覧
 
 | Function API | 用途 |
-|-------------|------|
+|-------------|
 | **Discount** | カートライン・配送への割引作成 |
 | **Cart Transform** | カートラインの変換・表示変更 |
 | **Cart and Checkout Validation** | チェックアウト中のサーバーサイドバリデーション |
