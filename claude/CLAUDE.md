@@ -34,7 +34,7 @@ Proceed without asking unless:
 Claude's role: interpret intent, make decisions, specify what to do, review results.
 Bulk work: delegate to `python3 ~/.claude/tools/<script>.py` via single Bash call.
 
-**Script-first rule:** 3+同種ツールコール（複数Read, 複数Edit等）が必要な場合、Pythonスクリプト1本にまとめる。
+**Script-first rule:** 3+同種ツールコール（複数Read, 複数Edit等）が必要な場合、Pythonスクリプト１本にまとめる。
 - 複数ファイル編集 → `multi-edit.py`
 - アドホック複合処理 → `run-task.py`（コードをJSON渡し）
 - 単純な一回限り → `python3 -c '...'`
@@ -55,7 +55,7 @@ When no Python tool exists, use minimal tool calls. Prefer 1 Bash call with a Py
 
 設定や同期状態が怎しい時は、複数コマンドで調査せず先に:
 - `python3 ~/.claude/tools/dotfiles-doctor.py --verbose` — symlink/learnings drift/repo状態を一括確認
-- SessionStart hook で自動修復も走るため、通常は明示的に叫ぶ必要なし
+- SessionStart hook で自動修復も走るため、通常は明示的に叩く必要なし
 
 ## Output compression (token budget)
 
@@ -165,7 +165,7 @@ Stage only task-relevant files. Never `git add .`.
 **Skip conditions (サブエージェント不要):**
 - 単一ファイルの読み取り・確認 → メインエージェントが直接 Read/Grep
 - 単純な質問・状態確認 → 直接回答
-- 明らかな 1。2 ツール操作 → メインエージェントが直接実行
+- 明らかな 1～2 ツール操作 → メインエージェントが直接実行
 - effort-calibrate が 🟢 [lite] を返した場合 → サブエージェント禁止
 - Web fetch of a known URL → main agent fetches directly
 
@@ -234,9 +234,9 @@ Save only if the information is **non-obvious and will help future sessions**. D
 | コマンド | 用途 |
 |---|---|
 | `/capture [domain] <insight>` | 学習メモを手動で即時保存（Stop hook を待たず） |
-| `/learning-report` | 全21ドメインの学習サマリーをレポート表示 |
+| `/learning-report` | 刐21ドメインの学習サマリーをレポート表示 |
 | `/memory-update` | 現セッションの学習を `claude/memory/` に即時統合 |
-| `/nightly-review` | 夜間自己改善バッチ（6タスク + 週次タスク1ツ）を手動実行 |
+| `/nightly-review` | 奈間自己改善バッチ（6タスク + 週次タスク1ツ）を手動実行 |
 | `/sync-dotfiles` | `claude/` 配下の変更をコミット・プッシュ |
 
 ### Injected learnings (from SessionStart hook)
@@ -311,7 +311,7 @@ nlm notebook query 58f81c6c-6f3e-42d1-9de5-e59b8975f51c "<question>"
 **Available notebooks (as of 2026-05-08):**
 - `df968fc5` — Shopify (73 sources)
 - `6c66b80c` — Shopify Matrixify (41 sources)
-- `95096a0b` — 【見積作成】株式会社スズヤ様 (12 sources)
+- `95096a0b` — 「見積作成」株式会社スズヤ様 (12 sources)
 - `58f81c6c` — Master Brain (session memory)
 
 **Session wrap-up:** Use `/wrap-up` command at end of session. It extracts key corrections/decisions/patterns and pushes to Master Brain automatically.
