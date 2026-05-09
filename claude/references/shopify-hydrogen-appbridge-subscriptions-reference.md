@@ -102,7 +102,7 @@ const PRODUCT_QUERY = `#graphql
 
 | 戦略 | Cache-Control値 | 用途 |
 |---|---|---|
-| `CacheShort()` | `public, max-age=1, stale-while-revalidate=9`（約10秒） | 在庫・価格など頻繁に変わるデータ |
+| `CacheShort()` | `public, max-age=1, stale-while-revalidate=9`（絀10秒） | 在庫・価格など頻繁に変わるデータ |
 | `CacheLong()` | `public, max-age=3600, stale-while-revalidate=82800`（最大１日） | 商品タイトル・説明など安定データ |
 | `CacheNone()` | `no-store` | **顧客固有データ（カート・アカウント）に必須** |
 
@@ -180,7 +180,7 @@ fetch("/api/endpoint", {
 
 ### Polaris との関係
 
-App Bridgeがレイアウト・Admin統合を担い、**Polaris**（`@shopify/polaris`）がUI部品（ボタン、カード、テーブル等）を提供する補完関係。組み合わせることでShopify Admin全体と一貫したUXを実現。
+App Bridgeがレイアウト・Admin統合を担い、**Polaris**（`@shopify/polaris`）がUI部品（ボタン、カード、テーブル等）を提供する補完関係。組み合わせることでShopify Admin全体と一賫したUXを実現。
 
 ---
 
@@ -190,7 +190,7 @@ App Bridgeがレイアウト・Admin統合を担い、**Polaris**（`@shopify/po
 
 ```
 SellingPlanGroup（販売方法のカテゴリ、例：「定期購入」）
-  └── SellingPlan（個別プラン、例：「毎週」「隔週」「毎月」）
+  └── SellingPlan（個別プラン、例：「毎週」「随週」「毎月」）
         ├── billingPolicy（請求方針：固定 or 繰り返し）
         ├── deliveryPolicy（配送方針）
         ├── pricingPolicies（割引設定）
@@ -395,7 +395,7 @@ mutation CreateCompany($input: CompanyCreateInput!) {
 ```
 マーチャントが Company + CompanyContact 作成
   ↓
-Contact が Shopify アカウントでログイン
+Contact くが Shopify アカウントでログイン
   ↓
 B2B価格カタログが適用された状態でショッピング
   ↓

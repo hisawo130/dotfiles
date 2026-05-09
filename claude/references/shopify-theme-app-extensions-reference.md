@@ -35,7 +35,7 @@ As of API 2026-04, Cart and Checkout Validation Functions support billing addres
 |---|---|---|
 | 管理者 | アプリ開発者がデプロイ | テーマ開発者がコミット |
 | 更新方法 | `shopify app deploy` で全店舗即時反映 | テーマのgit pushが必要 |
-| テーマ依存 | アプリのCDNに乗る | テーマに同桨 |
+| テーマ依存 | アプリのCDNに乗る | テーマに同梱 |
 
 ✅ Theme App Extension はアプリ側のコードであり、テーマファイルには含まれない。
 
@@ -376,7 +376,7 @@ export default function Extension() {
 |---|---|
 | ❌ Legacy Accounts非対応 | 旧アカウントシステムでは動作しない |
 | ❌ バンドルサイズ64KB上限 | コンパイル後64KBを超えるとデプロイ不可 |
-| ❌ 任意のHTML/scriptタグ不可 | Polaris Web Componentsのみ |
+| ❌ 任意HTML/scriptタグ不可 | Polaris Web Componentsのみ |
 | ❌ CSSオーバーライド不可 | マーチャントのブランド設定を自動継承 |
 | ⚠️ 保護データには要申請 | 住所・氏名などのProtected Customer DataはShopifyの審査が必要 |
 | ⚠️ サンドボックス隔離 | 各Extensionは独立。他Extensionのデータにアクセス不可 |
