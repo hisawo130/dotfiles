@@ -35,7 +35,6 @@
 - [gotcha] Symlink破損するとセッション学習がGitHubに届かなくなる。Stop hookが正しいパスに書き込めず、別PCで反映されない。SessionStart時の自動チェック機構が必須。
 - [pattern] 複数の小さな診断Bash/ls/diffコマンド（20回超）は1つのPython統合ツール（`dotfiles-doctor.py`）で置き換え可能。トラブルシューティングのコンテクスト消費が激減する。
 - [tip] 別PC間の設定同期では、symlink有効性の定期検証習慣が重要。SessionStart自動チェック＋手動確認用コマンド両方があると早期発見できる。
-- [gotcha] スキルを書いたら必ずサブエージェントで実行テスト — 自己再読は bias が入るので NG
 
 - [pattern] APIキー管理は3つのケースに分類：①dotfiles同期（Git運用、キー不要）②GitHub Actions（Secrets使用）③interactive CLI（OAuth認証）で、状況に応じて使い分け
 - [pattern] `claude auth login` でブラウザOAuth認証すれば、APIキー手動入力ゼロで setup.sh を完結可能
@@ -273,18 +272,6 @@
 - [pattern] テーブル列の一時的非表示はLiquidコメント（{% comment %}...{% endcomment %}）推奨。完全削除より変更可逆性が高く、復活が簡単
 - [tip] ecforceテーブル列非表示時は見出し（th）と値セル（td）の両方をコメント化。片方だけだと列幅がずれる
 
-## Recurring Patterns (updated 2026-05-09)
-- [shopify] メルマガでSKUと画像の整合性確認が必須 — seen 30 times
-- [shopify] Shopify CLI認証セッション切れに注意 — seen 12 times
-- [shopify] symlinkの定期検証が必要 — seen 9 times
-- [general] dotfiles symlink/git同期は破損リスクあり、定期チェック必須 — seen 16 times
-- [email] メルマガ認証・URL・UTMはテンプレート流用時に全確認 — seen 17 times
-- [general] GitHub Actions YAMLは複数行文字列・APIキー設定に注意 — seen 8 times
-- [ecforce] ecforceはshow/editの両方を確認 — seen 4 times
-- [email] メールHTML縦方向余白はem統一 — seen 4 times
-- [general] APIキー管理は環境別に分類（dotfiles/GitHub Secrets/OAuth） — seen 5 times
-- [css] レスポンシブ単位は最初に統一戦略を決める（clamp/vw/px） — seen 3 times
-- [shopify-app] アプリ削除で client_id が変わる — seen 3 times
 ## 2026-04-28 | pietro-onlineshop_ver01
 - [correction] フォントサイズが異なるところがあります。デザインに合わせて下さい。
 - [correction] タブレット、SP版でバッジの表示が崩れてしまいました。修正して下さい。
@@ -297,3 +284,18 @@
 - [gotcha] `shopify theme push`実行前に認証有効期限を確認。切れていたら`shopify auth login`で先に再認証する
 - [pattern] レスポンシブ値を`clamp(min, vw, max)`から純`vw`に統一すると、計算・保守がシンプル化。PC/SP両対応時は特に有効
 - [tip] px/vw/clamp混在の調整は後から統一するより、最初から単位戦略を決めると手戻りが減る
+
+## Recurring Patterns (updated 2026-05-10)
+- [shopify] メルマガでSKUと画像の整合性確認が必須 — seen 30 times
+- [shopify] Shopify CLI認証セッション切れに注意 — seen 12 times
+- [shopify] symlinkの定期検証が必要 — seen 9 times
+- [general] dotfiles symlink/git同期は破損リスクあり、定期チェック必須 — seen 16 times
+- [email] メルマガ認証・URL・UTMはテンプレート流用時に全確認 — seen 17 times
+- [general] GitHub Actions YAMLは複数行文字列・APIキー設定に注意 — seen 8 times
+- [ecforce] ecforceはshow/editの両方を確認 — seen 4 times
+- [email] メールHTML縦方向余白はem統一 — seen 4 times
+- [general] APIキー管理は環境別に分類（dotfiles/GitHub Secrets/OAuth） — seen 5 times
+- [css] レスポンシブ単位は最初に統一戦略を決める（clamp/vw/px） — seen 3 times
+- [shopify-app] アプリ削除で client_id が変わる — seen 3 times
+- [shopify] settings_data.json はtheme push前に差分確認・unstage必須 — seen 5 times
+- [shopify] Liquidメタフィールドの`.value`はOS2.0で不要（重ねるとnil） — seen 4 times
