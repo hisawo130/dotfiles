@@ -33,11 +33,19 @@ ln -sfn "$DOTFILES/claude/references" "$HOME/.claude/references"
 ln -sfn "$DOTFILES/claude/learnings" "$HOME/.claude/learnings"
 ln -sfn "$DOTFILES/claude/memory" "$HOME/.claude/memory"
 ln -sfn "$DOTFILES/claude/tools" "$HOME/.claude/tools"
+# skills: symlink each skill dir individually (allows mixing with plugin-installed skills)
+mkdir -p "$HOME/.claude/skills"
+for _skill_dir in "$DOTFILES/claude/skills"/*/; do
+  [ -d "$_skill_dir" ] || continue
+  _skill_name="$(basename "$_skill_dir")"
+  ln -sfn "$_skill_dir" "$HOME/.claude/skills/$_skill_name"
+done
+unset _skill_dir _skill_name
 mkdir -p "$HOME/.claude/logs"
 chmod +x "$DOTFILES"/claude/hooks/*.sh 2>/dev/null || true
 chmod +x "$DOTFILES"/claude/hooks/lib/*.sh 2>/dev/null || true
 chmod +x "$DOTFILES"/claude/tools/*.py 2>/dev/null || true
-echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,hooks,references,learnings,memory,tools,logs}"
+echo "  完了: ~/.claude/{CLAUDE.md,settings.json,agents,commands,hooks,references,learnings,memory,tools,skills,logs}"
 
 # --- 健全性チェック（doctor 走らせて即検証） ---
 echo "→ 健全性チェック..."
