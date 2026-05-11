@@ -53,7 +53,7 @@ no open issues), output "Nothing to record." and stop.
 **2. Push to Master Brain:**
 
 ```bash
-nlm source add "$MASTER_BRAIN_ID" "$SESSION_LOG"
+nlm source add "$MASTER_BRAIN_ID" --file "$SESSION_LOG"
 ```
 
 **3. Confirm:**

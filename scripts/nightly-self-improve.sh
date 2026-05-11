@@ -241,7 +241,7 @@ PYEOF
   if [ -n "$today_entry" ]; then
     _nlm_tmp=$(mktemp /tmp/nlm-nightly-XXXXXX.md)
     printf '%s\n' "$today_entry" > "$_nlm_tmp"
-    if nlm source add "$MASTER_BRAIN_ID" "$_nlm_tmp" &>/dev/null; then
+    if nlm source add "$MASTER_BRAIN_ID" --file "$_nlm_tmp" &>/dev/null; then
       echo "  Master Brain sync完了 ($DATE)"
     else
       echo "  [WARNING] Master Brain sync失敗 (nlm 認証切れの可能性)"

@@ -329,7 +329,7 @@ if [ -n "$_important" ] && command -v nlm >/dev/null 2>&1; then
   printf "## %s | %s | %s\n" "$DATE" "$PRIMARY_DOMAIN" "$DIR" > "$_nlm_tmp"
   printf '%b\n' "$_important" >> "$_nlm_tmp"
   # Run in background so session stop hook doesn't block
-  (nlm source add "$MASTER_BRAIN_ID" "$_nlm_tmp" &>/dev/null; rm -f "$_nlm_tmp") &
+  (nlm source add "$MASTER_BRAIN_ID" --file "$_nlm_tmp" &>/dev/null; rm -f "$_nlm_tmp") &
 fi
 
 exit 0
