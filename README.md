@@ -18,7 +18,8 @@ claude/
   CLAUDE.md          # グローバル指示（システムプロンプト）
   settings.json      # 権限・フック・effortLevel
   agents/            # サブエージェント定義（planner / executor / researcher / reviewer 他）
-  commands/          # スラッシュコマンド一覧（下表参照）
+  commands/          # スラッシュコマンド（旧形式、後方互換で動作）
+  skills/            # スキル一覧（下表参照）
   hooks/             # SessionStart / PreToolUse / PostToolUse / Stop hook 群
     lib/             # フック共通ライブラリ（dotfiles-root 解決・ドメイン判定）
   learnings/         # ドメイン別学習ログ（自動蓄積）
@@ -41,7 +42,15 @@ scripts/
 setup.sh             # シンボリックリンク作成スクリプト
 ```
 
-## スラッシュコマンド一覧
+## スキル・コマンド一覧
+
+### スキル（`claude/skills/`）
+
+| コマンド | 説明 |
+|---|---|
+| `/skill-creator [name]` | 対話形式でカスタムスキル（SKILL.md）を生成・保存 |
+
+### コマンド（`claude/commands/`）
 
 | コマンド | 説明 |
 |---|---|
@@ -89,6 +98,7 @@ setup.sh             # シンボリックリンク作成スクリプト
 | `~/.claude/references/` | `claude/references/` |
 | `~/.claude/learnings/` | `claude/learnings/` |
 | `~/.claude/memory/` | `claude/memory/` |
+| `~/.claude/skills/<name>/` | `claude/skills/<name>/`（各スキルを個別symlink） |
 | `~/.claude/logs/` | (mkdir) |
 | `~/.local/bin/claude-scripts` | `scripts/` |
 | `~/.local/bin/claude-run` | `scripts/claude-run.sh` |
