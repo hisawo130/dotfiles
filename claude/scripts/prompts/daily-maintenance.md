@@ -246,7 +246,7 @@ Monitor GitHub Atom release feeds for key repos. For each repo, fetch the feed, 
 3. Read the storage file from `claude/references/`. If absent: write current tag, skip update, mark as "initialized"
 4. If tag differs from stored:
    - Update the storage file with the new tag
-   - Add a note near the top of the target reference file: `<!-- {repo} latest: TAG (released DATE) -->`  
+   - Add a note near the top of the target reference file: `<!-- {repo} latest: TAG (released DATE) -->`
      (replace any existing line matching `<!-- {repo} latest:`)
    - Append to `t7_updates`: `{repo}: OLD → NEW`
 5. If tag unchanged: skip
