@@ -4,8 +4,11 @@
 #
 # 実行内容:
 #   STEP 1 — 学習ログの整理 (pure bash: recurring昇格・重複除去・古いfallback削除)
-#   STEP 2 — AI自己レビュー (claude -p: 記憶整理 / CLAUDE.md見直し / 成長ログ生成)
+#   STEP 2 — スクリプト自己改善 (Python only: preprocess + shell validate + postprocess)
 #   STEP 3 — dotfiles に全変更をコミット
+#   STEP 4 — Master Brain sync (nlm source add、nlm 未インストール時はスキップ)
+#
+# ※ AI自己レビュー (nightly-review.md prompt) は /nightly-review コマンドで手動実行
 #
 # cron 登録例 (JST AM3:00):
 #   0 3 * * * $HOME/dotfiles/scripts/nightly-self-improve.sh >> $HOME/.claude/logs/nightly.log 2>&1
