@@ -24,8 +24,9 @@ claude/
   learnings/         # ドメイン別学習ログ（自動蓄積）
   memory/            # 永続メモ（feedback/project/reference/user）
   references/        # プラットフォームリファレンス（Shopify / ecforce）
-  scripts/prompts/   # 夜間バッチ用プロンプト
+  scripts/prompts/   # 夜間バッチ用プロンプト（nightly-review.md / daily-maintenance.md）
   templates/         # CI / GitHub Actions 用テンプレート
+  tools/             # Pythonユーティリティ（git-ops / multi-edit / bulk-read 他）
 git/
   .gitignore_global  # グローバル gitignore
 zsh/
@@ -33,7 +34,10 @@ zsh/
 scripts/
   claude-run.sh             # ヘッドレス実行ラッパー
   install-nightly-cron.sh   # 夜間バッチ cron 登録
-  nightly-self-improve.sh   # 夜間自己改善バッチ本体
+  nightly-self-improve.sh   # 夜間自己改善バッチ本体（Python only、AM3:00 JST）
+  nightly-preprocess.py     # learnings digest 生成
+  nightly-validate-shell.py # シェルスクリプト構文検証
+  nightly-postprocess.py    # growth-log placeholder 埋め
 setup.sh             # シンボリックリンク作成スクリプト
 ```
 
@@ -48,11 +52,27 @@ setup.sh             # シンボリックリンク作成スクリプト
 | `/theme-check` | Shopify theme check実行（一部エラー自動修正） |
 | `/ecforce-pr` | ecforceテーマのPR作成（購入フロー影響度スコア付き） |
 | `/ecforce-checklist` | ecforceデプロイ前チェックリスト |
+| `/ecforce-deploy` | ecforceテーマのデプロイ |
+| `/feature-dev` | フィーチャーブランチ作成＋実装フロー |
 | `/git-checkpoint` | WIPチェックポイントコミット作成 |
+| `/review-pr` | PRレビュー支援 |
 | `/post-review` | 実装後レビュー（インタラクティブ） |
 | `/context-load` | プロジェクト種別検出＋リファレンス自動ロード |
 | `/debug-liquid` | Liquidテンプレートの変数・出力デバッグ |
+| `/frontend-design` | フロントエンドデザイン実装支援 |
 | `/sync-refs` | 全リファレンスドキュメントを一括更新 |
+| `/sync-dotfiles` | dotfiles を手動同期 |
+| `/nightly-review` | 夜間自己改善バッチを手動実行 |
+| `/wrap-up` | セッション終了時の知見整理＋Master Brainへpush |
+| `/state` | プロジェクト状態の保存・読み込み |
+| `/status-env` | 環境ステータス確認 |
+| `/memory-update` | メモリファイルの手動更新 |
+| `/learning-report` | 学習ログレポート生成 |
+| `/capture` | セッションの学びを手動キャプチャ |
+| `/doctor` | dotfiles 健全性チェック |
+| `/cleanup-perms` | settings.local.json の不要権限を削除 |
+| `/empty-trash` | ゴミ箱を空にする |
+| `/headless` | ヘッドレス実行のガイド |
 
 ## シンボリックリンク
 
@@ -65,6 +85,7 @@ setup.sh             # シンボリックリンク作成スクリプト
 | `~/.claude/agents/` | `claude/agents/` |
 | `~/.claude/commands/` | `claude/commands/` |
 | `~/.claude/hooks/` | `claude/hooks/` |
+| `~/.claude/tools/` | `claude/tools/` |
 | `~/.claude/references/` | `claude/references/` |
 | `~/.claude/learnings/` | `claude/learnings/` |
 | `~/.claude/memory/` | `claude/memory/` |
@@ -74,6 +95,47 @@ setup.sh             # シンボリックリンク作成スクリプト
 | `~/.zshrc` | `zsh/.zshrc` |
 | `~/.gitignore_global` | `git/.gitignore_global` |
 | `~/.dotfiles-root` | (text file: dotfiles 実体パス) |
+
+## NotebookLM 統合
+
+`nlm` CLI（`notebooklm-mcp-cli`）と連携して、セッション知見を永続メモリに保存:
+
+```bash
+# セットアップ（初回のみ）
+uv tool install notebooklm-mcp-cli
+nlm setup add claude-code   # Claude Code MCP に登録
+nlm login                    # Google 認証
+nlm skill install claude-code  # nlm-skill インストール
+```
+
+| ノートブック | 用途 |
+|---|---|
+| Master Brain (`58f81c6c-...`) | セッション知見の永続メモリ |
+
+- セッション終了時に `[gotcha]/[correction]/[recurring]` エントリを自動 push（`save-learnings.sh`）
+- `/wrap-up` コマンドで手動サマリーを push
+- `nlm` 未インストール環境では自動スキップ（複数PC同期に影響なし）
+
+## 夜間自己改善パイプライン
+
+毎日 AM3:00 JST（月〜金）にローカル cron と GitHub Actions が自動実行:
+
+| Step | ツール | 内容 |
+|---|---|---|
+| preprocess | `nightly-preprocess.py` | stale dates 修正・メトリクス・growth-log scaffold |
+| shell-validate | `nightly-validate-shell.py` | bash -n + shellcheck |
+| postprocess | `nightly-postprocess.py` | growth-log placeholder 埋め |
+| Master Brain sync | `nlm source add`（ローカルのみ） | growth-log エントリを NotebookLM へ push |
+
+> Claude API は使用しない（Pro 制限に影響ゼロ）。
+
+```bash
+# cron 登録
+bash ~/dotfiles/scripts/install-nightly-cron.sh
+
+# 手動実行
+/nightly-review
+```
 
 ## 別の PC との同期
 
