@@ -244,7 +244,15 @@
       }
     ]
   },
-  "skipAutoPermissionPrompt": true,
+  "mcpServers": {
+    "notebooklm": {
+      "command": "npx",
+      "args": ["notebooklm-mcp@latest"],
+      "type": "stdio"
+    }
+  },
   "remoteControlAtStartup": true,
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "inputNeededNotifEnabled": true
 }
