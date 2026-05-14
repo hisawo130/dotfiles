@@ -182,7 +182,6 @@
 - [correction] を明示的にしてあなたがプッシュするリポジトリを間違えないようにするにはどうすればいい？
 - [gotcha] 結論: ストアドメイン自体は公開情報なのでリスクは低いですが、`.envrc` に何を書くかで扱いが変わります。以下、実務上の注意点。
 
-- [gotcha] shopify auth logout/login を毎回自動化するとCLIキャッシュが壊れて遅くなる。認証切り替えより対象store固定と検証を優先すること。
 - [pattern] Shopifyリポジトリの間違えプッシュ防止：direnv+SHOPIFY_FLAG_STORE固定 → pre-pushフック検証 → シェル関数確認の多層防御パターン。
 - [tip] .envrc は .gitignore で除外し .envrc.example をコミット。store情報漏洩防止とチーム内柔軟性の両立。
 - [gotcha] Shopify複数ストア環境で `shopify auth logout/login` を毎回手動実行するのは事故リスク。direnv + SHOPIFY_FLAG_STORE 固定 + pre-push フックで対象ストア認証を自動検証する。
@@ -206,9 +205,7 @@
 - [tip] GitHub Actions/ヘッドレス環境では GitHub Secrets 経由で環境変数注入、API キーをリポジトリに入れない
 
 ## 2026-04-20 14:00 | ANIECA_ver02 [ai]
-- [pattern] Store URL を `.envrc` で固定し SHOPIFY_FLAG_STORE 環境変数で CLI を自動切替。毎回 logout/login を手動で打つより pre-push hook で認証検証する方が事故耐性高。
 - [gotcha] `.envrc` に Shopify token を書くと GitHub scanning 対象になり流出リスク。store URL のみコミット、token は `.envrc.local` で分離管理。
-- [tip] Shopify token（shpat_, shptka_ など）検出の pre-commit フックで二重防止。gitleaks や GitHub push protection も併用推奨。
 
 ## 2026-04-21 13:21 | Beauty-Select
 - [gotcha] > 注意: Shopify の Customer Segment API は比較的新しい。セグメント条件（`customer_tags CONTAINS 'userrank-gold'` 等）でディスカウントを制限できるか動作確認が必要。
@@ -216,11 +213,9 @@
 - [pattern] Shopifyで月次ランク更新やディスカウント発行などの定期バッチ処理が必要な場合、GitHub Actions + Admin GraphQL API + Bulk Operations APIの組み合わせが標準。Shopify単体では実装不可。
 - [gotcha] 顧客スケール（数百人 vs 数万人）でAPI選択が大きく変わる。実装前にスケール規模を確認しないと工数見積もりが2倍以上ズレる可能性がある。
 - [gotcha] Customer Segment APIなど比較的新しいShopify APIでセグメント条件（タグ絞り込み等）を使う場合、ドキュメント通りに動作するか実装前のPoC確認が必須。
-- [gotcha] Shopifyの`amount_spent`は全期間のみで過去N年指定不可。Admin APIで注文を日付フィルタして集計するスクリプトが必須。
 - [pattern] Liquidの`customer.tags`と`date`フィルタで当月コード（2026APR等）を動的生成できる。ランク別表示に有効。
 - [pattern] Shopifyディスカウント+セグメントAPIはドキュメント例がユースケースと完全一致。標準機能で実装可、開発見通しが立つ。
 - [gotcha] Shopify Admin GraphQL の `amount_spent` フィルタは「全期間合計のみ」で過去1年指定不可 → 期間ベースの顧客ランク計算は GitHub Actions スクリプト必須
-- [pattern] `account.liquid` はセクションシステム非対応のため、複雑なUIはスニペット化+`{% render %}` 1行追加が最適（セクション化移行はコスト > メリット）
 - [tip] Liquid の日付フィルタ `'now' | date: '%Y%b' | upcase` でコード名「2026MAY」を自動生成可能
 - [gotcha] Shopify のセグメント query 言語の `amount_spent` は全期間合計のみで「過去1年」指定不可。「過去1年購入額」ベースのランク計算は Admin API で注文を日付フィルタして集計するスクリプトが必須。
 - [pattern] `account.liquid` はセクションシステム非対応。スニペット + `{% render %}` で実装し、テーマ設定を `settings_schema.json` で UI 化すると、月次のコード更新を非開発者が管理画面で対応可能。
@@ -231,7 +226,6 @@
 - [gotcha] HTML IDはスペース不可。`getElementById` で見つからない場合、devtoolsで見えるのはクラス名の可能性がある。セレクターなら `.class1.class2` または `[class*="keyword"]` を使用。
 - [gotcha] DOM操作で属性をセット後にエラーが発生すると、属性だけ残って状態が不整合になる。`setAttribute` は操作成功後に実行し、try-catchで初期状態に戻す。
 - [pattern] ロケール文字列・CSSクラス・IDの削除・変更前に全プロジェクト検索で他テンプレートへの影響を確認。複数箇所に依存していないか確認してからマージ。
-- [gotcha] HTML id 属性にスペースを含む値は無効。`getElementById("fsb sr summary")` は常に null。DevTools の `class="fsb sr summary"` を ID と誤認しやすい罠。
 - [pattern] DOM修正時、修正成功フラグ（`data-*` 属性等）は操作後に付与する。操作失敗時にフラグだけ残るとリトライが機能しなくなる。
 - [gotcha] Shopify Dawn テーマの既存クラス（`title-wrapper-with-link` 等）をリネームすると定義済みスタイルが失われる。リネーム不要なら並存させるべき。
 ## 2026-04-27 13:18 | mimc.co.jp-mailmagazine
@@ -246,12 +240,9 @@
 - [pattern] 複数ファイルの一括置換（px→em 変換など）が必要な場合、Pythonスクリプトで自動化して効率化
 - [pattern] メールマガジンのプレゼント表示は複数商品のサムネイル行ではなく、横幅いっぱいの1枚画像（`0424_present.jpg`）が正解パターン
 - [pattern] メール HTML の縦方向余白（top/bottom）はすべて em で統一；横方向は px のまま。Pythonスクリプトで一括変換可能
-- [pattern] 右向き三角「▶」は HTMLエンティティではなく UTF-8 文字を直書き（`▶ 詳しくはこちら`）
-- [pattern] メールマガジン制作時は縦方向の余白（margin-top/bottom）をemで統一し、横方向はpxで統一。メールクライアント環境での表示安定性を確保。
 - [tip] メール環境での矢印記号は文字直書き`▶`より数値参照`&#9658;`が安全。Outlookを含めた広い互換性が必要な場合は数値参照推奨。
 - [pattern] メールマガジンの期間・特典表示はテーブル要素ではなくp要素の段落で実装。テーブル構造はメールクライアント依存で崩れやすい。
 - [correction] メールHTMLの右向き三角は▶直書きではなく`&#9658;`（数値参照）で実装 — 環境依存リスク対策
-- [pattern] メルマガHTMLの縦方向余白（padding/margin-top/bottom）はすべてemで統一すると、フォントサイズ基準で相対的に保守性向上
 - [pattern] 複数商品表示は画像と説明を左右交互で縦並びレイアウトすると視覚的な動きが出て効果的
 - [gotcha] メールHTMLで右向き三角を直書き（`▶`）すると環境依存リスク。`&#9658;` HTMLエンティティで統一すべき
 - [pattern] Pythonで縦方向余白を一括変換：正規表現で縦方向`px`→`em`に、横方向は変更なし
@@ -262,8 +253,6 @@
 - [gotcha] ecforceテンプレートは行番号ベース指定が脆弱。行数変更で指定位置がずれる可能性。実装前に該当行を必ず確認
 
 - [gotcha] ecforceテーマでUI要素を非表示にする際は、同じ機能が複数画面（show/edit等）に存在するか確認し、運用方針を決めてから実装すること
-- [pattern] 仕様が曖昧な場合は複数の実装案（削除/CSS非表示/Liquidコメント）を先に提示してからユーザーの意図を確認する
-
 - [pattern] ecforceテーマの非表示機能は複数案（削除/CSS/コメント）を提示し、ユーザーに選択させるのが効果的。Liquidテンプレートではコメントアウトが可逆的で復活しやすい。
 - [gotcha] show/edit など関連ページが複数ある場合、修正対象を明確にする。ユーザーが「詳細画面のみか、編集機能も一緒か」を判断する段階を挟まないと、後で仕様ズレが生じやすい。
 - [tip] `{% comment %}...{% endcomment %}` でコメントアウトすれば、DOMに残らず、将来の復活や検証も簡単。削除との中間案として有用。
@@ -285,17 +274,23 @@
 - [pattern] レスポンシブ値を`clamp(min, vw, max)`から純`vw`に統一すると、計算・保守がシンプル化。PC/SP両対応時は特に有効
 - [tip] px/vw/clamp混在の調整は後から統一するより、最初から単位戦略を決めると手戻りが減る
 
-## Recurring Patterns (updated 2026-05-10)
-- [shopify] メルマガでSKUと画像の整合性確認が必須 — seen 30 times
-- [shopify] Shopify CLI認証セッション切れに注意 — seen 12 times
-- [shopify] symlinkの定期検証が必要 — seen 9 times
-- [general] dotfiles symlink/git同期は破損リスクあり、定期チェック必須 — seen 16 times
-- [email] メルマガ認証・URL・UTMはテンプレート流用時に全確認 — seen 17 times
-- [general] GitHub Actions YAMLは複数行文字列・APIキー設定に注意 — seen 8 times
+## Recurring Patterns (updated 2026-05-14)
+- [shopify] メルマガでSKUと画像の整合性確認が必須 — seen 5 times
+- [shopify] Shopify CLI認証セッション切れに注意 — seen 4 times
+- [general] dotfiles symlink/git同期は破損リスクあり、定期チェック必須 — seen 4 times
+- [email] メルマガ認証・URL・UTMはテンプレート流用時に全確認 — seen 3 times
+- [general] GitHub Actions YAMLは複数行文字列・APIキー設定に注意 — seen 4 times
 - [ecforce] ecforceはshow/editの両方を確認 — seen 4 times
-- [email] メールHTML縦方向余白はem統一 — seen 4 times
-- [general] APIキー管理は環境別に分類（dotfiles/GitHub Secrets/OAuth） — seen 5 times
+- [email] メールHTML縦方向余白はem統一 — seen 3 times
+- [general] APIキー管理は環境別に分類（dotfiles/GitHub Secrets/OAuth） — seen 4 times
 - [css] レスポンシブ単位は最初に統一戦略を決める（clamp/vw/px） — seen 3 times
-- [shopify-app] アプリ削除で client_id が変わる — seen 3 times
-- [shopify] settings_data.json はtheme push前に差分確認・unstage必須 — seen 5 times
-- [shopify] Liquidメタフィールドの`.value`はOS2.0で不要（重ねるとnil） — seen 4 times
+- [shopify-app] アプリ削除で client_id が変わる — seen 6 times
+- [shopify] settings_data.json はtheme push前に差分確認・unstage必須 — seen 3 times
+- [shopify] Liquidメタフィールドの`.value`はOS2.0で不要（重ねるとnil） — seen 3 times
+- [shopify] Shopify複数ストア管理はdirenv+SHOPIFY_FLAG_STORE固定が必須 — seen 5 times
+- [shopify] Shopifyアプリ削除後はDiscountリソース再作成が必要 — seen 5 times
+- [git] git push前にリモート分岐確認が必須 — seen 4 times
+- [email] メールHTML修正はPDF仕様書との視覚確認が必須 — seen 6 times
+- [general] テキスト修正と画像差替えは分離PRで競合を防ぐ — seen 5 times
+- [shopify] Shopify Functionはディスカウント前提条件がないと動作しない — seen 5 times
+- [general] Python one-linerで複数ファイル一括置換が効率的 — seen 9 times
