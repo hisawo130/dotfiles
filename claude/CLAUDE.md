@@ -314,10 +314,12 @@ If nlm is unavailable (Web/CI), rely on in-context knowledge and `claude/learnin
 - User asks to research a topic with multiple web sources or PDFs
 - Generating audio overviews, slide decks, flashcards, or mind maps
 
-**Available notebooks (as of 2026-05-08):**
-- `df968fc5` — Shopify (73 sources)
+**Available notebooks (as of 2026-05-14):**
+- `df968fc5` — Shopify (111 sources)
 - `6c66b80c` — Shopify Matrixify (41 sources)
-- `95096a0b` — 「見積作成」株式会社スズヤ様 (12 sources)
+- `12d0bbc6` — ecforce (29 sources)
+- `fa282f82` — LOGILESS API Integration (20 sources)
+- `95096a0b` — 「見積作成」株式会社スズヤ様 (10 sources)
 - `58f81c6c` — Master Brain (session memory)
 
 **Session wrap-up:** Use `/wrap-up` command at end of session. It extracts key corrections/decisions/patterns and pushes to Master Brain automatically. If nlm is unavailable, `/wrap-up` saves locally to `~/.claude/logs/` only.
