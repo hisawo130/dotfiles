@@ -50,22 +50,26 @@ Keep the summary under 2000 characters. Skip sections with nothing to add.
 If nothing meaningful happened (no corrections, no patterns, no decisions,
 no open issues), output "Nothing to record." and stop.
 
-**2. Push to Master Brain:**
+**2. Push to Master Brain (nlm available only):**
 
 ```bash
-nlm source add "$MASTER_BRAIN_ID" --file "$SESSION_LOG"
+if command -v nlm >/dev/null 2>&1; then
+  nlm source add "$MASTER_BRAIN_ID" --file "$SESSION_LOG"
+fi
 ```
 
 **3. Confirm:**
 
+If nlm available:
 ```
 ✅ Session summary pushed to Master Brain.
    Local: $SESSION_LOG
 ```
 
-If `nlm` is unavailable or unauthenticated, save locally only and note:
+If nlm unavailable (Web/CI environment):
 ```
-⚠️  nlm unavailable — saved locally: $SESSION_LOG
+📄 nlm未インストール — ローカル保存のみ: $SESSION_LOG
+   (次回ローカルセッション時にナイトリーが自動同期します)
 ```
 
 ## Rules

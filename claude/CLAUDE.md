@@ -298,10 +298,16 @@ NotebookLM CLI (`nlm`) and MCP server are available for research and persistent 
 
 **Master Brain notebook ID:** `58f81c6c-6f3e-42d1-9de5-e59b8975f51c`
 
-Before answering questions about project architecture, historical decisions, or past session learnings, query the Master Brain notebook:
+**Environment check (runs automatically at SessionStart):**
+- If the startup message includes `🧠 NotebookLM: 接続済み` → nlm available, use freely
+- If the startup message includes `🧠 NotebookLM: nlm未インストール` → Web/CI environment; **skip all nlm commands**
+- If the startup message includes `🧠 NotebookLM: 未認証` → run `nlm login` first
+
+Before answering questions about project architecture, historical decisions, or past session learnings, **if nlm is available**, query the Master Brain notebook:
 ```bash
 nlm notebook query 58f81c6c-6f3e-42d1-9de5-e59b8975f51c "<question>"
 ```
+If nlm is unavailable (Web/CI), rely on in-context knowledge and `claude/learnings/` files instead.
 
 **Use NotebookLM when:**
 - Analyzing 5+ documents/sources (offload to NotebookLM to save tokens)
@@ -314,7 +320,7 @@ nlm notebook query 58f81c6c-6f3e-42d1-9de5-e59b8975f51c "<question>"
 - `95096a0b` — 「見積作成」株式会社スズヤ様 (12 sources)
 - `58f81c6c` — Master Brain (session memory)
 
-**Session wrap-up:** Use `/wrap-up` command at end of session. It extracts key corrections/decisions/patterns and pushes to Master Brain automatically.
+**Session wrap-up:** Use `/wrap-up` command at end of session. It extracts key corrections/decisions/patterns and pushes to Master Brain automatically. If nlm is unavailable, `/wrap-up` saves locally to `~/.claude/logs/` only.
 
 ## Nightly self-improvement
 
