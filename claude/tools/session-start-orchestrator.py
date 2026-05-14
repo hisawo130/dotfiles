@@ -98,7 +98,7 @@ def py_master_brain_status() -> str | None:
     import shutil
 
     if not shutil.which("nlm"):
-        return None
+        return "🧠 NotebookLM: nlm未インストール — Master Brainクエリ・/wrap-up同期は不可 (Web/CI環境)"
 
     try:
         r = subprocess.run(
@@ -109,7 +109,7 @@ def py_master_brain_status() -> str | None:
         )
         if r.returncode == 0:
             return "🧠 NotebookLM: 接続済み — /wrap-up で知見を保存, nlm notebook query で検索できます"
-        return None
+        return "🧠 NotebookLM: 未認証 — `nlm login` で認証してください"
     except Exception:
         return None
 

@@ -31,9 +31,9 @@ bash "$DOTFILES/scripts/nightly-self-improve.sh"
 
 完了後、`~/.claude/logs/nightly.log` で結果を確認できる。
 
-Master Brain へのクエリ（任意）:
+Master Brain へのクエリ（nlmインストール済みの場合のみ）:
 ```bash
-nlm notebook query 58f81c6c-6f3e-42d1-9de5-e59b8975f51c "質問"
+command -v nlm >/dev/null && nlm notebook query 58f81c6c-6f3e-42d1-9de5-e59b8975f51c "質問"
 ```
 
 cron への登録・削除・ステータス確認:
