@@ -436,7 +436,6 @@
   "skipDangerousModePermissionPrompt": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
   "autoMode": {
     "allow": [
       "File read/write/delete operations within the home directory or project directories",
@@ -487,5 +486,6 @@
         "shopify-mcp"
       ]
     }
-  }
+  },
+  "inputNeededNotifEnabled": true
 }
