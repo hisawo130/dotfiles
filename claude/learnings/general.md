@@ -276,20 +276,20 @@
 
 ## Recurring Patterns (updated 2026-05-14)
 - [shopify] メルマガでSKUと画像の整合性確認が必須 — seen 5 times
-- [shopify] Shopify CLI認証セッション切れに注意 — seen 4 times
+- [shopify] Shopify CLI認証セッション切れに注意 — seen 6 times
 - [general] dotfiles symlink/git同期は破損リスクあり、定期チェック必須 — seen 4 times
 - [email] メルマガ認証・URL・UTMはテンプレート流用時に全確認 — seen 3 times
 - [general] GitHub Actions YAMLは複数行文字列・APIキー設定に注意 — seen 4 times
-- [ecforce] ecforceはshow/editの両方を確認 — seen 4 times
+- [ecforce] ecforceはshow/editの両方を確認 — seen 5 times
 - [email] メールHTML縦方向余白はem統一 — seen 3 times
 - [general] APIキー管理は環境別に分類（dotfiles/GitHub Secrets/OAuth） — seen 4 times
 - [css] レスポンシブ単位は最初に統一戦略を決める（clamp/vw/px） — seen 3 times
-- [shopify-app] アプリ削除で client_id が変わる — seen 6 times
-- [shopify] settings_data.json はtheme push前に差分確認・unstage必須 — seen 3 times
+- [shopify-app] アプリ削除で client_id が変わる — seen 7 times
+- [shopify] settings_data.json はtheme push前に差分確認・unstage必須 — seen 4 times
 - [shopify] Liquidメタフィールドの`.value`はOS2.0で不要（重ねるとnil） — seen 3 times
 - [shopify] Shopify複数ストア管理はdirenv+SHOPIFY_FLAG_STORE固定が必須 — seen 5 times
 - [shopify] Shopifyアプリ削除後はDiscountリソース再作成が必要 — seen 5 times
-- [git] git push前にリモート分岐確認が必須 — seen 4 times
+- [git] git push前にリモート分岐確認が必須 — seen 6 times
 - [email] メールHTML修正はPDF仕様書との視覚確認が必須 — seen 6 times
 - [general] テキスト修正と画像差替えは分離PRで競合を防ぐ — seen 5 times
 - [shopify] Shopify Functionはディスカウント前提条件がないと動作しない — seen 5 times
