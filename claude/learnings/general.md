@@ -294,3 +294,7 @@
 - [general] テキスト修正と画像差替えは分離PRで競合を防ぐ — seen 5 times
 - [shopify] Shopify Functionはディスカウント前提条件がないと動作しない — seen 5 times
 - [general] Python one-linerで複数ファイル一括置換が効率的 — seen 9 times
+
+## 2026-05-14 16:34 | GitHub
+- 作業: <command-message>doctor</command-message>
+- 完了: - リモートの先行コミット（`improve-autonomous-learning`、`notebooklm-integration-check`ブランチ追加）をrebaseでマージしてpush
