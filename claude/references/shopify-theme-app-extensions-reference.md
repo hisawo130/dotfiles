@@ -1,10 +1,13 @@
 # Shopify Theme App Extensions & Customer Account UI Extensions リファレンス
 
-> 最終更新: 2026-04-08（公式ドキュメント精査済み）
+> 最終更新: 2026-04-08（公式ドキュメント精査済）
 
 ---
 
 ## 📋 Recent Changelog
+
+### 2026-05-13: [Unified branding customization across checkout and customer accounts](https://changelog.shopify.com/posts/draft-unified-branding-customization-across-checkout-and-customer-accounts)
+Brand settings now apply consistently across checkout, customer accounts, and sign-in pages. Checkout extension developers building branding-sensitive UI should verify market-specific override behavior, as color palette customization can now be applied per market.
 
 ### 2026-05-08: [Collect marketing consent on the account component](https://changelog.shopify.com/posts/collect-marketing-consent-on-the-account-component)
 The account component now includes a built-in marketing opt-in checkbox below the email field; Customer Account UI Extension developers should review how this consent signal surfaces in the marketing consent API and test sign-in flows that previously handled opt-in separately.
@@ -34,8 +37,8 @@ As of API 2026-04, Cart and Checkout Validation Functions support billing addres
 | 比較軸 | Theme App Extension | テーマ内 App Block |
 |---|---|---|
 | 管理者 | アプリ開発者がデプロイ | テーマ開発者がコミット |
-| 更新方法 | `shopify app deploy` で全店舗即時反映 | テーマのgit pushが必要 |
-| テーマ依存 | アプリのCDNに乗る | テーマに同梱 |
+| 更新方法 | `shopify app deploy` で全店舐即時反映 | テーマのgit pushが必要 |
+| テーマ依存 | アプリのCDNに乗る | テーマに同朱 |
 
 ✅ Theme App Extension はアプリ側のコードであり、テーマファイルには含まれない。
 
@@ -207,7 +210,7 @@ https://<myshopify.com>/admin/themes/current/editor?template=product&addAppBlock
 | ❌ ヴィンテージテーマ（App Block） | OS 2.0のJSONテンプレートテーマのみ |
 | ⚠️ `enabled_on` / `disabled_on` は排他 | 両方同時に指定不可 |
 | ⚠️ `name` は25文字以内 | テーマエディターでの表示名 |
-| ⚠️ CSS/JSの重複読み込みなし | 複数ブロックが同一ファイルを参照しても1回だけロード |
+| ⚠️ CSS/JSの重複読み込みなし | 複数ブロックが同一ファイルを参照しても１回だけロード |
 | ❌ 外部HTTP通信 | Liquidからの外部fetchは不可 |
 
 ---
@@ -221,7 +224,7 @@ shopify app generate extension   # タイプで "Theme app extension" を選択
 # ローカル開発（ホットリロードあり）
 shopify app dev
 
-# デプロイ（全店舗に即時反映 + appバージョン作成）
+# デプロイ（全店舐に即時反映 + appバージョン作成）
 shopify app deploy
 shopify app deploy --version="v1.2.0" --message="レビュー機能追加"
 shopify app deploy --no-release   # バージョン作成のみ、公開しない
@@ -379,7 +382,7 @@ export default function Extension() {
 | ❌ 任意HTML/scriptタグ不可 | Polaris Web Componentsのみ |
 | ❌ CSSオーバーライド不可 | マーチャントのブランド設定を自動継承 |
 | ⚠️ 保護データには要申請 | 住所・氏名などのProtected Customer DataはShopifyの審査が必要 |
-| ⚠️ サンドボックス隔離 | 各Extensionは独立。他Extensionのデータにアクセス不可 |
+| ⚠️ サンドボックス隣離 | 各Extensionは独立。他Extensionのデータにアクセス不可 |
 | ⚠️ `window` / `document` 制限 | 直接アクセスは制限される |
 | ⚠️ ReactでなくPreact | `useState` 等は `preact/hooks` からimport |
 | ⚠️ importパス | `@shopify/ui-extensions/customer-account`（`/checkout` は2023-10以降非推奨） |
