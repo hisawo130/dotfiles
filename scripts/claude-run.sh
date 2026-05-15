@@ -6,6 +6,7 @@
 #   claude-run --dir /path/to/project "テストを実行して修正して"
 #   claude-run --tools Read,Grep,Write "依存関係を確認して"
 #   claude-run --json "全テストを実行した結果を返して"
+#   claude-run --dangerous "変更を自動適用して"
 #
 # SSH経由:
 #   ssh user@host "~/dotfiles/scripts/claude-run.sh 'PRを作成して'"
@@ -21,6 +22,7 @@ OUTPUT_FORMAT="text"
 ALLOWED_TOOLS=""
 MAX_TURNS=10
 VERBOSE=false
+DANGEROUS_MODE=false
 
 # --- 引数パース ---
 while [[ $# -gt 0 ]]; do
@@ -30,6 +32,10 @@ while [[ $# -gt 0 ]]; do
     --tools|-t)     ALLOWED_TOOLS="$2";   shift 2 ;;
     --turns|-n)     MAX_TURNS="$2";       shift 2 ;;
     --verbose|-v)   VERBOSE=true;         shift ;;
+    --dangerous|--dangerous-mode)
+      DANGEROUS_MODE=true
+      shift
+      ;;
     --help|-h)
       sed -n '2,20p' "$0" | sed 's/^# \?//'
       exit 0
@@ -67,16 +73,17 @@ fi
 CMD=(claude -p "$PROMPT"
   --output-format "$OUTPUT_FORMAT"
   --max-turns "$MAX_TURNS"
-  --dangerously-skip-permissions
 )
 
 [[ -n "$ALLOWED_TOOLS" ]] && CMD+=(--allowedTools "$ALLOWED_TOOLS")
+[[ "$DANGEROUS_MODE" == true ]] && CMD+=(--dangerously-skip-permissions)
 
 # --- 実行 ---
 if $VERBOSE; then
   echo "📁 作業ディレクトリ: $WORK_DIR" >&2
   echo "🤖 プロンプト: $PROMPT" >&2
   echo "⚙️  ツール: ${ALLOWED_TOOLS:-すべて}" >&2
+  echo "🔐 実行モード: $([[ "$DANGEROUS_MODE" == true ]] && echo 'dangerous' || echo 'safe(default)')" >&2
   echo "---" >&2
 fi
 

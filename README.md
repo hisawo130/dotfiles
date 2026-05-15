@@ -2,6 +2,23 @@
 
 macOS 開発環境の設定ファイル。Claude Code / Shopify / ecforce 開発に最適化。
 
+## 5分スタート（大規模コードベース向け）
+
+1. **目的を1つに絞る**（1セッション1タスク）
+2. **読み取り中心で開始**（例: `Read/Grep/Glob`）
+3. **検証コマンドを先に実行**（下記「検証」参照）
+4. **必要になったら権限を段階的に拡張**（read/search → write → git）
+
+```bash
+# 安全デフォルト（危険モードなし）
+claude-run --tools "Read,Grep,Glob" "対象ディレクトリの構成と変更影響を調査して"
+
+# 危険モードが必要な場合のみ明示的に opt-in
+claude-run --dangerous "変更を適用して検証して"
+```
+
+> `scripts/claude-run.sh` はデフォルトで safe 実行です。`--dangerous` 指定時のみ `--dangerously-skip-permissions` を有効化します。
+
 ## セットアップ
 
 ```bash
@@ -138,6 +155,22 @@ nlm skill install claude-code  # nlm-skill インストール
 | Master Brain sync | `nlm source add`（ローカルのみ） | growth-log エントリを NotebookLM へ push |
 
 > Claude API は使用しない（Pro 制限に影響ゼロ）。
+
+## 権限の段階導入（Trust Ramp-up）
+
+- **Phase 1（初期）**: `Read/Grep/Glob` と検証系コマンドのみでコードベース理解を優先
+- **Phase 2（編集）**: 変更範囲を限定して `Write/Edit` を許可
+- **Phase 3（統合）**: 検証手順が安定した後に `git` / `gh` を段階開放
+- 常時フル許可ではなく、タスクに必要な最小権限で運用する
+
+## 検証（完了条件）
+
+- シェル系変更: `python3 /home/runner/work/dotfiles/dotfiles/scripts/nightly-validate-shell.py`
+- 夜間パイプライン変更: `python3 /home/runner/work/dotfiles/dotfiles/scripts/nightly-preprocess.py` と `python3 /home/runner/work/dotfiles/dotfiles/scripts/nightly-postprocess.py <digest.json> <shell.json>`
+- GitHub Actions（`nightly-self-improve`）完了条件:
+  - preprocess / shell-validate / postprocess がすべて exit 0
+  - shell-validate の `checked > 0`
+  - shell-validate の `syntax_errors == 0`
 
 ```bash
 # cron 登録

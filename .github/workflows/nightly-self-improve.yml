@@ -41,6 +41,19 @@ jobs:
           python3 scripts/nightly-validate-shell.py \
             > ~/.claude/logs/nightly-shell.json \
             2>> ~/.claude/logs/nightly-preprocess.log
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          shell = json.loads(Path.home().joinpath(".claude/logs/nightly-shell.json").read_text())
+          checked = shell.get("checked", 0)
+          syntax_errors = shell.get("syntax_errors", [])
+          if checked <= 0:
+              raise SystemExit("❌ shell validate failed: checked must be > 0")
+          if syntax_errors:
+              raise SystemExit(f"❌ shell validate failed: syntax_errors={len(syntax_errors)}")
+          print(f"✅ shell validate gate passed (checked={checked}, syntax_errors=0)")
+          PY
           cat ~/.claude/logs/nightly-preprocess.log | tail -5
           echo "✅ shell validate completed"
 

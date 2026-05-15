@@ -13,6 +13,8 @@ import sys
 from pathlib import Path
 
 DOTFILES = Path.home() / "dotfiles"
+if not DOTFILES.exists():
+    DOTFILES = Path(__file__).resolve().parent.parent
 SEARCH_DIRS = [
     DOTFILES / "claude" / "hooks",
     DOTFILES / "scripts",
