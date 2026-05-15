@@ -274,7 +274,7 @@
 - [pattern] レスポンシブ値を`clamp(min, vw, max)`から純`vw`に統一すると、計算・保守がシンプル化。PC/SP両対応時は特に有効
 - [tip] px/vw/clamp混在の調整は後から統一するより、最初から単位戦略を決めると手戻りが減る
 
-## Recurring Patterns (updated 2026-05-14)
+## Recurring Patterns (updated 2026-05-15)
 - [shopify] メルマガでSKUと画像の整合性確認が必須 — seen 5 times
 - [shopify] Shopify CLI認証セッション切れに注意 — seen 6 times
 - [general] dotfiles symlink/git同期は破損リスクあり、定期チェック必須 — seen 4 times
@@ -294,12 +294,14 @@
 - [general] テキスト修正と画像差替えは分離PRで競合を防ぐ — seen 5 times
 - [shopify] Shopify Functionはディスカウント前提条件がないと動作しない — seen 5 times
 - [general] Python one-linerで複数ファイル一括置換が効率的 — seen 9 times
+- [shopify] JS制御UI要素のFOUC防止：HTMLデフォルト非表示でJSで解除 — seen 3 times
+- [email] メールHTMLの空<p>タグは&nbsp;か<hr>で代替（直書きは崩れる） — seen 4 times
+- [email] <img>のwidth属性にパーセント指定不可、インラインスタイルのみ — seen 3 times
+- [shopify] ローカライゼーションキーはen.default.jsonにも同時追加が必須 — seen 3 times
 
 ## 2026-05-14 16:34 | GitHub
 - 作業: <command-message>doctor</command-message>
 - 完了: - リモートの先行コミット（`improve-autonomous-learning`、`notebooklm-integration-check`ブランチ追加）をrebaseでマージしてpush
-## 2026-04-27 20:17 | ohayoreuteri_theme
-
 ## 2026-04-27 20:17 | ohayoreuteri_theme [ai]
 - [pattern] ecforceの定期便機能では show/edit ページが独立した フロー。詳細表示と編集フォームの表示・非表示を切り分けて検討する。
 - [pattern] Liquidテンプレートで列を一時的に非表示にする場合、{% comment %} でコメント化すると復活が容易。短期的な仕様変更に有効。
@@ -390,14 +392,10 @@
 - [gotcha] `<img>` の `width="100%"` はHTML属性としては無効（ピクセル値が期待される）。パーセント指定はインラインスタイル `style="width:100%"` にのみ記述する
 - [pattern] KVボタンや商品リンクのキャンペーンURLは配信前に実在確認必須。存在しないパスは404になるため、utm付与と同時にリンク先の実在チェックをチェックリストに組み込む
 
-## 2026-04-30 19:35 | mimc.co.jp-mailmagazine
-
 ## 2026-04-30 19:35 | mimc.co.jp-mailmagazine [ai]
 - [gotcha] メールHTMLの空`<p>`タグはメールクライアントで高さが崩れる場合があるため、区切り線として使う場合は`&nbsp;`を入れるか`<hr>`に置き換える
 - [gotcha] `<img width="100%">`のHTML属性`width`はピクセル値を期待するため、パーセント指定はインラインスタイル（`style="max-width:100%"`）のみに頼るべき
 - [pattern] 参照元ファイル（260505.html）の二重`<tr>`バグを引き継がず修正できた——パターン踏襲時も構造差分を目視確認することで既存バグの伝搬を防げる
-
-## 2026-04-30 19:55 | mimc.co.jp-mailmagazine
 
 ## 2026-04-30 19:55 | mimc.co.jp-mailmagazine [ai]
 - [gotcha] メールHTMLの空 `<p>` タグはメールクライアントで高さが崩れる場合があるため、区切り線目的で使う場合は `&nbsp;` か `<hr>` を使う
