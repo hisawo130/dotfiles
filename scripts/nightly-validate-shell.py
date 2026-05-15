@@ -12,9 +12,18 @@ import subprocess
 import sys
 from pathlib import Path
 
-DOTFILES = Path.home() / "dotfiles"
-if not DOTFILES.exists():
-    DOTFILES = Path(__file__).resolve().parent.parent
+_candidates = [
+    Path.home() / "dotfiles",
+    Path(__file__).resolve().parent.parent,
+]
+
+DOTFILES = _candidates[0]
+for candidate in _candidates:
+    has_hooks = (candidate / "claude" / "hooks").exists()
+    has_scripts = (candidate / "scripts").exists()
+    if has_hooks and has_scripts:
+        DOTFILES = candidate
+        break
 SEARCH_DIRS = [
     DOTFILES / "claude" / "hooks",
     DOTFILES / "scripts",
