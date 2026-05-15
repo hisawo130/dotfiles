@@ -452,3 +452,8 @@
 - [pattern] settings.json のコンフリクト解決時、nightly自動管理部分とユーザー設定部分（editorMode等）を分離して採用する
 - [pattern] ローカル独自コミットとリモート変更が競合する場合、内容確認後rebaseで再適用する
 - [tip] 大幅分岐（100+コミット差）での同期は git rebase で対応、単純プッシュではNG
+
+## 2026-05-15 10:09 | dotfiles [ai]
+- [gotcha] dotfiles rebase 時のシンボリックリンク管理 — `~/.claude/` 配下ファイルは symlink 先のため、rebase/merge コンフリクト時に意図しない挙動が起こる可能性。次回はリベース前にリンク構造を明示的に確認する。
+- [pattern] 大幅分岐時の HEAD 採用戦略 — リモート HEAD が nightly 統合済みの場合、HEAD を基準に adopt しつつユーザー設定（`editorMode` など）のみ選別的に保持すると効率的。
+- [tip] 無関係な変更は先にスタッシュ — rebase 前に `.zshrc` など無関係ファイルをスタッシュすると、コンフリクト解決が単純化される。
