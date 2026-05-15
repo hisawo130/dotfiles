@@ -16,6 +16,9 @@ Sources:
 
 ## 📋 Recent Changelog
 
+### 2026-05-14: [Flow: Make test events for your workflows with existing shop data](https://changelog.shopify.com/posts/flow-sidekick-generates-test-cases-for-your-workflows)
+An AI-powered feature now generates test cases for workflows by analyzing logic paths and using real shop data, enabling developers to validate automation without manually crafting synthetic events.
+
 ### 2026-05-09: [Flow: New action to get analytics data using ShopifyQL](https://changelog.shopify.com/posts/flow-new-action-to-get-analytics-data-using-shopifyql)
 New ShopifyQL action enables workflows to query Shopify analytics data for sales, sessions, and inventory, making results available as variables for conditions and actions.
 
