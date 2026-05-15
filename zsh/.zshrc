@@ -104,3 +104,12 @@ chpwd() {
     shopify-app)   echo "⚙️  Shopify app" ;;
   esac
 }
+
+# bun completions
+[ -s "/Users/P130/.bun/_bun" ] && source "/Users/P130/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+alias claude-mem='/Users/P130/.bun/bin/bun "/Users/P130/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
