@@ -447,3 +447,8 @@
 - [gotcha] Shopify themeでポップアップ等のJS制御UI要素は、HTML側でデフォルトを隠す（aria-hidden="true"やdisplay:none）ことが必須。そうしないとJSが実行される前に一瞬表示されてしまう（FOUC）。
 - [gotcha] Shopifyのローカライゼーション：テーマキーを `ja.json` に追加しても、Shopifyは `en.default.json` をフォールバックとして使うため、スタッフアカウントが英語設定だと生キー名が出力される。すべてのキーを `en.default.json` にも登録すること。
 - [pattern] CSS で `scale()` 等の変換値を使う場合、宣言値と実表示サイズがズレるため、実寸ベースで設計し直すか、実寸をコメントで明記してメンテナンス性を高める。
+
+## 2026-05-15 10:08 | dotfiles [ai]
+- [pattern] settings.json のコンフリクト解決時、nightly自動管理部分とユーザー設定部分（editorMode等）を分離して採用する
+- [pattern] ローカル独自コミットとリモート変更が競合する場合、内容確認後rebaseで再適用する
+- [tip] 大幅分岐（100+コミット差）での同期は git rebase で対応、単純プッシュではNG
