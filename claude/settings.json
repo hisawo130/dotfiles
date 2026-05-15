@@ -212,7 +212,9 @@
       "Read(//Users/P130/.claude/references/**)",
       "Read(//Users/P130/dotfiles/claude/references/**)",
       "Read(//Users/P130/GitHub/pietro-onlineshop_ver01/sections/**)",
-      "Read(//Users/P130/GitHub/pietro-onlineshop_ver01/assets/**)"
+      "Read(//Users/P130/GitHub/pietro-onlineshop_ver01/assets/**)",
+      "Skill(superpowers:brainstorming)",
+      "Skill(superpowers:brainstorming:*)"
     ],
     "deny": [
       "Bash(rm -rf /)",
@@ -436,6 +438,7 @@
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
   "remoteControlAtStartup": true,
+  "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "autoMode": {
     "allow": [
@@ -487,6 +490,5 @@
         "shopify-mcp"
       ]
     }
-  },
-  "inputNeededNotifEnabled": true
+  }
 }
