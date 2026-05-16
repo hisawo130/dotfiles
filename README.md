@@ -165,8 +165,9 @@ nlm skill install claude-code  # nlm-skill インストール
 
 ## 検証（完了条件）
 
-- シェル系変更: `python3 /home/runner/work/dotfiles/dotfiles/scripts/nightly-validate-shell.py`
-- 夜間パイプライン変更: `python3 /home/runner/work/dotfiles/dotfiles/scripts/nightly-preprocess.py` と `python3 /home/runner/work/dotfiles/dotfiles/scripts/nightly-postprocess.py <digest.json> <shell.json>`
+- 実行場所: dotfiles リポジトリルート
+- シェル系変更: `python3 scripts/nightly-validate-shell.py`
+- 夜間パイプライン変更: `python3 scripts/nightly-preprocess.py` と `python3 scripts/nightly-postprocess.py <digest.json> <shell.json>`
 - GitHub Actions（`nightly-self-improve`）完了条件:
   - preprocess / shell-validate / postprocess がすべて exit 0
   - shell-validate の `checked > 0`

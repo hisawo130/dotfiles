@@ -219,6 +219,6 @@ Save only if the information is **non-obvious and will help future sessions**. D
 
 ## Extended reference (load on demand)
 
-運用詳細・プラットフォーム詳細・NotebookLM・夜間バッチは常時読み込みせず、必要時のみ参照:
+運用詳細・プラットフォーム詳細・NotebookLM・夜間バッチは、下記の単一リファレンスに集約しており、常時読み込みせず必要時のみ参照:
 
 - `claude/references/agent-operations-reference.md`
