@@ -298,8 +298,6 @@
 ## 2026-05-14 16:34 | GitHub
 - 作業: <command-message>doctor</command-message>
 - 完了: - リモートの先行コミット（`improve-autonomous-learning`、`notebooklm-integration-check`ブランチ追加）をrebaseでマージしてpush
-## 2026-04-27 20:17 | ohayoreuteri_theme
-
 ## 2026-04-27 20:17 | ohayoreuteri_theme [ai]
 - [pattern] ecforceの定期便機能では show/edit ページが独立した フロー。詳細表示と編集フォームの表示・非表示を切り分けて検討する。
 - [pattern] Liquidテンプレートで列を一時的に非表示にする場合、{% comment %} でコメント化すると復活が容易。短期的な仕様変更に有効。
@@ -390,14 +388,10 @@
 - [gotcha] `<img>` の `width="100%"` はHTML属性としては無効（ピクセル値が期待される）。パーセント指定はインラインスタイル `style="width:100%"` にのみ記述する
 - [pattern] KVボタンや商品リンクのキャンペーンURLは配信前に実在確認必須。存在しないパスは404になるため、utm付与と同時にリンク先の実在チェックをチェックリストに組み込む
 
-## 2026-04-30 19:35 | mimc.co.jp-mailmagazine
-
 ## 2026-04-30 19:35 | mimc.co.jp-mailmagazine [ai]
 - [gotcha] メールHTMLの空`<p>`タグはメールクライアントで高さが崩れる場合があるため、区切り線として使う場合は`&nbsp;`を入れるか`<hr>`に置き換える
 - [gotcha] `<img width="100%">`のHTML属性`width`はピクセル値を期待するため、パーセント指定はインラインスタイル（`style="max-width:100%"`）のみに頼るべき
 - [pattern] 参照元ファイル（260505.html）の二重`<tr>`バグを引き継がず修正できた——パターン踏襲時も構造差分を目視確認することで既存バグの伝搬を防げる
-
-## 2026-04-30 19:55 | mimc.co.jp-mailmagazine
 
 ## 2026-04-30 19:55 | mimc.co.jp-mailmagazine [ai]
 - [gotcha] メールHTMLの空 `<p>` タグはメールクライアントで高さが崩れる場合があるため、区切り線目的で使う場合は `&nbsp;` か `<hr>` を使う
