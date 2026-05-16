@@ -199,6 +199,9 @@ On first task in a project directory, detect project type from file structure an
 
 ## Session discipline
 
+- 1セッション1目的（目的が変わる場合は要約して新セッションへ分割）
+- 30〜60分ごとに「完了/未完/次アクション」を3行で要約
+- 対象外ファイルの調査が増えたら、いったんコンテキストをリセットして再開
 - Summarize uncommitted changes at session start.
 - SessionStart/Stop hooks run automatically (pull, learnings inject/save, notify).
 
@@ -214,132 +217,8 @@ When compacting, always preserve:
 
 Save only if the information is **non-obvious and will help future sessions**. Do not ask — just save and mention it in the session summary.
 
-### SessionStart hooks (自動実行順)
+## Extended reference (load on demand)
 
-セッション開始時に以下のフックが順番に実行され、systemMessage として注入される:
+運用詳細・プラットフォーム詳細・NotebookLM・夜間バッチは、下記の単一リファレンスに集約しており、常時読み込みせず必要時のみ参照:
 
-| 順序 | フック | 動作 |
-|---|---|---|
-| 1 | `check-stale-refs.sh` | 14日以上未更新のリファレンスファイルを警告 |
-| 2 | `recovery-detect.sh` | 前回クラッシュ検出 — state.md + clean marker で判定 |
-| 3 | `stale-branch-check.sh` | origin/main より 1 commit でも遅れていたら fast-forward pull。不可なら警告のみ |
-| 4 | `shopify-session-start.sh` | Shopifyリポジトリのみ: git pull + Shopify CLI 認証確認 |
-| 5 | `ecforce-session-start.sh` | ecforceリポジトリのみ: git pull + 本番テーマ編集リマインダー |
-| 6 | `load-learnings.sh` | ドメイン別学習メモを systemMessage に注入 |
-
-### カスタムコマンド
-
-`/` で始まるコマンドは `~/.claude/commands/` から実行される:
-
-| コマンド | 用途 |
-|---|---|
-| `/capture [domain] <insight>` | 学習メモを手動で即時保存（Stop hook を待たず） |
-| `/learning-report` | 刐21ドメインの学習サマリーをレポート表示 |
-| `/memory-update` | 現セッションの学習を `claude/memory/` に即時統合 |
-| `/nightly-review` | 奈間自己改善バッチ（6タスク + 週次タスク1ツ）を手動実行 |
-| `/sync-dotfiles` | `claude/` 配下の変更をコミット・プッシュ |
-
-### Injected learnings (from SessionStart hook)
-
-On session start, `📚 前回の学習メモ` may appear in context from `load-learnings.sh`.
-Apply them as follows — do not re-announce to the user:
-
-- `[recurring]` — confirmed trap seen 3+ times; treat as an invariant rule, not advice
-- `[gotcha]` — confirmed trap; check against current plan before implementing
-- `[correction]` — previous mistake; verify you are not repeating it
-- `[pattern]` — a known-good approach; prefer it over alternative implementations
-
-## Default assumptions
-
-When not explicitly specified, assume:
-
-- **Shopify:** Dawn (latest stable), Online Store 2.0, no app dependencies
-- **ecforce:** Liquid templates, file uploader for assets, `{{ file_root_path }}` for asset URL base
-- **CSS:** Follow existing class names and design patterns
-- **JS:** Vanilla JS or match the existing framework in use
-
-## Platform-specific notes
-
-### Shopify
-
-- Theme: specify Dawn version or custom theme name
-- Always use section schema `{% schema %}` for customizer settings
-- Asset references: `{{ 'filename.css' | asset_url | stylesheet_tag }}`
-- Test on both desktop and mobile preview in theme editor
-- Check for impact on other sections that share the same CSS namespace
-
-**Common traps (auto-check before finishing):**
-- `settings_data.json` accidentally staged → warn and unstage
-- `{% include %}` used instead of `{% render %}` → replace automatically
-- Schema setting IDs changed/removed → flag as breaking change
-- Hardcoded domain or asset URL → replace with Liquid filter
-
-### ecforce
-
-- Template engine: **Liquid** (`.html.liquid`、スマホ版は `+smartphone` サフィックス)
-- Layouts: `layouts/ec_force/shop/order.html.liquid`（購入フロー）/ `layouts/ec_force/shop.html.liquid`（その他）
-- Partials: `{% include 'ec_force/shop/shared/header.html' %}` 形式
-- Assets: 管理画面のファイルアップローダー。参照は `{{ file_root_path }}/css/style.css`
-- **保存 = 即本番反映**（現在のテーマ直接編集時）。必ずテーマを複製してから編集 → プレビュー確認 → テーマ切り替えの順で行う
-- ローカル環境での開発不可（Liquidはサーバーサイドレンダリングのみ）
-- デフォルトCSSに `!important` 多用 → CSS詳細度競合に注意
-- 新規URLルート追加・フォーム項目変更・サーバーサイド処理変更は不可
-- Check order flow pages (cart → order input → confirm → complete) for side effects
-
-**Common traps (auto-check before finishing):**
-- Editing active theme directly → always duplicate first; flag if can't confirm
-- Hardcoded asset URL (not using `{{ file_root_path }}`) → replace automatically
-- Missing `+smartphone` variant when desktop template changed → flag for manual check
-- CSS `!important` added → note specificity risk in response
-
-## NotebookLM integration
-
-NotebookLM CLI (`nlm`) and MCP server are available for research and persistent memory.
-
-**Master Brain notebook ID:** `58f81c6c-6f3e-42d1-9de5-e59b8975f51c`
-
-**Environment check (runs automatically at SessionStart):**
-- If the startup message includes `🧠 NotebookLM: 接続済み` → nlm available, use freely
-- If the startup message includes `🧠 NotebookLM: nlm未インストール` → Web/CI environment; **skip all nlm commands**
-- If the startup message includes `🧠 NotebookLM: 未認証` → run `nlm login` first
-
-Before answering questions about project architecture, historical decisions, or past session learnings, **if nlm is available**, query the Master Brain notebook:
-```bash
-nlm notebook query 58f81c6c-6f3e-42d1-9de5-e59b8975f51c "<question>"
-```
-If nlm is unavailable (Web/CI), rely on in-context knowledge and `claude/learnings/` files instead.
-
-**Use NotebookLM when:**
-- Analyzing 5+ documents/sources (offload to NotebookLM to save tokens)
-- User asks to research a topic with multiple web sources or PDFs
-- Generating audio overviews, slide decks, flashcards, or mind maps
-
-**Available notebooks (as of 2026-05-14):**
-- `df968fc5` — Shopify (111 sources)
-- `6c66b80c` — Shopify Matrixify (41 sources)
-- `12d0bbc6` — ecforce (29 sources)
-- `fa282f82` — LOGILESS API Integration (20 sources)
-- `95096a0b` — 「見積作成」株式会社スズヤ様 (10 sources)
-- `58f81c6c` — Master Brain (session memory)
-
-**Session wrap-up:** Use `/wrap-up` command at end of session. It extracts key corrections/decisions/patterns and pushes to Master Brain automatically. If nlm is unavailable, `/wrap-up` saves locally to `~/.claude/logs/` only.
-
-## Nightly self-improvement
-
-Every day at AM3:00 JST, `nightly-self-improve.sh` (local cron) and `.github/workflows/nightly-self-improve.yml` (GitHub Actions, Python-only) run the self-improvement pipeline.
-
-**Pipeline architecture:**
-
-| Step | Tool | Description |
-|---|---|---|
-| preprocess | `nightly-preprocess.py` | Stale dates, metrics, gotcha候補, growth-log scaffold |
-| shell-validate | `nightly-validate-shell.py` | bash -n + shellcheck for all hooks/scripts |
-| postprocess | `nightly-postprocess.py` | Fill growth-log placeholders |
-| AI review | `nightly-review.md` prompt via `claude -p` | Memory consolidation, CLAUDE.md review, observations |
-| Master Brain | `nlm source add` (local only) | Push growth-log entry to NotebookLM |
-
-**Prompts:**
-- `claude/scripts/prompts/nightly-review.md` — headless JSON-in/JSON-out AI review (used with `claude -p`)
-- `claude/scripts/prompts/daily-maintenance.md` — full-session 8-task maintenance (Shopify changelog, Dawn version, API alerts, Master Brain sync, etc.)
-
-Manual trigger: `/nightly-review`
+- `claude/references/agent-operations-reference.md`

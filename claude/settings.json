@@ -456,7 +456,8 @@
     "environment": [
       "User is a web/frontend developer working with Shopify and ecforce platforms",
       "All git operations are reversible; non-destructive actions should proceed without confirmation",
-      "Timezone is JST; user operates autonomously and prefers uninterrupted execution"
+      "Timezone is JST; user operates autonomously and prefers uninterrupted execution",
+      "Trust ramp-up policy: start in read/search mode, then expand to write/git only after validations pass"
     ]
   },
   "mcpServers": {
