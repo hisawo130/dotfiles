@@ -1,9 +1,9 @@
-# Reference Staleness 2026-05-17
-STALE: ecforce-reference.md(55d)
-AGING: shopify-reference.md(35d)
+# Reference Staleness 2026-05-18
+STALE: ecforce-reference.md(56d)
+AGING: shopify-reference.md(36d)
+AGING: shopify-webhooks-metafields-reference.md(31d)
 OK: agent-operations-reference.md
 OK: shopify-custom-app-reference.md
 OK: shopify-flow-reference.md
 OK: shopify-hydrogen-appbridge-subscriptions-reference.md
 OK: shopify-theme-app-extensions-reference.md
-OK: shopify-webhooks-metafields-reference.md
