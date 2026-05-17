@@ -1,9 +1,9 @@
 # Reference Staleness 2026-05-17
-STALE: ecforce-reference.md(55d)
-AGING: shopify-reference.md(35d)
-OK: agent-operations-reference.md
-OK: shopify-custom-app-reference.md
-OK: shopify-flow-reference.md
-OK: shopify-hydrogen-appbridge-subscriptions-reference.md
-OK: shopify-theme-app-extensions-reference.md
-OK: shopify-webhooks-metafields-reference.md
+OK: agent-operations-reference.md (2 days)
+OK: ecforce-reference.md (3 days)
+OK: shopify-custom-app-reference.md (3 days)
+OK: shopify-flow-reference.md (2 days)
+OK: shopify-hydrogen-appbridge-subscriptions-reference.md (3 days)
+OK: shopify-reference.md (3 days)
+OK: shopify-theme-app-extensions-reference.md (3 days)
+OK: shopify-webhooks-metafields-reference.md (3 days)
