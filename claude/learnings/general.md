@@ -299,3 +299,156 @@
 - [shopify-app] アプリ削除で client_id が変わる — seen 3 times
 - [shopify] settings_data.json はtheme push前に差分確認・unstage必須 — seen 5 times
 - [shopify] Liquidメタフィールドの`.value`はOS2.0で不要（重ねるとnil） — seen 4 times
+## Recurring Patterns (updated 2026-05-17)
+- [shopify] メルマガでSKUと画像の整合性確認が必須 — seen 5 times
+- [shopify] Shopify CLI認証セッション切れに注意 — seen 6 times
+- [general] dotfiles symlink/git同期は破損リスクあり、定期チェック必須 — seen 4 times
+- [email] メルマガ認証・URL・UTMはテンプレート流用時に全確認 — seen 3 times
+- [general] GitHub Actions YAMLは複数行文字列・APIキー設定に注意 — seen 4 times
+- [ecforce] ecforceはshow/editの両方を確認 — seen 5 times
+- [email] メールHTML縦方向余白はem統一 — seen 3 times
+- [general] APIキー管理は環境別に分類（dotfiles/GitHub Secrets/OAuth） — seen 4 times
+- [css] レスポンシブ単位は最初に統一戦略を決める（clamp/vw/px） — seen 3 times
+- [shopify-app] アプリ削除で client_id が変わる — seen 7 times
+- [shopify] settings_data.json はtheme push前に差分確認・unstage必須 — seen 4 times
+- [shopify] Liquidメタフィールドの`.value`はOS2.0で不要（重ねるとnil） — seen 3 times
+- [shopify] Shopify複数ストア管理はdirenv+SHOPIFY_FLAG_STORE固定が必須 — seen 5 times
+- [shopify] Shopifyアプリ削除後はDiscountリソース再作成が必要 — seen 5 times
+- [git] git push前にリモート分岐確認が必須 — seen 6 times
+- [email] メールHTML修正はPDF仕様書との視覚確認が必須 — seen 6 times
+- [general] テキスト修正と画像差替えは分離PRで競合を防ぐ — seen 5 times
+- [shopify] Shopify Functionはディスカウント前提条件がないと動作しない — seen 5 times
+- [general] Python one-linerで複数ファイル一括置換が効率的 — seen 9 times
+- [shopify] JS制御UI要素のFOUC防止：HTMLデフォルト非表示でJSで解除 — seen 3 times
+- [email] メールHTMLの空<p>タグは&nbsp;か<hr>で代替（直書きは崩れる） — seen 4 times
+- [email] <img>のwidth属性にパーセント指定不可、インラインスタイルのみ — seen 3 times
+- [shopify] ローカライゼーションキーはen.default.jsonにも同時追加が必須 — seen 3 times
+- [xserver] XServer APIはエンドポイント・フィールド名・サーバー名形式が非自明、実装前にドキュメント照合必須 — seen 3 times
+
+## 2026-05-14 16:34 | GitHub
+- 作業: <command-message>doctor</command-message>
+- 完了: - リモートの先行コミット（`improve-autonomous-learning`、`notebooklm-integration-check`ブランチ追加）をrebaseでマージしてpush
+
+## 2026-04-30 11:23 | pietro-onlineshop_ver01
+- [open] WPD App は `snippets/wcp_cart.liquid` でドメイン変数として参照されているだけで、実際にカートで使われているかはフロー次第です。確認が必要であれば調べます。
+
+## 2026-04-30 11:29 | pietro-onlineshop_ver01 [ai]
+- [gotcha] `shopify store auth` の `read_apps` スコープは標準では存在しない。Admin APIでアプリ一覧を取得する際は、標準スコープの確認が必須。
+- [gotcha] テーマ内コード検索（App Proxyエンドポイント）とAdmin API `appInstallations` クエリは確認する領域が異なる。前者は「テーマで参照」、後者は「実際にインストール」。両方で確認すべき。
+- [gotcha] `.shopify/project.json`にストアドメインが設定されていない場合、`shopify store auth --store <domain>.myshopify.com` で手動指定してから実行コマンドを実行する必要がある
+- [gotcha] `shopify store auth` はローカルサーバーをポート 13387 で起動するため、既に使用中だと失敗→ `lsof -ti:13387 | xargs kill -9` で解放が必須
+- [pattern] テーマ内のコード参照（App Proxy URL・スニペット）からアプリ依存関係を逆引きできる。GraphQL APIが必要でない場合も多い。
+- [tip] インストール済みアプリ一覧は管理画面 → 設定 → アプリと販売チャネル で直接確認が最速。URL: `https://admin.shopify.com/store/{store}/settings/apps`
+
+## 2026-04-30 16:55 | mimc.co.jp-mailmagazine
+- [correction] 3. **画像パス** — `2026/0508_kv.jpg`、`0508_01.jpg`〜`0508_04.jpg` を想定。実際のファイル名が異なる場合は修正します
+
+## 2026-04-30 16:55 | mimc.co.jp-mailmagazine [ai]
+- [pattern] メルマガHTML作成は「PDF構成読込 → 既存テンプレート参考 → 商品情報・画像パス確認」のステップで進める
+- [gotcha] PDFのURL情報は末尾が不完全な場合が多い。商品コード（gMLE-など）を正確に確認してから実装する
+- [tip] 画像パスは推定ではなく実ファイルの命名規則（2026/MMDD_XX.jpg）を事前に確認しておく
+
+## 2026-04-30 17:00 | mimc.co.jp-mailmagazine
+- 完了: [260508.html](260508.html) を作成しました。
+
+## 2026-04-30 17:00 | mimc.co.jp-mailmagazine
+- [open] - [tip] 商品リンク生成時、PDFから抽出した商品コードは末尾が切れることがあるため、正確性を要確認。
+
+## 2026-04-30 17:00 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] メルマガコーディング時、KVセクションの「詳しくはこちら」ボタンは必須要素。初版で見落としやすい。
+- [pattern] MIMC メルマガは構成が定型化：KV（ボタン付き）→ RECOMMEND（複数商品）→ PICKUP → mnb バナー群 → SNS/フッター。テンプレート化で初期作成時間を短縮可能。
+- [tip] 商品リンク生成時、PDFから抽出した商品コードは末尾が切れることがあるため、正確性を要確認。
+
+## 2026-04-30 17:00 | mimc.co.jp-mailmagazine
+- [pattern] 黒背景・白文字に修正しました。
+
+
+## 2026-04-30 17:00 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] メール HTML テンプレートはデザイン PDF の構成要素が抜け落ちやすい。完成後に PDF と 1 対 1 で照合し、ボタン・色・テキストを検証する
+- [pattern] メルマガボタンのスタイル（背景色・文字色）はデザイン PDF で明示的に確認し、既存テンプレートとの色一貫性を保つ
+- [correction] ユーザーからの修正指示（色違い等）に対しては即座に対応。メール HTML は環境依存の表示差異が大きいため、確認反復が重要
+
+## 2026-04-30 17:04 | mimc.co.jp-mailmagazine
+- 完了: 黒背景・白文字に修正しました。
+
+## 2026-04-30 17:04 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] メール HTML のボタンスタイル（色・背景）はPDFデザイン確認後に実装（初期版で不確定なまま進めない）
+- [pattern] メール画像は `width="100%" style="max-width:100%;"` で幅100%対応する
+
+## 2026-04-30 17:13 | mimc.co.jp-mailmagazine
+- 構造・スタイル・utm パラメータの基本品質は良好です。ただし、重要度の高い問題が2件、確認が必要な点が複数あります。
+
+## 2026-04-30 17:13 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] 空の `<p>` タグはメールクライアントで高さが崩れる可能性。セパレーターが必要な場合は `&nbsp;` か `<hr>` を使うべき
+- [gotcha] `<td>` に `margin` を指定してもメールクライアントで無視される。メールHTMLではパディングと高さで余白を制御する
+- [pattern] キャンペーンメールの全リンクに `utm_source=mailmagazine&utm_medium=email&utm_campaign=YYMMDD` を統一付与すると分析精度が向上
+
+## 2026-04-30 19:31 | mimc.co.jp-mailmagazine
+- 作業: ## Code Review Request
+- 完了: mnb セクションで `<div>` を使用していますが、260505.html でも同様のパターンを使用しています。Outlook 2007-2019 では `<div>` のマージン・パディングが信頼できない場合があります。ただし、260505.html との一貫性を考慮すると、現時点での変更は
+
+## 2026-04-30 19:31 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] メールHTMLの空 `<p>` タグはメールクライアントで高さが崩れるため、区切り線として使う場合は `&nbsp;` か `<hr>` を使う
+- [gotcha] `<img>` の `width="100%"` はHTML属性としては無効（ピクセル値が期待される）。パーセント指定はインラインスタイル `style="width:100%"` にのみ記述する
+- [pattern] KVボタンや商品リンクのキャンペーンURLは配信前に実在確認必須。存在しないパスは404になるため、utm付与と同時にリンク先の実在チェックをチェックリストに組み込む
+
+## 2026-04-30 19:35 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] メールHTMLの空`<p>`タグはメールクライアントで高さが崩れる場合があるため、区切り線として使う場合は`&nbsp;`を入れるか`<hr>`に置き換える
+- [gotcha] `<img width="100%">`のHTML属性`width`はピクセル値を期待するため、パーセント指定はインラインスタイル（`style="max-width:100%"`）のみに頼るべき
+- [pattern] 参照元ファイル（260505.html）の二重`<tr>`バグを引き継がず修正できた——パターン踏襲時も構造差分を目視確認することで既存バグの伝搬を防げる
+
+## 2026-04-30 19:55 | mimc.co.jp-mailmagazine [ai]
+- [gotcha] メールHTMLの空 `<p>` タグはメールクライアントで高さが崩れる場合があるため、区切り線目的で使う場合は `&nbsp;` か `<hr>` を使う
+- [gotcha] `<img>` の `width="100%"` はHTML属性としてはピクセル値を期待するため、パーセント指定はインラインスタイル（`style="max-width:100%"`）のみで行う
+- [pattern] 既存HTMLをテンプレートとして流用する際は二重 `<tr>` タグなどの既存バグを引き継がないよう、パターン元ファイルのバグを認識した上でコピーする
+
+
+## 2026-05-07 11:53 | P130 [ai]
+- [pattern] 外部API統合デバッグ時、ドキュメント参照とコード実装を並行確認し、エンドポイント・フィールド名・認証情報を対応表で検証する。複数ずれを同時に見つけやすい
+- [gotcha] RESTful APIでリソースIDがパス必須の場合（XServer等）、環境変数未設定なら403エラー。認証設定チェックリストに「パスに埋め込むID」を明示する
+
+## 2026-05-07 11:53 | P130 [ai]
+- [gotcha] XServer APIのエンドポイントはバージョン付き（`/v1/...`）で、ドメイン取得・DNS操作ごとにパスが異なる。`/domains` ではなく `/v1/server/{servername}/domain` など必ずドキュメント確認必須
+- [gotcha] XServer API呼び出しにはサーバー名がパスに必須。コンソール「サーバー情報」から `sv12345` を確認し、`sv12345.xsrv.jp` フル形式で設定
+- [pattern] 外部API連携時はレスポンス構造の事前確認。XServerはフィールド名が `value` → `content`、`name` → `host` など非直感的。ドキュメントとスクリプトの並行確認がデバッグ時間を短縮
+
+## 2026-05-07 11:54 | P130 [ai]
+- [gotcha] XServer APIはエンドポイントパス・フィールド名・サーバー名形式が全て非自明（/domains→/v1/server/{servername}/domain、value→content等）。ドキュメント照合なしに実装すると確実に失敗する。
+- [pattern] 403 FORBIDDENエラーはコード修正より先にアカウント管理画面のAPIキー権限・対象サーバー設定を確認。root causeは大抵権限設定側。
+- [correction] サーバーIDとサーバーFQDNは別。XServerではサーバーパネル「サーバー情報」の実名（例: cingroup2.xsrv.jp）をAPI呼び出しに使用。
+
+## 2026-05-07 11:54 | P130 [ai]
+- [gotcha] XServer APIのエンドポイントはパスにサーバー名を含める形式（`/v1/server/{servername}/domain`）。この構造を見落とすと全リクエストが失敗する
+- [gotcha] APIレスポンスのフィールド名（`value` vs `content`、`name` vs `host`）がドキュメント記載と異なる場合がある。実装前に必ずドキュメントとスキーマを照合
+- [tip] XServer 403エラー時、コード問題の前に管理画面でAPIキーの「対象サーバー」設定を確認。キーが特定サーバーにのみ権限を持つ可能性
+
+## 2026-05-07 13:11 | teras-taya
+- 重要な情報があります。このファイルについてすでに観測が記録されています。詳細を取得します。
+
+## 2026-05-07 13:10 | teras-taya [ai]
+- [gotcha] localStorage.setItem() は Safari プライベートブラウジングで SecurityError を throw する。重要な UI操作は必ず try/catch で囲む必須。
+- [pattern] Flash-of-content を防ぐには、デフォルト HTML 状態を非表示（aria-hidden="true"）にして、JS で必要な場合だけ解除する逆転パターンが確実。
+- [gotcha] Shopify テーマで locale キーを追加するとき、base locale（en.default.json）に同時に追加していないと theme check で警告される。
+
+## 2026-05-07 13:22 | teras-taya
+- [correction] #1〜#7まですべて修正してください
+
+## 2026-05-07 13:22 | teras-taya [ai]
+- [gotcha] ポップアップをHTML側で表示状態にしておくとFOUC発生。JS実行前に一瞬見える。デフォルトは `aria-hidden="true"` にしてJS側で条件判定時に外す
+- [gotcha] Shopifyで `ja.json` にキーを追加したら `en.default.json` にも同じキーを英語値で追加必須。フォールバック仕様で英語ユーザーに生キー名が表示される
+- [tip] CSS `transform: scale()` を常時適用するなら実寸をコメントで明記。宣言値と実態の乖離で将来の編集者が混乱する
+
+## 2026-05-07 13:23 | teras-taya [ai]
+- [gotcha] Shopify themeでポップアップ等のJS制御UI要素は、HTML側でデフォルトを隠す（aria-hidden="true"やdisplay:none）ことが必須。そうしないとJSが実行される前に一瞬表示されてしまう（FOUC）。
+- [gotcha] Shopifyのローカライゼーション：テーマキーを `ja.json` に追加しても、Shopifyは `en.default.json` をフォールバックとして使うため、スタッフアカウントが英語設定だと生キー名が出力される。すべてのキーを `en.default.json` にも登録すること。
+- [pattern] CSS で `scale()` 等の変換値を使う場合、宣言値と実表示サイズがズレるため、実寸ベースで設計し直すか、実寸をコメントで明記してメンテナンス性を高める。
+
+## 2026-05-15 10:08 | dotfiles [ai]
+- [pattern] settings.json のコンフリクト解決時、nightly自動管理部分とユーザー設定部分（editorMode等）を分離して採用する
+- [pattern] ローカル独自コミットとリモート変更が競合する場合、内容確認後rebaseで再適用する
+- [tip] 大幅分岐（100+コミット差）での同期は git rebase で対応、単純プッシュではNG
+
+## 2026-05-15 10:09 | dotfiles [ai]
+- [gotcha] dotfiles rebase 時のシンボリックリンク管理 — `~/.claude/` 配下ファイルは symlink 先のため、rebase/merge コンフリクト時に意図しない挙動が起こる可能性。次回はリベース前にリンク構造を明示的に確認する。
+- [pattern] 大幅分岐時の HEAD 採用戦略 — リモート HEAD が nightly 統合済みの場合、HEAD を基準に adopt しつつユーザー設定（`editorMode` など）のみ選別的に保持すると効率的。
+- [tip] 無関係な変更は先にスタッシュ — rebase 前に `.zshrc` など無関係ファイルをスタッシュすると、コンフリクト解決が単純化される。
