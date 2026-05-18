@@ -9,7 +9,7 @@ Sources:
   - WebFetch: https://shopify.dev/changelog
 -->
 
-> 最終更新: 2026-04-08（公式ドキュメント・Changelog精査済み）
+> 最終更新: 2026-05-18（公式ドキュメント・Changelog精査済み）
 > 対象: Shopify Flow（全プラン Basic 以上で利用可能）
 
 ---
